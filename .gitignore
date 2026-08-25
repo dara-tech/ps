@@ -9,6 +9,17 @@ dist/
 web-build/
 expo-env.d.ts
 
+# Databases / local storage
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+storage/*.db
+backend/storage/*.db
+backend/storage/*.db-shm
+backend/storage/*.db-wal
+
 # Native
 .kotlin/
 *.orig.*
@@ -30,8 +41,10 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# local env files
-.env*.local
+# env files
+.env
+.env.*
+!.env.example
 
 # typescript
 *.tsbuildinfo
