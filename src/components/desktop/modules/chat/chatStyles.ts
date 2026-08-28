@@ -182,8 +182,6 @@ export const chatStyles = StyleSheet.create({
   },
   convCardActive: {
     backgroundColor: '#F0F9FF',
-    borderLeftWidth: 2,
-    borderLeftColor: '#0284C7',
   },
   collapsedItem: {
     alignItems: 'center',

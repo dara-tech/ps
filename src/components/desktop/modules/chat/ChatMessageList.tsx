@@ -278,12 +278,9 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
           const prevDate = prevMsg ? (prevMsg.rawDate || prevMsg.date || prevMsg.timestamp || '') : '';
           const showDateSeparator = idx === 0 || (currDate && prevDate && formatMessageDate(currDate, isKh) !== formatMessageDate(prevDate, isKh));
 
-          const bubbleBg = isMe
-            ? (isDark ? '#064E3B' : '#EFFCEE')
-            : tokens.surfaceBg;
-          const bubbleBorder = isMe
-            ? (isDark ? '#047857' : '#BBF7D0')
-            : tokens.borderSubtle;
+          const bubbleBg = isMe ? tokens.bubbleOutgoing : tokens.bubbleIncoming;
+          const bubbleBorder = isMe ? tokens.bubbleOutgoingBorder : tokens.bubbleIncomingBorder;
+          const bubbleText = isMe ? tokens.bubbleOutgoingText : tokens.bubbleIncomingText;
 
           return (
             <React.Fragment key={`msg-${msg.id ?? ''}-${idx}`}>
@@ -340,10 +337,10 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                     {/* Forwarded from original sender */}
                     {Boolean(msg.fwdFrom) && (
                       <View style={styles.tgForwardHeader}>
-                        <RemixIcon name="share-forward-line" size={12} color={tokens.accentColor} />
-                        <Text style={[styles.tgForwardLabel, { color: tokens.textSecondary }]}>
+                        <RemixIcon name="share-forward-line" size={12} color={isMe ? 'rgba(255, 255, 255, 0.85)' : tokens.accentColor} />
+                        <Text style={[styles.tgForwardLabel, { color: isMe ? 'rgba(255, 255, 255, 0.85)' : tokens.textSecondary }]}>
                           {isKh ? 'បញ្ជូនបន្តពី' : 'Forwarded from'}{' '}
-                          <Text style={[styles.tgForwardSender, { color: tokens.accentColor }]}>
+                          <Text style={[styles.tgForwardSender, { color: isMe ? '#FFFFFF' : tokens.accentColor }]}>
                             {msg.fwdFrom.senderName || 'Original Sender'}
                           </Text>
                         </Text>
@@ -357,18 +354,18 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                           styles.tgQuoteBox,
                           {
                             backgroundColor: isMe
-                              ? (isDark ? 'rgba(0, 0, 0, 0.25)' : '#DCFCE7')
+                              ? 'rgba(0, 0, 0, 0.15)'
                               : tokens.surfaceMuted,
-                            borderLeftColor: tokens.accentColor,
+                            borderLeftColor: isMe ? '#FFFFFF' : tokens.accentColor,
                           },
                         ]}
                       >
-                        <View style={[styles.tgQuoteAccent, { backgroundColor: tokens.accentColor }]} />
+                        <View style={[styles.tgQuoteAccent, { backgroundColor: isMe ? '#FFFFFF' : tokens.accentColor }]} />
                         <View style={styles.tgQuoteBody}>
-                          <Text style={[styles.tgQuoteSender, { color: tokens.accentColor }]} numberOfLines={1}>
+                          <Text style={[styles.tgQuoteSender, { color: isMe ? '#FFFFFF' : tokens.accentColor }]} numberOfLines={1}>
                             {msg.replyToMsg?.senderName || 'Reply'}
                           </Text>
-                          <Text style={[styles.tgQuoteText, { color: tokens.textSecondary }]} numberOfLines={1}>
+                          <Text style={[styles.tgQuoteText, { color: isMe ? 'rgba(255, 255, 255, 0.85)' : tokens.textSecondary }]} numberOfLines={1}>
                             {msg.replyToMsg?.text || 'Original message'}
                           </Text>
                         </View>
@@ -380,34 +377,34 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                       <View style={styles.tgFileBubbleBlock}>
                         <View style={styles.tgFileMainRow}>
                           <TouchableOpacity
-                            style={[styles.tgDownloadCircleBtn, { backgroundColor: tokens.accentColor }]}
+                            style={[styles.tgDownloadCircleBtn, { backgroundColor: isMe ? 'rgba(255, 255, 255, 0.2)' : tokens.accentColor }]}
                             onPress={() => msg.mediaUrl && window.open(msg.mediaUrl, '_blank')}
                             activeOpacity={0.8}
                           >
-                            <RemixIcon name="arrow-down-line" size={18} color={tokens.accentFg} />
+                            <RemixIcon name="arrow-down-line" size={18} color="#FFFFFF" />
                           </TouchableOpacity>
                           <View style={styles.tgFileInfoBox}>
-                            <Text style={[styles.tgFileName, { color: tokens.textPrimary }]} numberOfLines={1}>
+                            <Text style={[styles.tgFileName, { color: bubbleText }]} numberOfLines={1}>
                               {msg.fileName || 'Document.pdf'}
                             </Text>
                             <View style={styles.tgFileSizeRow}>
-                              <Text style={[styles.tgFileSize, { color: tokens.textSecondary }]}>{msg.fileSize || 'File'}</Text>
-                              <Text style={[styles.tgFileDot, { color: tokens.textMuted }]}>•</Text>
-                              <Text style={[styles.tgFileDownloadLink, { color: tokens.accentColor }]}>Download</Text>
+                              <Text style={[styles.tgFileSize, { color: isMe ? 'rgba(255, 255, 255, 0.75)' : tokens.textSecondary }]}>{msg.fileSize || 'File'}</Text>
+                              <Text style={[styles.tgFileDot, { color: isMe ? 'rgba(255, 255, 255, 0.6)' : tokens.textMuted }]}>•</Text>
+                              <Text style={[styles.tgFileDownloadLink, { color: isMe ? '#FFFFFF' : tokens.accentColor }]}>Download</Text>
                             </View>
                           </View>
                         </View>
                         <View style={styles.tgMsgMetaRow}>
-                          {msg.isPinned && <RemixIcon name="pushpin-fill" size={10} color={tokens.accentColor} />}
-                          {msg.isEdited && <Text style={[styles.tgEditedLabel, { color: tokens.textMuted }]}>edited</Text>}
-                          <Text style={[styles.tgMsgTime, { color: tokens.textMuted }]}>
+                          {msg.isPinned && <RemixIcon name="pushpin-fill" size={10} color={isMe ? 'rgba(255, 255, 255, 0.85)' : tokens.accentColor} />}
+                          {msg.isEdited && <Text style={[styles.tgEditedLabel, { color: isMe ? 'rgba(255, 255, 255, 0.7)' : tokens.textMuted }]}>edited</Text>}
+                          <Text style={[styles.tgMsgTime, { color: isMe ? 'rgba(255, 255, 255, 0.75)' : tokens.textMuted }]}>
                             {msg.date || msg.timestamp}
                           </Text>
                           {isMe && (
                             <RemixIcon
                               name={msg.isSeen ? 'check-double-line' : 'check-line'}
                               size={13}
-                              color={isDark ? '#34D399' : '#16A34A'}
+                              color="rgba(255, 255, 255, 0.9)"
                             />
                           )}
                         </View>
@@ -786,21 +783,21 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                     {/* 5. Real Text Content / Caption */}
                     {captionText && !isMediaOnly && !isSticker ? (
                       <View style={isMediaWithCaption ? styles.tgCaptionTextBox : null}>
-                        <Text style={[styles.msgText, { color: tokens.textPrimary }, isMe && (isDark ? { color: '#ECFDF5' } : styles.msgTextMe)]}>
-                          {renderFormattedMarkdown(captionText, [styles.msgText, { color: tokens.textPrimary }, isMe && (isDark ? { color: '#ECFDF5' } : styles.msgTextMe)], `msg-${msg.id}`)}
+                        <Text style={[styles.msgText, { color: bubbleText }]}>
+                          {renderFormattedMarkdown(captionText, [styles.msgText, { color: bubbleText }], `msg-${msg.id}`)}
                         </Text>
                         {!isVoice && !isDoc && (
                           <View style={styles.tgMsgMetaRow}>
-                            {msg.isPinned && <RemixIcon name="pushpin-fill" size={10} color={tokens.accentColor} />}
-                            {msg.isEdited && <Text style={[styles.tgEditedLabel, { color: tokens.textMuted }]}>edited</Text>}
-                            <Text style={[styles.tgMsgTime, { color: tokens.textMuted }]}>
+                            {msg.isPinned && <RemixIcon name="pushpin-fill" size={10} color={isMe ? 'rgba(255, 255, 255, 0.85)' : tokens.accentColor} />}
+                            {msg.isEdited && <Text style={[styles.tgEditedLabel, { color: isMe ? 'rgba(255, 255, 255, 0.7)' : tokens.textMuted }]}>edited</Text>}
+                            <Text style={[styles.tgMsgTime, { color: isMe ? 'rgba(255, 255, 255, 0.75)' : tokens.textMuted }]}>
                               {msg.date || msg.timestamp}
                             </Text>
                             {isMe && (
                               <RemixIcon
                                 name={msg.isSeen ? 'check-double-line' : 'check-line'}
                                 size={13}
-                                color={isDark ? '#34D399' : '#16A34A'}
+                                color="rgba(255, 255, 255, 0.9)"
                               />
                             )}
                           </View>
