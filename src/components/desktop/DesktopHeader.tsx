@@ -46,6 +46,7 @@ const PanelRightIcon: React.FC<{ active?: boolean; size?: number; color?: string
 );
 
 import { UserProfileModal } from './UserProfileModal';
+import { ThemePickerModal } from './ThemePickerModal';
 
 export const DesktopHeader: React.FC = () => {
   const user = useAuthStore((state) => state.user);
@@ -64,6 +65,7 @@ export const DesktopHeader: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isBottomOpen, setIsBottomOpen] = useState(false);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
+  const [themeModalOpen, setThemeModalOpen] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
 
   const handleGlobalRefresh = async () => {
@@ -143,6 +145,15 @@ export const DesktopHeader: React.FC = () => {
           <RemixIcon name="sparkles-fill" size={14} color={activeModule === 'copilot' ? '#6366F1' : '#64748B'} />
         </TouchableOpacity>
 
+        {/* Theme Palette Customizer Button */}
+        <TouchableOpacity
+          style={[styles.toolIconBtn, themeModalOpen && styles.toolIconBtnActive]}
+          onPress={() => setThemeModalOpen(true)}
+          activeOpacity={0.7}
+        >
+          <RemixIcon name="palette-line" size={14} color={themeModalOpen ? '#6366F1' : '#64748B'} />
+        </TouchableOpacity>
+
         {/* Settings Gear Button */}
         <TouchableOpacity
           style={[styles.toolIconBtn, activeModule === 'settings' && styles.toolIconBtnActive]}
@@ -194,47 +205,55 @@ export const DesktopHeader: React.FC = () => {
                     isOnline={true}
                   />
                   <View style={styles.menuProfileInfo}>
-                    <Text style={styles.menuProfileName} numberOfLines={1}>{user.name}</Text>
-                    <Text style={styles.menuProfileEmail} numberOfLines={1}>{user.email}</Text>
+                    <Text style={styles.menuProfileName} numberOfLines={1}>
+                      {user.name}
+                    </Text>
+                    <Text style={styles.menuProfileEmail} numberOfLines={1}>
+                      {user.email || 'Admin'}
+                    </Text>
                   </View>
-                  <RemixIcon name="arrow-right-line" size={12} color="#94A3B8" />
+                  <RemixIcon name="arrow-right-s-line" size={14} color="#94A3B8" />
                 </TouchableOpacity>
               )}
 
-              {/* Status & Language Row */}
-              <View style={styles.menuRowGroup}>
-                <View style={styles.statusLivePill}>
-                  <View style={styles.statusLiveDot} />
-                  <Text style={styles.statusLiveText}>{t.online}</Text>
-                </View>
+              <View style={styles.menuDivider} />
 
-                {/* Language Switcher inside dropdown */}
-                <LanguageToggle />
-              </View>
-
-              {/* Account Settings Menu Item */}
+              {/* Theme Settings Item */}
               <TouchableOpacity
                 style={styles.menuItemBtn}
                 onPress={() => {
                   setMenuOpen(false);
-                  setProfileModalOpen(true);
+                  setThemeModalOpen(true);
                 }}
-                activeOpacity={0.75}
+                activeOpacity={0.7}
               >
-                <RemixIcon name="settings-3-line" size={14} color="#334155" />
-                <Text style={styles.menuItemText}>Account & Preferences</Text>
+                <RemixIcon name="palette-line" size={14} color="#64748B" />
+                <Text style={styles.menuItemText}>Appearance & Theme</Text>
+              </TouchableOpacity>
+
+              {/* Settings Item */}
+              <TouchableOpacity
+                style={styles.menuItemBtn}
+                onPress={() => {
+                  setMenuOpen(false);
+                  setActiveModule('settings');
+                }}
+                activeOpacity={0.7}
+              >
+                <RemixIcon name="settings-3-line" size={14} color="#64748B" />
+                <Text style={styles.menuItemText}>Settings</Text>
               </TouchableOpacity>
 
               <View style={styles.menuDivider} />
 
-              {/* Logout Action */}
+              {/* Sign Out Button */}
               <TouchableOpacity
                 style={styles.menuLogoutBtn}
                 onPress={() => {
                   setMenuOpen(false);
                   logout();
                 }}
-                activeOpacity={0.8}
+                activeOpacity={0.7}
               >
                 <RemixIcon name="logout-box-r-line" size={14} color="#EF4444" />
                 <Text style={styles.menuLogoutText}>{t.signOut}</Text>
@@ -248,6 +267,12 @@ export const DesktopHeader: React.FC = () => {
       <UserProfileModal
         visible={profileModalOpen}
         onClose={() => setProfileModalOpen(false)}
+      />
+
+      {/* Telegram-Grade Theme Customizer Modal */}
+      <ThemePickerModal
+        visible={themeModalOpen}
+        onClose={() => setThemeModalOpen(false)}
       />
     </View>
   );
