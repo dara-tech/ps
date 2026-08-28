@@ -544,7 +544,7 @@ export const CalendarModule: React.FC = () => {
             {/* Monthly Executive Insight Strip */}
             <View style={[styles.monthInsightStrip, { backgroundColor: tokens.surfaceBg, borderBottomColor: tokens.borderSubtle }]}>
               <View style={[styles.insightStripItem, { backgroundColor: tokens.surfaceBg, borderRightColor: tokens.borderSubtle }]}>
-                <View style={[styles.insightStripIconWrap, { backgroundColor: '#FEF2F2' }]}>
+                <View style={[styles.insightStripIconWrap, { backgroundColor: 'rgba(220, 38, 38, 0.14)' }]}>
                   <RemixIcon name="bank-card-line" size={11} color="#DC2626" />
                 </View>
                 <Text style={[styles.insightStripLabel, { color: tokens.textSecondary }]}>{isKh ? 'លំហូរសាច់ប្រាក់:' : 'Cashflow:'}</Text>
@@ -566,7 +566,7 @@ export const CalendarModule: React.FC = () => {
               </View>
 
               <View style={[styles.insightStripItem, { backgroundColor: tokens.surfaceBg, borderRightColor: tokens.borderSubtle }]}>
-                <View style={[styles.insightStripIconWrap, { backgroundColor: '#EEF2FF' }]}>
+                <View style={[styles.insightStripIconWrap, { backgroundColor: 'rgba(99, 102, 241, 0.14)' }]}>
                   <RemixIcon name="checkbox-circle-fill" size={11} color="#6366F1" />
                 </View>
                 <Text style={[styles.insightStripLabel, { color: tokens.textSecondary }]}>{isKh ? 'កិច្ចការ Sprint:' : 'Sprint Tasks:'}</Text>
@@ -574,7 +574,7 @@ export const CalendarModule: React.FC = () => {
               </View>
 
               <View style={[styles.insightStripItem, { backgroundColor: tokens.surfaceBg, borderRightWidth: 0 }]}>
-                <View style={[styles.insightStripIconWrap, { backgroundColor: '#EFF6FF' }]}>
+                <View style={[styles.insightStripIconWrap, { backgroundColor: 'rgba(37, 99, 235, 0.14)' }]}>
                   <RemixIcon name="calendar-line" size={11} color="#2563EB" />
                 </View>
                 <Text style={[styles.insightStripLabel, { color: tokens.textSecondary }]}>{isKh ? 'កាលវិភាគ:' : 'Schedule:'}</Text>
@@ -647,16 +647,16 @@ export const CalendarModule: React.FC = () => {
                           style={[
                             styles.finDayBadge,
                             financesByDate.get(item.dateStr)!.income > financesByDate.get(item.dateStr)!.expense
-                              ? styles.finDayBadgeIncome
-                              : styles.finDayBadgeExpense,
+                              ? { backgroundColor: 'rgba(16, 185, 129, 0.14)', borderColor: 'rgba(16, 185, 129, 0.28)' }
+                              : { backgroundColor: 'rgba(239, 68, 68, 0.14)', borderColor: 'rgba(239, 68, 68, 0.28)' },
                           ]}
                         >
                           <Text
                             style={[
                               styles.finDayBadgeText,
                               financesByDate.get(item.dateStr)!.income > financesByDate.get(item.dateStr)!.expense
-                                ? styles.finDayTextIncome
-                                : styles.finDayTextExpense,
+                                ? { color: '#10B981' }
+                                : { color: '#EF4444' },
                             ]}
                             numberOfLines={1}
                           >
@@ -679,19 +679,23 @@ export const CalendarModule: React.FC = () => {
                             key={ev.id}
                             style={[
                               styles.eventPill,
-                              isUrgent ? styles.pillUrgent : isHigh ? styles.pillHigh : styles.pillMeeting,
+                              { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+                              isUrgent && { backgroundColor: 'rgba(239, 68, 68, 0.14)', borderColor: 'rgba(239, 68, 68, 0.28)' },
+                              isHigh && { backgroundColor: 'rgba(245, 158, 11, 0.14)', borderColor: 'rgba(245, 158, 11, 0.28)' },
                             ]}
                           >
                             <View
                               style={[
                                 styles.pillDot,
-                                { backgroundColor: isUrgent ? '#EF4444' : isHigh ? '#F59E0B' : '#2563EB' },
+                                { backgroundColor: isUrgent ? '#EF4444' : isHigh ? '#F59E0B' : tokens.accentColor },
                               ]}
                             />
                             <Text
                               style={[
                                 styles.eventPillText,
-                                isUrgent ? styles.pillTextUrgent : isHigh ? styles.pillTextHigh : styles.pillTextMeeting,
+                                { color: tokens.textPrimary },
+                                isUrgent && { color: '#EF4444' },
+                                isHigh && { color: '#F59E0B' },
                               ]}
                               numberOfLines={1}
                             >
@@ -703,17 +707,23 @@ export const CalendarModule: React.FC = () => {
 
                       {/* 2. Top Task (If any) */}
                       {dayTasks.slice(0, realEvents.length >= 2 ? 0 : 1).map((t) => (
-                        <View key={t.id} style={[styles.eventPill, styles.pillTask]}>
+                        <View
+                          key={t.id}
+                          style={[
+                            styles.eventPill,
+                            { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+                          ]}
+                        >
                           <View
                             style={[
                               styles.pillDot,
                               {
                                 backgroundColor:
-                                  t.priority === 'urgent' ? '#EF4444' : t.priority === 'high' ? '#F59E0B' : '#6366F1',
+                                  t.priority === 'urgent' ? '#EF4444' : t.priority === 'high' ? '#F59E0B' : tokens.accentColor,
                               },
                             ]}
                           />
-                          <Text style={[styles.eventPillText, styles.pillTextTask]} numberOfLines={1}>
+                          <Text style={[styles.eventPillText, { color: tokens.textPrimary }]} numberOfLines={1}>
                             {t.title}
                           </Text>
                         </View>
@@ -721,9 +731,15 @@ export const CalendarModule: React.FC = () => {
 
                       {/* 3. Consolidated GitHub Activity Pulse Pill */}
                       {gitEvents.length > 0 && (
-                        <View style={[styles.eventPill, styles.pillGithub]}>
-                          <RemixIcon name="github-fill" size={10} color="#0F172A" />
-                          <Text style={[styles.eventPillText, styles.pillTextGithub]} numberOfLines={1}>
+                        <View
+                          style={[
+                            styles.eventPill,
+                            styles.pillGithub,
+                            { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+                          ]}
+                        >
+                          <RemixIcon name="github-fill" size={10} color={tokens.textPrimary} />
+                          <Text style={[styles.eventPillText, { color: tokens.textPrimary, fontSize: 9.5, fontFamily: 'Krasar-Regular' }]} numberOfLines={1}>
                             {gitEvents.length === 1
                               ? gitEvents[0].title.replace(/^\[Git (Commit|Push|Create|Event)\]\s*/i, '')
                               : `${gitEvents.length} Commits (${githubConfig.repo || 'ps'})`}
@@ -733,8 +749,8 @@ export const CalendarModule: React.FC = () => {
 
                       {/* 4. More counter if total items exceed visible space */}
                       {totalItems > (realEvents.length > 0 ? 2 : 1) + (gitEvents.length > 0 ? 1 : 0) && (
-                        <View style={styles.moreEventsPill}>
-                          <Text style={styles.moreEventsText}>
+                        <View style={[styles.moreEventsPill, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                          <Text style={[styles.moreEventsText, { color: tokens.textSecondary }]}>
                             +{totalItems - (realEvents.length > 0 ? 2 : 1)} more
                           </Text>
                         </View>
