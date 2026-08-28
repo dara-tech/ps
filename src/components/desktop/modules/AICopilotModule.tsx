@@ -18,13 +18,12 @@ import { RichMarkdownView } from '../../ui/RichMarkdownView';
 import { CustomSelect } from '../../ui/CustomSelect';
 import { toast } from '../../../store/useToastStore';
 
-const AI_MEMO_IMG = require('../../../../assets/copilot/ai_memo.jpg');
-const AI_MILESTONE_IMG = require('../../../../assets/copilot/ai_milestone.jpg');
-const AI_FINANCE_IMG = require('../../../../assets/copilot/ai_finance.jpg');
-const AI_CODE_IMG = require('../../../../assets/copilot/ai_code.jpg');
-const AI_PRIORITY_IMG = require('../../../../assets/copilot/ai_priority.jpg');
-const AI_PULSE_IMG = require('../../../../assets/copilot/ai_pulse.jpg');
-const AI_RADAR_IMG = require('../../../../assets/copilot/ai_radar.jpg');
+const AI_MEMO_IMG = require('../../../../assets/copilot/ai_memo_soft.jpg');
+const AI_MILESTONE_IMG = require('../../../../assets/copilot/ai_milestone_soft.jpg');
+const AI_FINANCE_IMG = require('../../../../assets/copilot/ai_finance_soft.jpg');
+const AI_CODE_IMG = require('../../../../assets/copilot/ai_code_soft.jpg');
+const TIME_MORNING_IMG = require('../../../../assets/copilot/time_morning.jpg');
+const TIME_AFTERNOON_IMG = require('../../../../assets/copilot/time_afternoon.jpg');
 
 interface AttachmentItem {
   id: string;
@@ -68,12 +67,39 @@ export const AICopilotModule: React.FC = () => {
     [aiMessages]
   );
 
-  const getGreeting = () => {
+  const greetingInfo = useMemo(() => {
     const hour = new Date().getHours();
-    if (hour < 12) return 'Good morning';
-    if (hour < 17) return 'Good afternoon';
-    return 'Good evening';
-  };
+    if (hour >= 5 && hour < 12) {
+      return {
+        text: 'Good morning',
+        image: TIME_MORNING_IMG,
+        fallbackIcon: 'sun-foggy-fill' as const,
+        iconColor: '#F59E0B',
+      };
+    }
+    if (hour >= 12 && hour < 17) {
+      return {
+        text: 'Good afternoon',
+        image: TIME_AFTERNOON_IMG,
+        fallbackIcon: 'sun-fill' as const,
+        iconColor: '#F59E0B',
+      };
+    }
+    if (hour >= 17 && hour < 21) {
+      return {
+        text: 'Good evening',
+        image: null,
+        fallbackIcon: 'sun-cloudy-fill' as const,
+        iconColor: '#F97316',
+      };
+    }
+    return {
+      text: 'Good night',
+      image: null,
+      fallbackIcon: 'moon-stars-fill' as const,
+      iconColor: '#8B5CF6',
+    };
+  }, []);
 
   const [input, setInput] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -244,12 +270,18 @@ export const AICopilotModule: React.FC = () => {
             {/* 1. Header Banner: Greeting & Live Status */}
             <View style={[styles.cockpitBanner, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
               <View style={styles.cockpitBannerLeft}>
-                <View style={[styles.cockpitAvatarBadge, { backgroundColor: tokens.accentSoft }]}>
-                  <RemixIcon name="sparkles-fill" size={16} color={tokens.accentColor} />
-                </View>
+                {greetingInfo.image ? (
+                  <View style={[styles.cockpitAvatarBadge, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                    <Image source={greetingInfo.image} style={styles.greeting3dImg} resizeMode="cover" />
+                  </View>
+                ) : (
+                  <View style={[styles.cockpitAvatarBadge, { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}>
+                    <RemixIcon name={greetingInfo.fallbackIcon} size={18} color={greetingInfo.iconColor} />
+                  </View>
+                )}
                 <View>
                   <Text style={[styles.cockpitGreetingTitle, { color: tokens.textPrimary }]}>
-                    {getGreeting()}, Dara
+                    {greetingInfo.text}, Dara
                   </Text>
                 </View>
               </View>
@@ -1247,14 +1279,13 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   cockpitAvatarBadge: {
-    width: 32,
-    height: 32,
+    width: 36,
+    height: 36,
     borderRadius: 8,
-    backgroundColor: '#EEF2FF',
     borderWidth: 1,
-    borderColor: '#C7D2FE',
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
   cockpitGreetingTitle: {
     fontSize: 16,
@@ -1418,13 +1449,11 @@ const styles = StyleSheet.create({
   },
   quickActionCard: {
     flex: 1,
-    minWidth: 180,
+    minWidth: 200,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    backgroundColor: '#F8FAFC',
+    gap: 12,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 12,
@@ -1439,19 +1468,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   quickActionTitle: {
-    fontSize: 11.5,
+    fontSize: 12,
     fontFamily: 'Krasar-Bold',
-    color: '#0F172A',
-    fontWeight: '600',
+    fontWeight: '700',
   },
   quickAction3dImg: {
-    width: 32,
-    height: 32,
-    borderRadius: 7,
+    width: 44,
+    height: 44,
+    borderRadius: 9,
   },
   insightHeader3dImg: {
-    width: 18,
-    height: 18,
-    borderRadius: 4,
+    width: 22,
+    height: 22,
+    borderRadius: 5,
+  },
+  greeting3dImg: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
   },
 });
