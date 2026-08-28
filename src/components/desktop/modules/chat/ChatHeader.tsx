@@ -89,25 +89,29 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           {isTelegram ? (
             <>
               <TouchableOpacity
-                style={styles.headerActionBtn}
+                style={[styles.headerActionBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                 onPress={onSearchInChat}
                 activeOpacity={0.7}
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               >
-                <RemixIcon name="search-line" size={14} color="#64748B" />
+                <RemixIcon name="search-line" size={14} color={tokens.textSecondary} />
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={styles.headerActionBtn}
+                style={[styles.headerActionBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                 onPress={onOpenSettingsModal}
                 activeOpacity={0.7}
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               >
-                <RemixIcon name="settings-3-line" size={14} color="#0284C7" />
+                <RemixIcon name="settings-3-line" size={14} color={tokens.accentColor} />
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.headerActionBtn, showProfileSidebar && styles.headerActionBtnActive]}
+                style={[
+                  styles.headerActionBtn,
+                  { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+                  showProfileSidebar && { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder },
+                ]}
                 onPress={onToggleProfileSidebar}
                 activeOpacity={0.7}
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
@@ -115,32 +119,36 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
                 <RemixIcon
                   name="information-fill"
                   size={14}
-                  color={showProfileSidebar ? '#0284C7' : '#64748B'}
+                  color={showProfileSidebar ? tokens.accentColor : tokens.textSecondary}
                 />
               </TouchableOpacity>
             </>
           ) : (
             <>
               <TouchableOpacity
-                style={styles.headerActionBtn}
+                style={[styles.headerActionBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                 onPress={onCall}
                 activeOpacity={0.7}
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               >
-                <RemixIcon name="phone-line" size={14} color="#475569" />
+                <RemixIcon name="phone-line" size={14} color={tokens.textSecondary} />
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={styles.headerActionBtn}
+                style={[styles.headerActionBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                 onPress={onVideo}
                 activeOpacity={0.7}
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               >
-                <RemixIcon name="vidicon-line" size={14} color="#475569" />
+                <RemixIcon name="vidicon-line" size={14} color={tokens.textSecondary} />
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.headerActionBtn, showProfileSidebar && styles.headerActionBtnActive]}
+                style={[
+                  styles.headerActionBtn,
+                  { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+                  showProfileSidebar && { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder },
+                ]}
                 onPress={onToggleProfileSidebar}
                 activeOpacity={0.7}
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}

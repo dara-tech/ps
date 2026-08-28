@@ -105,7 +105,11 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
           <>
             <View style={styles.sidebarHeaderLeft}>
               <TouchableOpacity
-                style={[styles.sourceSwitchBtn, !isTelegram && styles.sourceSwitchBtnActive]}
+                style={[
+                  styles.sourceSwitchBtn,
+                  { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+                  !isTelegram && { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder },
+                ]}
                 onPress={() => onSetChatSource('team')}
                 activeOpacity={0.7}
               >
@@ -114,7 +118,11 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.sourceSwitchBtn, isTelegram && styles.sourceSwitchBtnActive]}
+                style={[
+                  styles.sourceSwitchBtn,
+                  { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+                  isTelegram && { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder },
+                ]}
                 onPress={() => onSetChatSource('telegram')}
                 activeOpacity={0.7}
               >
@@ -124,7 +132,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
             </View>
 
             <TouchableOpacity
-              style={styles.collapseBtn}
+              style={[styles.collapseBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
               onPress={onToggleCollapse}
               activeOpacity={0.7}
             >
@@ -133,7 +141,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
           </>
         ) : (
           <TouchableOpacity
-            style={styles.collapseBtn}
+            style={[styles.collapseBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
             onPress={onToggleCollapse}
             activeOpacity={0.7}
           >
@@ -194,17 +202,21 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                 return (
                   <TouchableOpacity
                     key={f.id}
-                    style={[styles.folderChip, isActive && styles.folderChipActive]}
+                    style={[
+                      styles.folderChip,
+                      { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+                      isActive && { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder },
+                    ]}
                     onPress={() => onSetActiveFolder(f.id)}
                     activeOpacity={0.7}
                   >
-                    <RemixIcon name={f.icon as any} size={11} color={isActive ? '#0284C7' : '#64748B'} />
-                    <Text style={[styles.folderChipText, isActive && styles.folderChipTextActive]}>
+                    <RemixIcon name={f.icon as any} size={11} color={isActive ? tokens.accentColor : tokens.textSecondary} />
+                    <Text style={[styles.folderChipText, { color: tokens.textSecondary }, isActive && { color: tokens.accentColor, fontWeight: '700' }]}>
                       {f.label}
                     </Text>
                     {count > 0 && (
-                      <View style={[styles.folderCountBadge, isActive && styles.folderCountBadgeActive]}>
-                        <Text style={[styles.folderCountText, isActive && styles.folderCountTextActive]}>
+                      <View style={[styles.folderCountBadge, { backgroundColor: tokens.surfaceBg }, isActive && { backgroundColor: tokens.accentColor }]}>
+                        <Text style={[styles.folderCountText, { color: tokens.textSecondary }, isActive && { color: tokens.accentFg }]}>
                           {count}
                         </Text>
                       </View>
@@ -312,7 +324,11 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                     } as any)}
                   >
                     <TouchableOpacity
-                      style={[styles.convCard, isSelected && styles.convCardActive]}
+                      style={[
+                        styles.convCard,
+                        { borderBottomColor: tokens.borderSubtle },
+                        isSelected && { backgroundColor: tokens.accentSoft, borderLeftColor: tokens.accentColor },
+                      ]}
                       onPress={() => onSelectTelegramChat(dialog.id)}
                       onLongPress={(e) => handleContextMenu(e, dialog)}
                       activeOpacity={0.75}
@@ -328,14 +344,21 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                       <View style={styles.convBody}>
                         <View style={styles.convTopRow}>
                           <View style={styles.convTitleRow}>
-                            <Text style={[styles.convTitle, isSelected && styles.convTitleActive]} numberOfLines={1}>
+                            <Text
+                              style={[
+                                styles.convTitle,
+                                { color: tokens.textPrimary },
+                                isSelected && { color: tokens.accentColor, fontWeight: '700' },
+                              ]}
+                              numberOfLines={1}
+                            >
                               {dialog.name}
                             </Text>
                             {dialog.isVerified ? (
-                              <RemixIcon name={'checkbox-circle-fill' as any} size={12} color="#0284C7" />
+                              <RemixIcon name={'checkbox-circle-fill' as any} size={12} color={tokens.accentColor} />
                             ) : null}
                             {dialog.isMuted ? (
-                              <RemixIcon name={'notification-off-line' as any} size={11} color="#94A3B8" />
+                              <RemixIcon name={'notification-off-line' as any} size={11} color={tokens.textMuted} />
                             ) : null}
                           </View>
                           <View style={styles.convTimeRow}>
@@ -343,10 +366,10 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                               <RemixIcon
                                 name={(dialog.isSeen ? 'check-double-line' : 'check-line') as any}
                                 size={12}
-                                color={dialog.isSeen ? '#0284C7' : '#94A3B8'}
+                                color={dialog.isSeen ? tokens.accentColor : tokens.textMuted}
                               />
                             ) : null}
-                            <Text style={styles.convTime}>{dialog.lastMessageDate}</Text>
+                            <Text style={[styles.convTime, { color: tokens.textMuted }]}>{dialog.lastMessageDate}</Text>
                           </View>
                         </View>
 
@@ -361,13 +384,13 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                                     resizeMode="cover"
                                   />
                                 ) : (
-                                  <RemixIcon name="image-line" size={12} color="#0284C7" />
+                                  <RemixIcon name="image-line" size={12} color={tokens.accentColor} />
                                 )}
                               </View>
                             ) : dialog.lastMediaType === 'voice' ? (
-                              <RemixIcon name="mic-line" size={12} color="#0284C7" />
+                              <RemixIcon name="mic-line" size={12} color={tokens.accentColor} />
                             ) : dialog.lastMediaType === 'document' ? (
-                              <RemixIcon name="file-text-line" size={12} color="#0284C7" />
+                              <RemixIcon name="file-text-line" size={12} color={tokens.accentColor} />
                             ) : dialog.lastMediaType === 'sticker' ? (
                               <RemixIcon name="emotion-line" size={12} color="#F59E0B" />
                             ) : null}
@@ -376,7 +399,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                               <Text
                                 style={[
                                   styles.convSnippet,
-                                  { color: '#0284C7', fontFamily: 'Krasar-Bold' },
+                                  { color: tokens.accentColor, fontFamily: 'Krasar-Bold' },
                                 ]}
                                 numberOfLines={1}
                               >
@@ -390,6 +413,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                               <Text
                                 style={[
                                   styles.convSnippet,
+                                  { color: tokens.textSecondary },
                                   Boolean(dialog.lastMediaType) && styles.convSnippetWithMedia,
                                 ]}
                                 numberOfLines={1}
@@ -423,7 +447,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                             </View>
                           ) : dialog.isPinned ? (
                             <View style={styles.tgPinBadge}>
-                              <RemixIcon name={'pushpin-fill' as any} size={12} color="#94A3B8" />
+                              <RemixIcon name={'pushpin-fill' as any} size={12} color={tokens.textMuted} />
                             </View>
                           ) : null}
                         </View>
@@ -435,7 +459,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
 
               {loadingMoreDialogs && (
                 <View style={{ padding: 12, alignItems: 'center' }}>
-                  <ActivityIndicator size="small" color="#0284C7" />
+                  <ActivityIndicator size="small" color={tokens.accentColor} />
                 </View>
               )}
             </>
@@ -447,7 +471,10 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
             return isLeftCollapsed ? (
               <TouchableOpacity
                 key={conv.id}
-                style={[styles.collapsedItem, isSelected && styles.collapsedItemActive]}
+                style={[
+                  styles.collapsedItem,
+                  isSelected && { backgroundColor: tokens.accentSoft },
+                ]}
                 onPress={() => onSelectTeamConversation(conv.id)}
                 activeOpacity={0.75}
               >
@@ -458,12 +485,16 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                   showPresence={true}
                   isOnline={Boolean(conv.isOnline)}
                 />
-                {isSelected && <View style={styles.activePillDot} />}
+                {isSelected && <View style={[styles.activePillDot, { backgroundColor: tokens.accentColor }]} />}
               </TouchableOpacity>
             ) : (
               <TouchableOpacity
                 key={conv.id}
-                style={[styles.convCard, isSelected && styles.convCardActive]}
+                style={[
+                  styles.convCard,
+                  { borderBottomColor: tokens.borderSubtle },
+                  isSelected && { backgroundColor: tokens.accentSoft, borderLeftColor: tokens.accentColor },
+                ]}
                 onPress={() => onSelectTeamConversation(conv.id)}
                 activeOpacity={0.75}
               >
@@ -477,12 +508,19 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
 
                 <View style={styles.convBody}>
                   <View style={styles.convTopRow}>
-                    <Text style={[styles.convTitle, isSelected && styles.convTitleActive]} numberOfLines={1}>
+                    <Text
+                      style={[
+                        styles.convTitle,
+                        { color: tokens.textPrimary },
+                        isSelected && { color: tokens.accentColor, fontWeight: '700' },
+                      ]}
+                      numberOfLines={1}
+                    >
                       {conv.name}
                     </Text>
-                    <Text style={styles.convTime}>{conv.lastMessageTime}</Text>
+                    <Text style={[styles.convTime, { color: tokens.textMuted }]}>{conv.lastMessageTime}</Text>
                   </View>
-                  <Text style={styles.convSnippet} numberOfLines={1}>
+                  <Text style={[styles.convSnippet, { color: tokens.textSecondary }]} numberOfLines={1}>
                     {conv.lastMessage || 'Start a conversation'}
                   </Text>
                 </View>
@@ -494,7 +532,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
 
       {/* 5. Bottom Navigation Bar for Telegram */}
       {isTelegram && isTelegramConnected && (
-        <View style={!isLeftCollapsed ? styles.sidebarBottomBar : styles.sidebarBottomBarCollapsed}>
+        <View style={[!isLeftCollapsed ? styles.sidebarBottomBar : styles.sidebarBottomBarCollapsed, { backgroundColor: tokens.surfaceBg, borderTopColor: tokens.borderSubtle }]}>
           {/* Chats */}
           <TouchableOpacity
             style={!isLeftCollapsed ? styles.sidebarBottomTab : styles.sidebarBottomTabCollapsed}
@@ -507,7 +545,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
             <RemixIcon
               name="chat-3-fill"
               size={20}
-              color={activeSidebarTab === 'chats' ? '#0284C7' : '#94A3B8'}
+              color={activeSidebarTab === 'chats' ? tokens.accentColor : tokens.textSecondary}
             />
           </TouchableOpacity>
 
@@ -524,7 +562,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
             <RemixIcon
               name="user-circle-fill"
               size={20}
-              color={activeSidebarTab === 'contacts' ? '#0284C7' : '#94A3B8'}
+              color={activeSidebarTab === 'contacts' ? tokens.accentColor : tokens.textSecondary}
             />
           </TouchableOpacity>
 
@@ -535,7 +573,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
               onPress={() => {}}
               activeOpacity={0.7}
             >
-              <RemixIcon name="phone-fill" size={19} color="#94A3B8" />
+              <RemixIcon name="phone-fill" size={19} color={tokens.textSecondary} />
             </TouchableOpacity>
           )}
 
@@ -545,7 +583,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
             onPress={onOpenTelegramModal}
             activeOpacity={0.7}
           >
-            <RemixIcon name="settings-3-fill" size={20} color="#94A3B8" />
+            <RemixIcon name="settings-3-fill" size={20} color={tokens.textSecondary} />
           </TouchableOpacity>
         </View>
       )}
