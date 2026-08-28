@@ -453,47 +453,53 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
             {activeTab === 'ghost' && (
               <View style={styles.tabContent}>
                 {/* Master Ghost Mode Banner Card */}
-                <View style={[styles.cardSection, ghostSettings.enabled && styles.ghostCardActive]}>
-                  <View style={styles.settingRow}>
-                    <View style={styles.settingTextCol}>
+                <View style={[styles.ghostHeroCard, ghostSettings.enabled && styles.ghostHeroCardActive]}>
+                  <View style={styles.ghostHeroLeft}>
+                    <View style={[styles.ghostHeroIconBox, ghostSettings.enabled && styles.ghostHeroIconBoxActive]}>
+                      <Text style={{ fontSize: 22 }}>👻</Text>
+                    </View>
+                    <View style={{ flex: 1, gap: 2 }}>
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                        <Text style={[styles.settingLabel, { fontSize: 13, color: ghostSettings.enabled ? '#7C3AED' : '#0F172A' }]}>
-                          👻 {isKh ? 'មុខងារសម្ងាត់ (Master Ghost Mode)' : 'Master Ghost Mode'}
+                        <Text style={[styles.ghostHeroTitle, ghostSettings.enabled && { color: '#7C3AED' }]}>
+                          {isKh ? 'មុខងារសម្ងាត់ Ghost Mode' : 'Master Ghost Mode'}
                         </Text>
-                        <View style={[styles.ghostBadge, { backgroundColor: ghostSettings.enabled ? '#EDE9FE' : '#F1F5F9' }]}>
+                        <View style={[styles.ghostBadge, { backgroundColor: ghostSettings.enabled ? '#EDE9FE' : '#F1F5F9', borderColor: ghostSettings.enabled ? '#DDD6FE' : '#E2E8F0' }]}>
                           <Text style={[styles.ghostBadgeText, { color: ghostSettings.enabled ? '#7C3AED' : '#64748B' }]}>
-                            {ghostSettings.enabled ? (isKh ? 'សកម្ម (Active)' : 'Stealth Active') : (isKh ? 'បិទ' : 'Disabled')}
+                            {ghostSettings.enabled ? (isKh ? '● កំពុងដំណើរការ' : '● STEALTH ACTIVE') : (isKh ? '○ បានបិទ' : '○ INACTIVE')}
                           </Text>
                         </View>
                       </View>
-                      <Text style={styles.settingDesc}>
+                      <Text style={styles.ghostHeroDesc}>
                         {isKh
-                          ? 'អានសារ និងប្រើប្រាស់ Telegram ដោយលាក់វត្តមាន Online និង Read Receipts មិនឱ្យអ្នកដទៃដឹង។'
-                          : 'Read messages and use Telegram completely invisibly without sending read receipts or online status.'}
+                          ? 'អានសារ និងលាក់វត្តមាន Online / Typing មិនឱ្យអ្នកដទៃដឹងឡើយ។'
+                          : 'Read messages & browse invisibly without sending read receipts or online presence.'}
                       </Text>
                     </View>
-                    <TouchableOpacity
-                      style={[styles.toggleBtn, ghostSettings.enabled && styles.toggleBtnGhostActive]}
-                      onPress={() => updateGhostSettings({ enabled: !ghostSettings.enabled })}
-                      activeOpacity={0.8}
-                    >
-                      <View style={[styles.toggleThumb, ghostSettings.enabled && styles.toggleThumbGhostActive]} />
-                    </TouchableOpacity>
                   </View>
+                  <TouchableOpacity
+                    style={[styles.toggleBtn, ghostSettings.enabled && styles.toggleBtnGhostActive]}
+                    onPress={() => updateGhostSettings({ enabled: !ghostSettings.enabled })}
+                    activeOpacity={0.8}
+                  >
+                    <View style={[styles.toggleThumb, ghostSettings.enabled && styles.toggleThumbGhostActive]} />
+                  </TouchableOpacity>
                 </View>
 
                 {/* Granular Ghost Mode Capabilities */}
                 <View style={styles.cardSection}>
                   {/* 1. Stealth Read (Don't Send Read Receipts) */}
                   <View style={styles.settingRow}>
+                    <View style={[styles.stealthIconBox, { backgroundColor: '#F0F9FF', borderColor: '#BAE6FD' }]}>
+                      <Text style={{ fontSize: 14 }}>👁️</Text>
+                    </View>
                     <View style={styles.settingTextCol}>
                       <Text style={styles.settingLabel}>
-                        👁️ {isKh ? 'អានសារដោយសម្ងាត់ (Don’t Send Read Receipts)' : 'Stealth Read (No Double Checks)'}
+                        {isKh ? 'អានសារដោយសម្ងាត់ (Stealth Read)' : 'Stealth Read (No Double Checks)'}
                       </Text>
                       <Text style={styles.settingDesc}>
                         {isKh
                           ? 'អ្នកអាចបើកមើលសារទាំងអស់បាន ប៉ុន្តែអ្នកផ្ញើនឹងនៅតែឃើញសញ្ញាធីក ១ (Unread) ដដែល។'
-                          : 'Open and read chats without sending read receipts. Senders still see single check mark.'}
+                          : 'Read chats without sending read receipts. Senders still see single check mark.'}
                       </Text>
                     </View>
                     <TouchableOpacity
@@ -510,14 +516,17 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
 
                   {/* 2. Hide Online Status (Always Offline) */}
                   <View style={styles.settingRow}>
+                    <View style={[styles.stealthIconBox, { backgroundColor: '#F5F3FF', borderColor: '#DDD6FE' }]}>
+                      <Text style={{ fontSize: 14 }}>📴</Text>
+                    </View>
                     <View style={styles.settingTextCol}>
                       <Text style={styles.settingLabel}>
-                        📴 {isKh ? 'លាក់ស្ថានភាព Online (Stay Invisible)' : 'Hide Online Status (Stay Invisible)'}
+                        {isKh ? 'លាក់ស្ថានភាព Online (Ghost Online)' : 'Hide Online Status (Stay Invisible)'}
                       </Text>
                       <Text style={styles.settingDesc}>
                         {isKh
                           ? 'កុំផ្ញើស្ថានភាព Online ទៅកាន់ Server។ អ្នកដទៃនឹងឃើញត្រឹម «Last seen recently»។'
-                          : 'Do not broadcast online presence to Telegram. Always appear offline / last seen recently.'}
+                          : 'Never broadcast online presence to Telegram. Always appear offline.'}
                       </Text>
                     </View>
                     <TouchableOpacity
@@ -534,9 +543,12 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
 
                   {/* 3. Hide Typing Broadcast */}
                   <View style={styles.settingRow}>
+                    <View style={[styles.stealthIconBox, { backgroundColor: '#FFFBEB', borderColor: '#FDE68A' }]}>
+                      <Text style={{ fontSize: 14 }}>✍️</Text>
+                    </View>
                     <View style={styles.settingTextCol}>
                       <Text style={styles.settingLabel}>
-                        ✍️ {isKh ? 'លាក់ស្ថានភាពពេលវាយអក្សរ (Hide Typing Status)' : 'Hide Typing Status'}
+                        {isKh ? 'លាក់ការវាយអក្សរ (Ghost Typing)' : 'Hide Typing Status (Stealth Typing)'}
                       </Text>
                       <Text style={styles.settingDesc}>
                         {isKh
@@ -558,9 +570,12 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
 
                   {/* 4. Anti-Delete Message Vault */}
                   <View style={styles.settingRow}>
+                    <View style={[styles.stealthIconBox, { backgroundColor: '#FEF2F2', borderColor: '#FECACA' }]}>
+                      <Text style={{ fontSize: 14 }}>🛡️</Text>
+                    </View>
                     <View style={styles.settingTextCol}>
                       <Text style={styles.settingLabel}>
-                        🛡️ {isKh ? 'ការពារការលុបសារ (Anti-Delete Messages)' : 'Anti-Delete Message Vault'}
+                        {isKh ? 'ការពារការលុបសារ (Anti-Delete Vault)' : 'Anti-Delete Message Vault'}
                       </Text>
                       <Text style={styles.settingDesc}>
                         {isKh
@@ -582,9 +597,12 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
 
                   {/* 5. Stealth Story Viewing */}
                   <View style={styles.settingRow}>
+                    <View style={[styles.stealthIconBox, { backgroundColor: '#ECFDF5', borderColor: '#A7F3D0' }]}>
+                      <Text style={{ fontSize: 14 }}>🎭</Text>
+                    </View>
                     <View style={styles.settingTextCol}>
                       <Text style={styles.settingLabel}>
-                        🎭 {isKh ? 'មើល Story ដោយសម្ងាត់ (Anonymous Story View)' : 'Anonymous Story Viewer'}
+                        {isKh ? 'មើល Story ដោយសម្ងាត់ (Anonymous Stories)' : 'Anonymous Story Viewer'}
                       </Text>
                       <Text style={styles.settingDesc}>
                         {isKh
@@ -1239,14 +1257,67 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     backgroundColor: '#FFFFFF',
   },
-  ghostCardActive: {
-    borderColor: '#C4B5FD',
+  ghostHeroCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     backgroundColor: '#FAF5FF',
+    borderWidth: 1,
+    borderColor: '#E9D5FF',
+    borderRadius: 10,
+    padding: 14,
+  },
+  ghostHeroCardActive: {
+    backgroundColor: '#FAF5FF',
+    borderColor: '#C4B5FD',
+  },
+  ghostHeroLeft: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginRight: 10,
+  },
+  ghostHeroIconBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 10,
+    backgroundColor: '#F3E8FF',
+    borderWidth: 1,
+    borderColor: '#DDD6FE',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  ghostHeroIconBoxActive: {
+    backgroundColor: '#EDE9FE',
+    borderColor: '#C4B5FD',
+  },
+  ghostHeroTitle: {
+    fontSize: 13.5,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  ghostHeroDesc: {
+    fontSize: 11,
+    fontFamily: 'Krasar-Regular',
+    color: '#64748B',
+    lineHeight: 16,
+  },
+  stealthIconBox: {
+    width: 32,
+    height: 32,
+    borderRadius: 7,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 2,
   },
   ghostBadge: {
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
+    borderWidth: 1,
   },
   ghostBadgeText: {
     fontSize: 9.5,
