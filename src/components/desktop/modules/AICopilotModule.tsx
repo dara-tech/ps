@@ -300,123 +300,130 @@ export const AICopilotModule: React.FC = () => {
 
               {/* Card 2: Financial Pulse */}
               <TouchableOpacity
-                style={styles.insightCard}
+                style={[styles.insightCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}
                 onPress={() => setActiveModule('finances')}
                 activeOpacity={0.85}
               >
-                <View style={styles.insightCardHeader}>
+                <View style={[styles.insightCardHeader, { borderBottomColor: tokens.borderSubtle }]}>
                   <View style={styles.insightHeaderTitleBox}>
-                    <RemixIcon name="bank-card-line" size={14} color="#059669" />
-                    <Text style={styles.insightCardTitle}>Financial Pulse</Text>
+                    <RemixIcon name="bank-card-line" size={14} color="#10B981" />
+                    <Text style={[styles.insightCardTitle, { color: tokens.textPrimary }]}>Financial Pulse</Text>
                   </View>
-                  <View style={[styles.insightCountBadge, { backgroundColor: '#ECFDF5', borderColor: '#A7F3D0' }]}>
-                    <Text style={[styles.insightCountBadgeText, { color: '#059669' }]}>USD</Text>
+                  <View style={[styles.insightCountBadge, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                    <Text style={[styles.insightCountBadgeText, { color: tokens.textSecondary }]}>USD</Text>
                   </View>
                 </View>
                 <View style={styles.insightCardBody}>
                   <View style={styles.financeMetricRow}>
-                    <Text style={styles.financeMetricLabel}>Today's Outflow</Text>
-                    <Text style={[styles.financeMetricVal, { color: '#DC2626' }]}>-${todaySpent.toLocaleString()}</Text>
+                    <Text style={[styles.financeMetricLabel, { color: tokens.textSecondary }]}>Today's Outflow</Text>
+                    <Text style={[styles.financeMetricVal, { color: '#DC2626' }]}>-${todaySpent.toLocaleString('en-US', { minimumFractionDigits: 2 })}</Text>
                   </View>
                   <View style={styles.financeMetricRow}>
-                    <Text style={styles.financeMetricLabel}>Net Cashflow</Text>
-                    <Text style={[styles.financeMetricVal, { color: '#16A34A' }]}>+${(monthIncome - todaySpent).toLocaleString()}</Text>
+                    <Text style={[styles.financeMetricLabel, { color: tokens.textSecondary }]}>Net Cashflow</Text>
+                    {(() => {
+                      const netVal = monthIncome - todaySpent;
+                      return (
+                        <Text style={[styles.financeMetricVal, { color: netVal >= 0 ? '#16A34A' : '#DC2626' }]}>
+                          {netVal >= 0 ? '+' : '-'}${Math.abs(netVal).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                        </Text>
+                      );
+                    })()}
                   </View>
                 </View>
-                <View style={styles.insightCardFooter}>
-                  <Text style={[styles.insightFooterLink, { color: '#059669' }]}>Open Finances</Text>
-                  <RemixIcon name="arrow-right-line" size={11} color="#059669" />
+                <View style={[styles.insightCardFooter, { borderTopColor: tokens.borderSubtle }]}>
+                  <Text style={[styles.insightFooterLink, { color: tokens.accentColor }]}>Open Finances</Text>
+                  <RemixIcon name="arrow-right-line" size={11} color={tokens.accentColor} />
                 </View>
               </TouchableOpacity>
 
               {/* Card 3: Market Radar Snipers */}
               <TouchableOpacity
-                style={styles.insightCard}
+                style={[styles.insightCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}
                 onPress={() => setActiveModule('market')}
                 activeOpacity={0.85}
               >
-                <View style={styles.insightCardHeader}>
+                <View style={[styles.insightCardHeader, { borderBottomColor: tokens.borderSubtle }]}>
                   <View style={styles.insightHeaderTitleBox}>
                     <RemixIcon name="shopping-bag-line" size={14} color="#0284C7" />
-                    <Text style={styles.insightCardTitle}>Market Radar</Text>
+                    <Text style={[styles.insightCardTitle, { color: tokens.textPrimary }]}>Market Radar</Text>
                   </View>
-                  <View style={[styles.insightCountBadge, { backgroundColor: '#F0F9FF', borderColor: '#BAE6FD' }]}>
-                    <Text style={[styles.insightCountBadgeText, { color: '#0284C7' }]}>Hot Deals</Text>
+                  <View style={[styles.insightCountBadge, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                    <Text style={[styles.insightCountBadgeText, { color: tokens.textSecondary }]}>Hot Deals</Text>
                   </View>
                 </View>
                 <View style={styles.insightCardBody}>
                   {marketItems.slice(0, 2).map((item, idx) => (
                     <View key={item.id || idx} style={styles.insightRowItem}>
                       <Text style={styles.marketPriceTag}>${item.price}</Text>
-                      <Text style={styles.insightRowText} numberOfLines={1}>
+                      <Text style={[styles.insightRowText, { color: tokens.textPrimary }]} numberOfLines={1}>
                         {item.title}
                       </Text>
                     </View>
                   ))}
                   {marketItems.length === 0 && (
-                    <Text style={styles.insightEmptyText}>Scanning Khmer24</Text>
+                    <Text style={[styles.insightEmptyText, { color: tokens.textSecondary }]}>Scanning Khmer24</Text>
                   )}
                 </View>
-                <View style={styles.insightCardFooter}>
-                  <Text style={[styles.insightFooterLink, { color: '#0284C7' }]}>Open Radar</Text>
-                  <RemixIcon name="arrow-right-line" size={11} color="#0284C7" />
+                <View style={[styles.insightCardFooter, { borderTopColor: tokens.borderSubtle }]}>
+                  <Text style={[styles.insightFooterLink, { color: tokens.accentColor }]}>Open Radar</Text>
+                  <RemixIcon name="arrow-right-line" size={11} color={tokens.accentColor} />
                 </View>
               </TouchableOpacity>
             </View>
 
             {/* 3. Four Quick AI Executive Actions */}
-            <View style={styles.quickActionsSection}>
-              <Text style={styles.quickActionsHeaderTitle}>Executive AI Actions</Text>
+            <View style={[styles.quickActionsSection, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+              <Text style={[styles.quickActionsHeaderTitle, { color: tokens.textPrimary }]}>Executive AI Actions</Text>
               <View style={styles.quickActionsGrid}>
                 <TouchableOpacity
-                  style={styles.quickActionCard}
+                  style={[styles.quickActionCard, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                   onPress={() => sendAiMessage('Please give me a complete daily executive briefing summarizing my pending tasks, cashflow, and schedule recommendations for today.')}
                   activeOpacity={0.8}
                 >
-                  <View style={[styles.quickActionIconBox, { backgroundColor: '#EEF2FF', borderColor: '#C7D2FE' }]}>
-                    <RemixIcon name="sparkles-fill" size={14} color="#6366F1" />
+                  <View style={[styles.quickActionIconBox, { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}>
+                    <RemixIcon name="sparkles-fill" size={14} color={tokens.accentColor} />
                   </View>
                   <View style={{ flex: 1, gap: 2 }}>
-                    <Text style={styles.quickActionTitle}>Daily Executive Memo</Text>
+                    <Text style={[styles.quickActionTitle, { color: tokens.textPrimary }]}>Daily Executive Memo</Text>
                   </View>
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={styles.quickActionCard}
+                  style={[styles.quickActionCard, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                   onPress={() => sendAiMessage('Help me break down my current active project milestone into 4 actionable sprint tasks with clear criteria.')}
                   activeOpacity={0.8}
                 >
-                  <View style={[styles.quickActionIconBox, { backgroundColor: '#F5F3FF', borderColor: '#DDD6FE' }]}>
-                    <RemixIcon name="list-check-line" size={14} color="#7C3AED" />
+                  <View style={[styles.quickActionIconBox, { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}>
+                    <RemixIcon name="list-check-line" size={14} color={tokens.accentColor} />
                   </View>
                   <View style={{ flex: 1, gap: 2 }}>
-                    <Text style={styles.quickActionTitle}>Break Down Milestone</Text>
+                    <Text style={[styles.quickActionTitle, { color: tokens.textPrimary }]}>Break Down Milestone</Text>
                   </View>
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={styles.quickActionCard}
+                  style={[styles.quickActionCard, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                   onPress={() => sendAiMessage('Analyze my recent expenses and suggest optimization tips for my weekly budget and cashflow.')}
                   activeOpacity={0.8}
                 >
-                  <View style={[styles.quickActionIconBox, { backgroundColor: '#ECFDF5', borderColor: '#A7F3D0' }]}>
-                    <RemixIcon name="bank-card-line" size={14} color="#059669" />
+                  <View style={[styles.quickActionIconBox, { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}>
+                    <RemixIcon name="bank-card-line" size={14} color={tokens.accentColor} />
                   </View>
                   <View style={{ flex: 1, gap: 2 }}>
-                    <Text style={styles.quickActionTitle}>Audit Weekly Expenses</Text>
+                    <Text style={[styles.quickActionTitle, { color: tokens.textPrimary }]}>Audit Weekly Expenses</Text>
                   </View>
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={styles.quickActionCard}
+                  style={[styles.quickActionCard, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                   onPress={() => sendAiMessage('Suggest clean architecture and optimization tips for our React Native and MTProto Telegram stack.')}
                   activeOpacity={0.8}
                 >
-                  <View style={[styles.quickActionIconBox, { backgroundColor: '#FFFBEB', borderColor: '#FDE68A' }]}>
-                    <RemixIcon name="code-line" size={14} color="#D97706" />
+                  <View style={[styles.quickActionIconBox, { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}>
+                    <RemixIcon name="code-line" size={14} color={tokens.accentColor} />
                   </View>
                   <View style={{ flex: 1, gap: 2 }}>
-                    <Text style={styles.quickActionTitle}>Code Architecture Tips</Text>
+                    <Text style={[styles.quickActionTitle, { color: tokens.textPrimary }]}>Code Architecture Tips</Text>
                   </View>
                 </TouchableOpacity>
               </View>
@@ -536,7 +543,7 @@ export const AICopilotModule: React.FC = () => {
       </ScrollView>
 
       {/* Suggestion Chips */}
-      <View style={styles.suggestionsRail}>
+      <View style={[styles.suggestionsRail, { backgroundColor: tokens.surfaceBg, borderTopColor: tokens.borderSubtle }]}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -545,7 +552,7 @@ export const AICopilotModule: React.FC = () => {
           {promptSuggestions.map((s, idx) => (
             <TouchableOpacity
               key={idx}
-              style={styles.suggestionChip}
+              style={[styles.suggestionChip, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
               activeOpacity={0.75}
               onPress={() => {
                 if (s.prompt.startsWith('Break down')) {
@@ -557,7 +564,7 @@ export const AICopilotModule: React.FC = () => {
                 }
               }}
             >
-              <Text style={styles.suggestionText}>{s.label}</Text>
+              <Text style={[styles.suggestionText, { color: tokens.textPrimary }]}>{s.label}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -565,34 +572,34 @@ export const AICopilotModule: React.FC = () => {
 
       {/* Slash Commands Menu */}
       {showSlashMenu && (
-        <View style={styles.slashMenuContainer}>
-          <View style={styles.slashMenuHeader}>
-            <Text style={styles.slashMenuTitle}>Quick Commands</Text>
+        <View style={[styles.slashMenuContainer, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+          <View style={[styles.slashMenuHeader, { borderBottomColor: tokens.borderSubtle }]}>
+            <Text style={[styles.slashMenuTitle, { color: tokens.textPrimary }]}>Quick Commands</Text>
             <TouchableOpacity onPress={() => setShowSlashMenu(false)}>
-              <RemixIcon name="close-line" size={13} color="#94A3B8" />
+              <RemixIcon name="close-line" size={13} color={tokens.textSecondary} />
             </TouchableOpacity>
           </View>
           {SLASH_COMMANDS.map((cmd) => (
             <TouchableOpacity
               key={cmd.cmd}
-              style={styles.slashMenuItem}
+              style={[styles.slashMenuItem, { backgroundColor: tokens.surfaceMuted }]}
               onPress={() => {
                 setInput(cmd.prompt);
                 setShowSlashMenu(false);
               }}
               activeOpacity={0.7}
             >
-              <View style={styles.slashPill}>
-                <Text style={styles.slashPillText}>{cmd.cmd}</Text>
+              <View style={[styles.slashPill, { backgroundColor: tokens.accentSoft }]}>
+                <Text style={[styles.slashPillText, { color: tokens.accentColor }]}>{cmd.cmd}</Text>
               </View>
-              <Text style={styles.slashDesc}>{cmd.desc}</Text>
+              <Text style={[styles.slashDesc, { color: tokens.textPrimary }]}>{cmd.desc}</Text>
             </TouchableOpacity>
           ))}
         </View>
       )}
 
       {/* Modern Clean Input Box */}
-      <View style={styles.inputContainer}>
+      <View style={[styles.inputContainer, { backgroundColor: tokens.surfaceBg, borderTopColor: tokens.borderSubtle }]}>
         {/* Attached Items Badges */}
         {attachments.length > 0 && (
           <View style={styles.attachmentsRow}>

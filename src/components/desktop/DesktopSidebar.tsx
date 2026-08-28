@@ -126,6 +126,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 12,
+    overflow: 'hidden',
     transitionProperty: 'width',
     transitionDuration: '200ms',
   } as any,
@@ -133,14 +134,17 @@ const styles = StyleSheet.create({
     width: 185,
     paddingHorizontal: 10,
     alignItems: 'stretch',
+    overflow: 'hidden',
   },
   navGroup: {
     alignItems: 'center',
     gap: 6,
     width: '100%',
+    overflow: 'hidden',
   },
   navGroupExpanded: {
     alignItems: 'stretch',
+    overflow: 'hidden',
   },
   iconButton: {
     width: 36,
@@ -149,6 +153,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'transparent',
+    overflow: 'hidden',
   },
   iconButtonExpanded: {
     width: '100%',
