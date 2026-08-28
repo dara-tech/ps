@@ -244,13 +244,13 @@ export const PersonalPlannerModule: React.FC = () => {
               style={[
                 styles.addBtn,
                 { backgroundColor: tokens.accentColor },
-                !taskInput.trim() && styles.addBtnDisabled,
+                !taskInput.trim() && { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle, borderWidth: 1 },
               ]}
               onPress={handleQuickAdd}
               disabled={!taskInput.trim()}
               activeOpacity={0.75}
             >
-              <Text style={[styles.addBtnText, { color: tokens.accentFg }]}>Add Task</Text>
+              <Text style={[styles.addBtnText, { color: taskInput.trim() ? tokens.accentFg : tokens.textMuted }]}>Add Task</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -264,7 +264,7 @@ export const PersonalPlannerModule: React.FC = () => {
         icon="task-line"
         maxWidth={460}
       >
-        <Text style={styles.modalSub}>
+        <Text style={[styles.modalSub, { color: tokens.textSecondary }]}>
           Enter a high-level goal, and Gemini will decompose it into structured, prioritized subtasks.
         </Text>
 
@@ -283,18 +283,22 @@ export const PersonalPlannerModule: React.FC = () => {
             style={styles.cancelBtn}
             onPress={() => setShowAiModal(false)}
           >
-            <Text style={styles.cancelBtnText}>Cancel</Text>
+            <Text style={[styles.cancelBtnText, { color: tokens.textSecondary }]}>Cancel</Text>
           </Pressable>
 
           <Pressable
-            style={[styles.planBtn, (!aiGoalInput.trim() || isAiPlanning) && styles.planBtnDisabled]}
+            style={[
+              styles.planBtn,
+              { backgroundColor: tokens.accentColor },
+              (!aiGoalInput.trim() || isAiPlanning) && { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle, borderWidth: 1 },
+            ]}
             onPress={handleAiBreakdown}
             disabled={!aiGoalInput.trim() || isAiPlanning}
           >
             {isAiPlanning ? (
-              <ActivityIndicator size="small" color="#FFFFFF" />
+              <ActivityIndicator size="small" color={tokens.accentFg} />
             ) : (
-              <Text style={styles.planBtnText}>Generate Subtasks</Text>
+              <Text style={[styles.planBtnText, { color: aiGoalInput.trim() ? tokens.accentFg : tokens.textMuted }]}>Generate Subtasks</Text>
             )}
           </Pressable>
         </View>
