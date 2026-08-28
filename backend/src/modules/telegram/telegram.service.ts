@@ -1268,18 +1268,67 @@ export class TelegramService {
     }
   }
 
+  private formatMarkdownForTelegram(raw: string): string {
+    if (!raw) return '';
+
+    const lines = raw.split(/\r?\n/);
+    const formattedLines: string[] = [];
+    let inCodeBlock = false;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const trimmed = line.trim();
+
+      // Preserve code fences exactly
+      if (trimmed.startsWith('```')) {
+        inCodeBlock = !inCodeBlock;
+        formattedLines.push(line);
+        continue;
+      }
+
+      if (inCodeBlock) {
+        formattedLines.push(line);
+        continue;
+      }
+
+      // Convert horizontal dividers (---, ***, ___) to decorative separator
+      if (/^(\-{3,}|\*{3,}|_{3,})$/.test(trimmed)) {
+        formattedLines.push('────────────────────');
+        continue;
+      }
+
+      // Convert markdown headers (# Title, ## Title, ### Title, #### Title) to Telegram Bold
+      const headerMatch = line.match(/^\s*(#{1,6})\s+(.*)$/);
+      if (headerMatch) {
+        const headerText = headerMatch[2].trim();
+        formattedLines.push(`**${headerText}**`);
+        continue;
+      }
+
+      // Convert bullet lists starting with `* ` or `- ` or `+ ` to unicode bullet `• `
+      // This avoids GramJS parsing `* ` as an unclosed italic/bold delimiter
+      let processedLine = line.replace(/^(\s*)[\*\-\+]\s+(.*)$/, '$1• $2');
+
+      formattedLines.push(processedLine);
+    }
+
+    return formattedLines.join('\n');
+  }
+
   public async sendMessage(chatId: string, text: string, replyToMsgId?: number): Promise<TelegramMessageItem> {
     if (!this.client || !this.isConnected) {
       await this.initSavedSession();
       if (!this.client) throw new Error('Telegram client is not connected');
     }
 
+    const tgText = this.formatMarkdownForTelegram(text);
+
     try {
       const entity = await this.client.getEntity(chatId);
       let res: any;
       try {
         res = await this.client.sendMessage(entity, {
-          message: text,
+          message: tgText,
           replyTo: replyToMsgId ? Number(replyToMsgId) : undefined,
           parseMode: 'markdown',
         });
@@ -1295,7 +1344,7 @@ export class TelegramService {
         chatId,
         senderId: this.currentUser?.id?.toString() || '',
         senderName: this.currentUser?.firstName || 'Me',
-        text,
+        text: tgText,
         date: new Date(res.date * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         isOut: true,
         replyToMsgId: replyToMsgId ? Number(replyToMsgId) : undefined,
@@ -1319,16 +1368,26 @@ export class TelegramService {
       if (!this.client) throw new Error('Telegram client is not connected');
     }
 
+    const tgText = this.formatMarkdownForTelegram(text);
+
     try {
       const entity = await this.client.getEntity(chatId);
-      await this.client.editMessage(entity, {
-        message: Number(messageId),
-        text,
-      });
+      try {
+        await this.client.editMessage(entity, {
+          message: Number(messageId),
+          text: tgText,
+          parseMode: 'markdown',
+        });
+      } catch {
+        await this.client.editMessage(entity, {
+          message: Number(messageId),
+          text: text,
+        });
+      }
 
       wsGateway.broadcast({
         type: 'TELEGRAM_MESSAGE_EDITED',
-        data: { chatId, messageId: Number(messageId), text },
+        data: { chatId, messageId: Number(messageId), text: tgText },
       });
 
       return true;
