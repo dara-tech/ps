@@ -463,25 +463,16 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                     <View style={[styles.ghostHeroIconBox, ghostSettings.enabled && styles.ghostHeroIconBoxActive]}>
                       <RemixIcon
                         name="ghost-fill"
-                        size={18}
+                        size={16}
                         color={ghostSettings.enabled ? '#7C3AED' : '#64748B'}
                       />
                     </View>
-                    <View style={{ flex: 1, gap: 2 }}>
-                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                        <Text style={[styles.ghostHeroTitle, ghostSettings.enabled && { color: '#7C3AED' }]}>
-                          {isKh ? 'មុខងារសម្ងាត់ Ghost Mode' : 'Master Ghost Mode'}
-                        </Text>
-                        <View style={[styles.ghostBadge, { backgroundColor: ghostSettings.enabled ? '#EDE9FE' : '#F1F5F9', borderColor: ghostSettings.enabled ? '#DDD6FE' : '#E2E8F0' }]}>
-                          <Text style={[styles.ghostBadgeText, { color: ghostSettings.enabled ? '#7C3AED' : '#64748B' }]}>
-                            {ghostSettings.enabled ? (isKh ? '● កំពុងដំណើរការ' : '● STEALTH ACTIVE') : (isKh ? '○ បានបិទ' : '○ INACTIVE')}
-                          </Text>
-                        </View>
-                      </View>
-                      <Text style={styles.ghostHeroDesc}>
-                        {isKh
-                          ? 'អានសារ និងលាក់វត្តមាន Online / Typing មិនឱ្យអ្នកដទៃដឹងឡើយ។'
-                          : 'Read messages & browse invisibly without sending read receipts or online presence.'}
+                    <Text style={[styles.ghostHeroTitle, ghostSettings.enabled && { color: '#7C3AED' }]}>
+                      {isKh ? 'Ghost Mode (មុខងារសម្ងាត់)' : 'Master Ghost Mode'}
+                    </Text>
+                    <View style={[styles.ghostBadge, { backgroundColor: ghostSettings.enabled ? '#EDE9FE' : '#F1F5F9', borderColor: ghostSettings.enabled ? '#DDD6FE' : '#E2E8F0' }]}>
+                      <Text style={[styles.ghostBadgeText, { color: ghostSettings.enabled ? '#7C3AED' : '#64748B' }]}>
+                        {ghostSettings.enabled ? (isKh ? '● កំពុងដំណើរការ' : '● ACTIVE') : (isKh ? '○ បានបិទ' : '○ INACTIVE')}
                       </Text>
                     </View>
                   </View>
@@ -503,12 +494,7 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                     </View>
                     <View style={styles.settingTextCol}>
                       <Text style={styles.settingLabel}>
-                        {isKh ? 'អានសារដោយសម្ងាត់ (Stealth Read)' : 'Stealth Read (No Double Checks)'}
-                      </Text>
-                      <Text style={styles.settingDesc}>
-                        {isKh
-                          ? 'អ្នកអាចបើកមើលសារទាំងអស់បាន ប៉ុន្តែអ្នកផ្ញើនឹងនៅតែឃើញសញ្ញាធីក ១ (Unread) ដដែល។'
-                          : 'Read chats without sending read receipts. Senders still see single check mark.'}
+                        {isKh ? 'អានសារដោយសម្ងាត់ (Stealth Read)' : 'Stealth Read'}
                       </Text>
                     </View>
                     <TouchableOpacity
@@ -530,12 +516,7 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                     </View>
                     <View style={styles.settingTextCol}>
                       <Text style={styles.settingLabel}>
-                        {isKh ? 'លាក់ស្ថានភាព Online (Ghost Online)' : 'Hide Online Status (Stay Invisible)'}
-                      </Text>
-                      <Text style={styles.settingDesc}>
-                        {isKh
-                          ? 'កុំផ្ញើស្ថានភាព Online ទៅកាន់ Server។ អ្នកដទៃនឹងឃើញត្រឹម «Last seen recently»។'
-                          : 'Never broadcast online presence to Telegram. Always appear offline.'}
+                        {isKh ? 'លាក់ស្ថានភាព Online (Ghost Online)' : 'Hide Online Status'}
                       </Text>
                     </View>
                     <TouchableOpacity
@@ -557,12 +538,7 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                     </View>
                     <View style={styles.settingTextCol}>
                       <Text style={styles.settingLabel}>
-                        {isKh ? 'លាក់ការវាយអក្សរ (Ghost Typing)' : 'Hide Typing Status (Stealth Typing)'}
-                      </Text>
-                      <Text style={styles.settingDesc}>
-                        {isKh
-                          ? 'មិនបង្ហាញសញ្ញា «Typing...» ឬ «Recording audio...» ពេលអ្នកកំពុងសរសេរឡើយ។'
-                          : 'Never broadcast typing or voice recording actions to chats.'}
+                        {isKh ? 'លាក់ការវាយអក្សរ (Ghost Typing)' : 'Hide Typing Status'}
                       </Text>
                     </View>
                     <TouchableOpacity
@@ -584,12 +560,7 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                     </View>
                     <View style={styles.settingTextCol}>
                       <Text style={styles.settingLabel}>
-                        {isKh ? 'ការពារការលុបសារ (Anti-Delete Vault)' : 'Anti-Delete Message Vault'}
-                      </Text>
-                      <Text style={styles.settingDesc}>
-                        {isKh
-                          ? 'ប្រសិនបើដៃគូសន្ទនាលុបសារសម្រាប់មនុស្សគ្រប់គ្នា ប្រព័ន្ធនឹងរក្សាទុកច្បាប់ដើមជាមួយស្លាក [Deleted]។'
-                          : 'Retain cached copies of messages revoked/deleted by the sender with a [Deleted] tag.'}
+                        {isKh ? 'រក្សាទុកសារគេលុប (Anti-Delete)' : 'Anti-Delete Message Vault'}
                       </Text>
                     </View>
                     <TouchableOpacity
@@ -611,12 +582,7 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                     </View>
                     <View style={styles.settingTextCol}>
                       <Text style={styles.settingLabel}>
-                        {isKh ? 'មើល Story ដោយសម្ងាត់ (Anonymous Stories)' : 'Anonymous Story Viewer'}
-                      </Text>
-                      <Text style={styles.settingDesc}>
-                        {isKh
-                          ? 'មើល Telegram Stories ដោយមិនឱ្យម្ចាស់ Story ឃើញឈ្មោះរបស់អ្នកក្នុងបញ្ជីអ្នកមើល។'
-                          : 'View contact stories anonymously without appearing on their viewer list.'}
+                        {isKh ? 'មើល Story ដោយសម្ងាត់ (Stealth Stories)' : 'Anonymous Story Viewer'}
                       </Text>
                     </View>
                     <TouchableOpacity
@@ -639,12 +605,7 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                   <View style={styles.settingRow}>
                     <View style={styles.settingTextCol}>
                       <Text style={styles.settingLabel}>
-                        {isKh ? 'ចុច Enter ដើម្បីផ្ញើសារ' : 'Send on Enter'}
-                      </Text>
-                      <Text style={styles.settingDesc}>
-                        {sendOnEnter
-                          ? isKh ? 'ចុច Enter ដើម្បីផ្ញើ (Shift+Enter ចុះបន្ទាត់)' : 'Press Enter to send, Shift+Enter for new line'
-                          : isKh ? 'ចុច Ctrl+Enter ដើម្បីផ្ញើ' : 'Press Ctrl+Enter to send'}
+                        {isKh ? 'ចុច Enter ដើម្បីផ្ញើសារ (Send on Enter)' : 'Send on Enter'}
                       </Text>
                     </View>
                     <TouchableOpacity
@@ -661,10 +622,7 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                   <View style={styles.settingRow}>
                     <View style={styles.settingTextCol}>
                       <Text style={styles.settingLabel}>
-                        {isKh ? 'ទាញយករូបភាពស្វ័យប្រវត្តិ' : 'Auto-download Media'}
-                      </Text>
-                      <Text style={styles.settingDesc}>
-                        {isKh ? 'បង្ហាញរូបភាព Preview និង Thumbnail ភ្លាមៗ' : 'Preload thumbnails and posters automatically'}
+                        {isKh ? 'ទាញយករូបភាពស្វ័យប្រវត្តិ (Auto-download Media)' : 'Auto-download Media'}
                       </Text>
                     </View>
                     <TouchableOpacity
@@ -681,10 +639,7 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                   <View style={styles.settingRow}>
                     <View style={styles.settingTextCol}>
                       <Text style={styles.settingLabel}>
-                        {isKh ? 'សំឡេងសារចូល (Message Sound)' : 'Sound Notifications'}
-                      </Text>
-                      <Text style={styles.settingDesc}>
-                        {isKh ? 'បន្លឺសំឡេងនៅពេលមានសារ Telegram ចូលថ្មី' : 'Play audio alert when new messages arrive'}
+                        {isKh ? 'សំឡេងសារចូល (Sound Notifications)' : 'Sound Notifications'}
                       </Text>
                     </View>
                     <TouchableOpacity
@@ -701,10 +656,7 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                   <View style={styles.settingRow}>
                     <View style={styles.settingTextCol}>
                       <Text style={styles.settingLabel}>
-                        {isKh ? 'ការជូនដំណឹង (Desktop Push)' : 'Desktop Push Notifications'}
-                      </Text>
-                      <Text style={styles.settingDesc}>
-                        {isKh ? 'បង្ហាញផ្ទាំងជូនដំណឹងលើ Desktop' : 'Show system banner for incoming chats'}
+                        {isKh ? 'ការជូនដំណឹង Desktop (Push Notifications)' : 'Desktop Push Notifications'}
                       </Text>
                     </View>
                     <TouchableOpacity
