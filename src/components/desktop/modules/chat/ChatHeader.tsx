@@ -4,8 +4,8 @@ import { RemixIcon } from '../../../ui/RemixIcon';
 import { ModernAvatar } from '../../../ui/ModernAvatar';
 import { chatStyles as styles } from './chatStyles';
 import { getConversationStatusText } from './chatHelpers';
-
 import { useTelegramStore } from '../../../../store/useTelegramStore';
+import { useThemeStore } from '../../../../store/useThemeStore';
 
 interface ChatHeaderProps {
   activeConv: any;
@@ -31,6 +31,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   onVideo,
 }) => {
   const typingStatus = useTelegramStore((s) => s.typingStatus);
+  const tokens = useThemeStore((s) => s.tokens);
 
   if (!activeConv) return null;
 
@@ -55,7 +56,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
   return (
     <>
       {/* Top Header Bar */}
-      <View style={styles.detailHeader}>
+      <View style={[styles.detailHeader, { backgroundColor: tokens.surfaceBg, borderBottomColor: tokens.borderSubtle }]}>
         <TouchableOpacity
           style={styles.detailHeaderLeft}
           onPress={onToggleProfileSidebar}
@@ -70,13 +71,13 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           />
 
           <View>
-            <Text style={styles.detailTitle}>{activeConv.name}</Text>
+            <Text style={[styles.detailTitle, { color: tokens.textPrimary }]}>{activeConv.name}</Text>
             {isTyping ? (
-              <Text style={[styles.detailSub, { color: '#0284C7', fontFamily: 'Krasar-Bold' }]}>
+              <Text style={[styles.detailSub, { color: tokens.accentColor, fontFamily: 'Krasar-Bold' }]}>
                 {typingLabel}
               </Text>
             ) : (
-              <Text style={[styles.detailSub, isDirectOnline && styles.detailSubOnline]}>
+              <Text style={[styles.detailSub, { color: tokens.textSecondary }, isDirectOnline && styles.detailSubOnline]}>
                 {statusText}
               </Text>
             )}

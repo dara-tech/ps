@@ -4,6 +4,7 @@ import { RemixIcon } from '../../../ui/RemixIcon';
 import { ModernAvatar } from '../../../ui/ModernAvatar';
 import { chatStyles as styles } from './chatStyles';
 import { TelegramFolderFilter, TelegramSidebarTab, useTelegramStore } from '../../../../store/useTelegramStore';
+import { useThemeStore } from '../../../../store/useThemeStore';
 import { toast } from '../../../../store/useToastStore';
 
 interface ChatSidebarProps {
@@ -66,26 +67,30 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
   onFetchContacts,
   isKh,
 }) => {
-  const typingStatus = useTelegramStore((s) => s.typingStatus);
-  const togglePinDialog = useTelegramStore((s) => s.togglePinDialog);
+  const tokens = useThemeStore((s) => s.tokens);
+  const pinTelegramChat = useTelegramStore((state) => state.pinChat);
+  const deleteTelegramChat = useTelegramStore((state) => state.deleteChat);
+
+  const [contextMenu, setContextMenu] = useState<{
+    visible: boolean;
+    x: number;
+    y: number;
+    dialog: any;
+  } | null>(null);
+
   const isTelegram = chatSource === 'telegram';
-  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; dialog: any } | null>(null);
 
   const handleContextMenu = (e: any, dialog: any) => {
-    if (e && typeof e.preventDefault === 'function') {
-      e.preventDefault();
-    }
-    if (e && typeof e.stopPropagation === 'function') {
-      e.stopPropagation();
-    }
-    const posX = e?.clientX ?? e?.nativeEvent?.clientX ?? e?.nativeEvent?.pageX ?? e?.pageX ?? 160;
-    const posY = e?.clientY ?? e?.nativeEvent?.clientY ?? e?.nativeEvent?.pageY ?? e?.pageY ?? 220;
-    const menuWidth = 220;
-    const menuHeight = 340;
-    const maxPosX = typeof window !== 'undefined' ? window.innerWidth - menuWidth - 16 : 500;
-    const maxPosY = typeof window !== 'undefined' ? window.innerHeight - menuHeight - 16 : 500;
-
+    e?.preventDefault?.();
+    e?.stopPropagation?.();
+    const clickX = e?.nativeEvent?.pageX ?? e?.pageX ?? 120;
+    const clickY = e?.nativeEvent?.pageY ?? e?.pageY ?? 200;
+    const maxPosX = typeof window !== 'undefined' ? window.innerWidth - 200 : 300;
+    const maxPosY = typeof window !== 'undefined' ? window.innerHeight - 160 : 400;
+    const posX = clickX + 4;
+    const posY = clickY + 4;
     setContextMenu({
+      visible: true,
       x: Math.min(Math.max(16, posX), maxPosX),
       y: Math.min(Math.max(16, posY), maxPosY),
       dialog,
@@ -93,9 +98,9 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
   };
 
   return (
-    <View style={[styles.sidebar, isLeftCollapsed && styles.sidebarCollapsed]}>
+    <View style={[styles.sidebar, isLeftCollapsed && styles.sidebarCollapsed, { backgroundColor: tokens.surfaceBg, borderRightColor: tokens.borderSubtle }]}>
       {/* 1. Sidebar Top Header */}
-      <View style={[styles.sidebarHeader, isLeftCollapsed && styles.sidebarHeaderCollapsed]}>
+      <View style={[styles.sidebarHeader, isLeftCollapsed && styles.sidebarHeaderCollapsed, { borderBottomColor: tokens.borderSubtle }]}>
         {!isLeftCollapsed ? (
           <>
             <View style={styles.sidebarHeaderLeft}>
@@ -104,8 +109,8 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                 onPress={() => onSetChatSource('team')}
                 activeOpacity={0.7}
               >
-                <RemixIcon name="user-3-fill" size={13} color={!isTelegram ? '#0284C7' : '#64748B'} />
-                <Text style={[styles.sourceSwitchText, isTelegram && { color: '#64748B' }]}>Team</Text>
+                <RemixIcon name="user-3-fill" size={13} color={!isTelegram ? tokens.accentColor : tokens.textSecondary} />
+                <Text style={[styles.sourceSwitchText, { color: !isTelegram ? tokens.accentColor : tokens.textSecondary }]}>Team</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -113,8 +118,8 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                 onPress={() => onSetChatSource('telegram')}
                 activeOpacity={0.7}
               >
-                <RemixIcon name="telegram-official" size={13} color={isTelegram ? '#0284C7' : '#64748B'} />
-                <Text style={[styles.sourceSwitchText, !isTelegram && { color: '#64748B' }]}>Telegram</Text>
+                <RemixIcon name="telegram-official" size={13} color={isTelegram ? tokens.accentColor : tokens.textSecondary} />
+                <Text style={[styles.sourceSwitchText, { color: isTelegram ? tokens.accentColor : tokens.textSecondary }]}>Telegram</Text>
               </TouchableOpacity>
             </View>
 
@@ -123,7 +128,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
               onPress={onToggleCollapse}
               activeOpacity={0.7}
             >
-              <RemixIcon name="menu-line" size={16} color="#64748B" />
+              <RemixIcon name="menu-line" size={16} color={tokens.textSecondary} />
             </TouchableOpacity>
           </>
         ) : (
@@ -132,7 +137,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
             onPress={onToggleCollapse}
             activeOpacity={0.7}
           >
-            <RemixIcon name="menu-line" size={16} color="#64748B" />
+            <RemixIcon name="menu-line" size={16} color={tokens.textSecondary} />
           </TouchableOpacity>
         )}
       </View>
@@ -141,29 +146,29 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
       {!isLeftCollapsed && (
         <>
           <View style={styles.searchBox}>
-            <View style={styles.searchInputWrapper}>
-              <RemixIcon name="search-line" size={13} color="#94A3B8" />
+            <View style={[styles.searchInputWrapper, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+              <RemixIcon name="search-line" size={13} color={tokens.textMuted} />
               <TextInput
-                style={styles.searchInput}
+                style={[styles.searchInput, { color: tokens.textPrimary }]}
                 placeholder={isTelegram ? (isKh ? 'ស្វែងរក Chat / ទំនាក់ទំនង...' : 'Search Telegram...') : (isKh ? 'ស្វែងរកការសន្ទនា...' : 'Search chats...')}
-                placeholderTextColor="#94A3B8"
+                placeholderTextColor={tokens.textMuted}
                 value={filterQuery}
                 onChangeText={onSetFilterQuery}
               />
               {filterQuery ? (
                 <TouchableOpacity onPress={() => onSetFilterQuery('')}>
-                  <RemixIcon name="close-line" size={12} color="#94A3B8" />
+                  <RemixIcon name="close-line" size={12} color={tokens.textMuted} />
                 </TouchableOpacity>
               ) : null}
             </View>
 
             {isTelegram && (
               <TouchableOpacity
-                style={styles.addContactBtn}
+                style={[styles.addContactBtn, { backgroundColor: tokens.surfaceMuted }]}
                 onPress={onOpenAddContactModal}
                 activeOpacity={0.75}
               >
-                <RemixIcon name="user-add-line" size={14} color="#0284C7" />
+                <RemixIcon name="user-add-line" size={14} color={tokens.accentColor} />
               </TouchableOpacity>
             )}
           </View>

@@ -4,6 +4,7 @@ import { useDesktopStore } from '../../../store/useDesktopStore';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { useTelegramStore, TelegramFolderFilter } from '../../../store/useTelegramStore';
 import { useLanguageStore } from '../../../store/useLanguageStore';
+import { useThemeStore } from '../../../store/useThemeStore';
 import { RemixIcon } from '../../ui/RemixIcon';
 import { ContactInfoSidebar } from './ContactInfoSidebar';
 import { TelegramConnectModal } from '../TelegramConnectModal';
@@ -18,6 +19,7 @@ import { TelegramMediaViewerModal, TelegramMediaItem } from './chat/TelegramMedi
 import { ForwardMessageModal } from './chat/ForwardMessageModal';
 
 export const ChatModule: React.FC = () => {
+  const tokens = useThemeStore((state) => state.tokens);
   const language = useLanguageStore((state) => state.language);
   const isKh = language === 'kh';
 
@@ -415,7 +417,7 @@ export const ChatModule: React.FC = () => {
       />
 
       {/* Column 2: Main Chat Screen */}
-      <View style={styles.chatMain}>
+      <View style={[styles.chatMain, { backgroundColor: tokens.windowBg }]}>
         {activeConv ? (
           <>
             {/* Header with Accurate Online Status */}
@@ -492,44 +494,44 @@ export const ChatModule: React.FC = () => {
             />
           </>
         ) : chatSource === 'telegram' && !isTelegramConnected ? (
-          <View style={styles.heroCenterCard}>
-            <View style={styles.heroIconCircle}>
-              <RemixIcon name="telegram-official" size={32} color="#0284C7" />
+          <View style={[styles.heroCenterCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+            <View style={[styles.heroIconCircle, { backgroundColor: tokens.accentSoft }]}>
+              <RemixIcon name="telegram-official" size={32} color={tokens.accentColor} />
             </View>
-            <Text style={styles.heroTitle}>
+            <Text style={[styles.heroTitle, { color: tokens.textPrimary }]}>
               {isKh ? 'ភ្ជាប់គណនី Telegram (MTProto)' : 'Connect Telegram Account'}
             </Text>
-            <Text style={styles.heroSub}>
+            <Text style={[styles.heroSub, { color: tokens.textSecondary }]}>
               {isKh
                 ? 'ជជែក ផ្ញើ និងទទួលសារពី Telegram ផ្ទាល់ក្នុង Desktop Workspace តាមរយៈ MTProto Sync Real-time'
                 : 'Chat, send, and receive Telegram messages directly in Desktop Workspace with real-time MTProto sync.'}
             </Text>
             <TouchableOpacity
-              style={styles.heroActionBtn}
+              style={[styles.heroActionBtn, { backgroundColor: tokens.accentColor }]}
               onPress={() => setShowTelegramModal(true)}
               activeOpacity={0.8}
             >
-              <RemixIcon name="arrow-right-line" size={16} color="#FFFFFF" />
-              <Text style={styles.heroActionBtnText}>
+              <RemixIcon name="arrow-right-line" size={16} color={tokens.accentFg} />
+              <Text style={[styles.heroActionBtnText, { color: tokens.accentFg }]}>
                 {isKh ? 'ភ្ជាប់គណនីឥឡូវនេះ' : 'Connect Account Now'}
               </Text>
             </TouchableOpacity>
           </View>
         ) : (
           <View style={styles.emptyStateBox}>
-            <View style={styles.emptyStateIconCircle}>
+            <View style={[styles.emptyStateIconCircle, { backgroundColor: tokens.surfaceMuted }]}>
               <RemixIcon
                 name={chatSource === 'telegram' ? 'telegram-official' : 'chat-3-line'}
                 size={28}
-                color="#0284C7"
+                color={tokens.accentColor}
               />
             </View>
-            <Text style={styles.emptyTitle}>
+            <Text style={[styles.emptyTitle, { color: tokens.textPrimary }]}>
               {chatSource === 'telegram'
                 ? isKh ? 'ជ្រើសរើសការសន្ទនា Telegram' : 'Select a Telegram Chat'
                 : 'No Direct Chats or Notes Yet'}
             </Text>
-            <Text style={styles.emptySub}>
+            <Text style={[styles.emptySub, { color: tokens.textSecondary }]}>
               {chatSource === 'telegram'
                 ? isKh
                   ? 'ជ្រើសរើស chat ឬក្រុមពីបញ្ជីខាងឆ្វេង ដើម្បីចាប់ផ្តើមជជែក'

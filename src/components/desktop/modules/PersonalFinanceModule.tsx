@@ -779,19 +779,19 @@ export const PersonalFinanceModule: React.FC = () => {
       </View>
 
       {/* Main Bank Ledger Table Container */}
-      <View style={styles.tableCard}>
+      <View style={[styles.tableCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
         {/* Sticky Fixed Table Column Headers */}
-        <View style={styles.tableHeader}>
-          <Text style={[styles.th, { flex: 3 }]}>
+        <View style={[styles.tableHeader, { backgroundColor: tokens.surfaceMuted, borderBottomColor: tokens.borderSubtle }]}>
+          <Text style={[styles.th, { color: tokens.textSecondary, flex: 3 }]}>
             {language === 'kh' ? 'ប្រតិបត្តិការ / ធនាគារ & អ្នកទទួល' : 'Transaction / Bank & Merchant'}
           </Text>
-          <Text style={[styles.th, { flex: 1.3 }]}>
+          <Text style={[styles.th, { color: tokens.textSecondary, flex: 1.3 }]}>
             {language === 'kh' ? 'ប្រភេទ' : 'Category'}
           </Text>
-          <Text style={[styles.th, { flex: 1.1 }]}>
+          <Text style={[styles.th, { color: tokens.textSecondary, flex: 1.1 }]}>
             {language === 'kh' ? 'កាលបរិច្ឆេទ & ម៉ោង' : 'Date & Time'}
           </Text>
-          <Text style={[styles.th, { flex: 1.2, textAlign: 'right' }]}>
+          <Text style={[styles.th, { color: tokens.textSecondary, flex: 1.2, textAlign: 'right' }]}>
             {language === 'kh' ? 'ចំនួនទឹកប្រាក់' : 'Amount'}
           </Text>
           <View style={{ width: 36 }} />
@@ -800,13 +800,13 @@ export const PersonalFinanceModule: React.FC = () => {
         {/* Conditional Rendering: Empty State vs Bank Ledger Data Rows */}
         {filteredFinances.length === 0 ? (
           <View style={styles.emptyState}>
-            <View style={styles.emptyIconCircle}>
-              <RemixIcon name="bank-card-line" size={24} color="#94A3B8" />
+            <View style={[styles.emptyIconCircle, { backgroundColor: tokens.surfaceMuted }]}>
+              <RemixIcon name="bank-card-line" size={24} color={tokens.textMuted} />
             </View>
-            <Text style={styles.emptyTitle}>
+            <Text style={[styles.emptyTitle, { color: tokens.textPrimary }]}>
               {language === 'kh' ? 'មិនមានប្រតិបត្តិការត្រូវបង្ហាញទេ' : 'No Transactions Found'}
             </Text>
-            <Text style={styles.emptySub}>
+            <Text style={[styles.emptySub, { color: tokens.textSecondary }]}>
               {searchQuery || selectedCategory !== 'all' || selectedPeriod !== 'all' || selectedBank !== 'all'
                 ? language === 'kh'
                   ? 'សូមសាកល្បងផ្លាស់ប្តូរពាក្យស្វែងរក ឬកាលបរិច្ឆេទ'
@@ -817,7 +817,7 @@ export const PersonalFinanceModule: React.FC = () => {
             </Text>
             {(searchQuery || selectedCategory !== 'all' || selectedPeriod !== 'all' || selectedBank !== 'all' || filterType !== 'all') && (
               <TouchableOpacity
-                style={styles.resetFiltersBtn}
+                style={[styles.resetFiltersBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                 onPress={() => {
                   setSearchQuery('');
                   setSelectedBank('all');
@@ -828,8 +828,8 @@ export const PersonalFinanceModule: React.FC = () => {
                 }}
                 activeOpacity={0.75}
               >
-                <RemixIcon name="refresh-line" size={12} color="#2563EB" />
-                <Text style={styles.resetFiltersBtnText}>
+                <RemixIcon name="refresh-line" size={12} color={tokens.accentColor} />
+                <Text style={[styles.resetFiltersBtnText, { color: tokens.accentColor }]}>
                   {language === 'kh' ? 'សម្អាត Filter ទាំងអស់' : 'Reset All Filters'}
                 </Text>
               </TouchableOpacity>
@@ -843,15 +843,15 @@ export const PersonalFinanceModule: React.FC = () => {
             showsVerticalScrollIndicator={false}
           >
             {groupedByDate.map((group) => (
-              <View key={group.date} style={styles.dateGroupBlock}>
+              <View key={group.date} style={[styles.dateGroupBlock, { borderBottomColor: tokens.borderSubtle }]}>
                 {/* Bank Statement Group Date Header */}
-                <View style={styles.dateGroupHeader}>
+                <View style={[styles.dateGroupHeader, { backgroundColor: tokens.surfaceMuted, borderTopColor: tokens.borderSubtle, borderBottomColor: tokens.borderSubtle }]}>
                   <View style={styles.dateGroupHeaderLeft}>
-                    <Text style={styles.dateGroupTitle}>{group.date}</Text>
-                    <Text style={styles.dateGroupCount}>({group.items.length} {language === 'kh' ? 'ប្រតិបត្តិការ' : 'items'})</Text>
+                    <Text style={[styles.dateGroupTitle, { color: tokens.textPrimary }]}>{group.date}</Text>
+                    <Text style={[styles.dateGroupCount, { color: tokens.textSecondary }]}>({group.items.length} {language === 'kh' ? 'ប្រតិបត្តិការ' : 'items'})</Text>
                   </View>
                   <View style={styles.dateGroupHeaderRight}>
-                    <Text style={styles.dateGroupNetLabel}>Day Net:</Text>
+                    <Text style={[styles.dateGroupNetLabel, { color: tokens.textSecondary }]}>Day Net:</Text>
                     <Text
                       style={[
                         styles.dateGroupNetValue,
@@ -875,7 +875,8 @@ export const PersonalFinanceModule: React.FC = () => {
                       key={item.id}
                       style={({ hovered }: any) => [
                         styles.tableRow,
-                        hovered && styles.tableRowHovered,
+                        { backgroundColor: tokens.surfaceBg, borderBottomColor: tokens.borderSubtle },
+                        hovered && { backgroundColor: tokens.surfaceMuted },
                       ]}
                       onPress={() => setSelectedTx(item)}
                     >
@@ -885,11 +886,11 @@ export const PersonalFinanceModule: React.FC = () => {
                         <BankLogo brand={bankInfo.brand} size={36} height={36} />
 
                         <View style={styles.noteWrap}>
-                          <Text style={styles.rowTitle} numberOfLines={1}>
+                          <Text style={[styles.rowTitle, { color: tokens.textPrimary }]} numberOfLines={1}>
                             {title}
                           </Text>
                           {sub ? (
-                            <Text style={styles.rowSub} numberOfLines={1}>
+                            <Text style={[styles.rowSub, { color: tokens.textSecondary }]} numberOfLines={1}>
                               {sub}
                             </Text>
                           ) : null}
@@ -899,7 +900,7 @@ export const PersonalFinanceModule: React.FC = () => {
                       {/* Column 2: Clean Category */}
                       <View style={[styles.td, { flex: 1.3 }]}>
                         {catStyle.isSimple ? (
-                          <Text style={styles.categorySimpleText} numberOfLines={1}>
+                          <Text style={[styles.categorySimpleText, { color: tokens.textSecondary }]} numberOfLines={1}>
                             {item.category === 'Transfer & Payments' ? 'Transfer' : item.category}
                           </Text>
                         ) : (
@@ -914,7 +915,7 @@ export const PersonalFinanceModule: React.FC = () => {
 
                       {/* Column 3: Date & Time */}
                       <View style={[styles.td, { flex: 1.1 }]}>
-                        <Text style={styles.rowDate}>{time || item.date}</Text>
+                        <Text style={[styles.rowDate, { color: tokens.textSecondary }]}>{time || item.date}</Text>
                       </View>
 
                       {/* Column 4: Tabular Amount (Bold Green for In, Bold Red for Out) */}

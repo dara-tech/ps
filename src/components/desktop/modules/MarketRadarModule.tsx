@@ -442,10 +442,10 @@ export const MarketRadarModule: React.FC = () => {
       </View>
 
       {/* 2. SCROLL CONTENT: CATEGORY DRILL-DOWN & PRODUCT FEED */}
-      <ScrollView style={styles.mainScroll} contentContainerStyle={styles.mainScrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView style={[styles.mainScroll, { backgroundColor: tokens.windowBg }]} contentContainerStyle={styles.mainScrollContent} showsVerticalScrollIndicator={false}>
         {/* LEVEL 1: 12 MAIN CATEGORIES (6 Columns Grid, Khmer24 exact style) */}
         {!activeCategory && (
-          <View style={styles.categoryPanel}>
+          <View style={[styles.categoryPanel, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
             <View style={styles.categoryGrid6Cols}>
               {KHMER24_CATEGORIES.map((cat) => {
                 const icon3D = KHMER24_3D_ICONS[cat.id] || (cat.imageUrl ? { uri: cat.imageUrl } : null);
@@ -463,7 +463,7 @@ export const MarketRadarModule: React.FC = () => {
                         <RemixIcon name={cat.iconName as RemixIconName} size={28} color="#0284C7" />
                       )}
                     </View>
-                    <Text style={styles.k24CategoryCardTitle} numberOfLines={2}>
+                    <Text style={[styles.k24CategoryCardTitle, { color: tokens.textPrimary }]} numberOfLines={2}>
                       {cat.name}
                     </Text>
                   </TouchableOpacity>
@@ -475,7 +475,7 @@ export const MarketRadarModule: React.FC = () => {
 
         {/* LEVEL 2: SUB-CATEGORIES (6 Columns Grid, Khmer24 exact style) */}
         {activeCategory && !activeSubCategory && (
-          <View style={styles.categoryPanel}>
+          <View style={[styles.categoryPanel, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
             <View style={styles.categoryGrid6Cols}>
               {activeCategory.subCategories.map((sub) => (
                 <TouchableOpacity
@@ -495,11 +495,11 @@ export const MarketRadarModule: React.FC = () => {
                       />
                     )}
                   </View>
-                  <Text style={styles.k24CategoryCardTitle} numberOfLines={1}>
+                  <Text style={[styles.k24CategoryCardTitle, { color: tokens.textPrimary }]} numberOfLines={1}>
                     {sub.name}
                   </Text>
                   {sub.khName && (
-                    <Text style={styles.k24CategoryCardSubTitle} numberOfLines={1}>
+                    <Text style={[styles.k24CategoryCardSubTitle, { color: tokens.textSecondary }]} numberOfLines={1}>
                       {sub.khName}
                     </Text>
                   )}
@@ -511,17 +511,21 @@ export const MarketRadarModule: React.FC = () => {
 
         {/* LEVEL 3: BRANDS SECTION (10 Columns Brand Logos, Khmer24 Screenshot 3) */}
         {activeSubCategory && (
-          <View style={styles.categoryPanel}>
+          <View style={[styles.categoryPanel, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
             {activeSubCategory.brands && activeSubCategory.brands.length > 0 && (
               <View style={styles.brandSectionWrapper}>
-                <Text style={styles.brandSectionHeader}>Brand</Text>
+                <Text style={[styles.brandSectionHeader, { color: tokens.textPrimary }]}>Brand</Text>
                 <View style={styles.brandGrid10Cols}>
                   {displayedBrands.map((brand) => {
                     const isBrandActive = selectedBrandId === brand.id;
                     return (
                       <TouchableOpacity
                         key={brand.id}
-                        style={[styles.k24BrandItem, isBrandActive && styles.k24BrandItemActive]}
+                        style={[
+                          styles.k24BrandItem,
+                          { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+                          isBrandActive && { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder },
+                        ]}
                         onPress={() => handleSelectBrand(brand)}
                         activeOpacity={0.8}
                       >
@@ -529,11 +533,15 @@ export const MarketRadarModule: React.FC = () => {
                           <RemixIcon
                             name={isBrandActive ? 'checkbox-circle-fill' : 'grid-line'}
                             size={16}
-                            color={isBrandActive ? '#0284C7' : '#64748B'}
+                            color={isBrandActive ? '#0284C7' : tokens.textSecondary}
                           />
                         </View>
                         <Text
-                          style={[styles.k24BrandName, isBrandActive && styles.k24BrandNameActive]}
+                          style={[
+                            styles.k24BrandName,
+                            { color: tokens.textPrimary },
+                            isBrandActive && { color: tokens.accentColor, fontWeight: '700' },
+                          ]}
                           numberOfLines={1}
                         >
                           {brand.name}
@@ -545,17 +553,17 @@ export const MarketRadarModule: React.FC = () => {
 
                 {activeSubCategory.brands.length > 10 && (
                   <TouchableOpacity
-                    style={styles.k24ShowMoreBtn}
+                    style={[styles.k24ShowMoreBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                     onPress={() => setShowAllBrands(!showAllBrands)}
                     activeOpacity={0.8}
                   >
-                    <Text style={styles.k24ShowMoreText}>
+                    <Text style={[styles.k24ShowMoreText, { color: tokens.textSecondary }]}>
                       {showAllBrands ? 'Show Less' : 'Show More'}
                     </Text>
                     <RemixIcon
                       name={showAllBrands ? 'arrow-up-line' : 'chevron-down-line'}
                       size={13}
-                      color="#64748B"
+                      color={tokens.textSecondary}
                     />
                   </TouchableOpacity>
                 )}
@@ -567,7 +575,7 @@ export const MarketRadarModule: React.FC = () => {
         {/* 3. LIVE KHMER24 PRODUCT FEED */}
         <View style={styles.feedWrapper}>
           <View style={styles.feedHeaderRow}>
-            <Text style={styles.feedHeaderTitle}>
+            <Text style={[styles.feedHeaderTitle, { color: tokens.textPrimary }]}>
               {selectedBrand
                 ? `${selectedBrand.name} Listings (${filteredItems.length})`
                 : activeSubCategory
@@ -582,13 +590,13 @@ export const MarketRadarModule: React.FC = () => {
           {isMarketLoading && filteredItems.length === 0 ? (
             <View style={styles.feedLoadingBox}>
               <ActivityIndicator size="large" color="#0284C7" />
-              <Text style={styles.feedLoadingText}>Loading authentic listings from Khmer24...</Text>
+              <Text style={[styles.feedLoadingText, { color: tokens.textSecondary }]}>Loading authentic listings from Khmer24...</Text>
             </View>
           ) : filteredItems.length === 0 ? (
-            <View style={styles.feedEmptyBox}>
-              <RemixIcon name="search-line" size={36} color="#CBD5E1" />
-              <Text style={styles.feedEmptyTitle}>No listings found</Text>
-              <Text style={styles.feedEmptySub}>Try adjusting your filters or location.</Text>
+            <View style={[styles.feedEmptyBox, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+              <RemixIcon name="search-line" size={36} color={tokens.textMuted} />
+              <Text style={[styles.feedEmptyTitle, { color: tokens.textPrimary }]}>No listings found</Text>
+              <Text style={[styles.feedEmptySub, { color: tokens.textSecondary }]}>Try adjusting your filters or location.</Text>
             </View>
           ) : viewMode === 'grid' ? (
             /* Product Card Grid (4 Columns) */
@@ -598,19 +606,19 @@ export const MarketRadarModule: React.FC = () => {
                 return (
                   <TouchableOpacity
                     key={item.id}
-                    style={styles.k24ProductCard}
+                    style={[styles.k24ProductCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}
                     onPress={() => {
                       setSelectedItem(item);
                       setIsDetailModalOpen(true);
                     }}
                     activeOpacity={0.85}
                   >
-                    <View style={styles.k24CardPhotoWrap}>
+                    <View style={[styles.k24CardPhotoWrap, { backgroundColor: tokens.surfaceMuted }]}>
                       {imgUri ? (
                         <Image source={{ uri: imgUri }} style={styles.k24CardPhoto} resizeMode="cover" />
                       ) : (
                         <View style={styles.k24CardNoPhoto}>
-                          <RemixIcon name="image-line" size={28} color="#CBD5E1" />
+                          <RemixIcon name="image-line" size={28} color={tokens.textMuted} />
                         </View>
                       )}
                       <View style={styles.k24CardPriceBadge}>
@@ -619,18 +627,18 @@ export const MarketRadarModule: React.FC = () => {
                     </View>
 
                     <View style={styles.k24CardContent}>
-                      <Text style={styles.k24CardTitle} numberOfLines={2}>
+                      <Text style={[styles.k24CardTitle, { color: tokens.textPrimary }]} numberOfLines={2}>
                         {item.title}
                       </Text>
 
-                      <View style={styles.k24CardMetaRow}>
+                      <View style={[styles.k24CardMetaRow, { borderTopColor: tokens.borderSubtle }]}>
                         <View style={styles.k24LocChip}>
-                          <RemixIcon name="pushpin-line" size={11} color="#64748B" />
-                          <Text style={styles.k24LocText} numberOfLines={1}>
+                          <RemixIcon name="pushpin-line" size={11} color={tokens.textSecondary} />
+                          <Text style={[styles.k24LocText, { color: tokens.textSecondary }]} numberOfLines={1}>
                             {item.location || 'Phnom Penh'}
                           </Text>
                         </View>
-                        <Text style={styles.k24DateText}>{item.postedDate || 'Active'}</Text>
+                        <Text style={[styles.k24DateText, { color: tokens.textSecondary }]}>{item.postedDate || 'Active'}</Text>
                       </View>
                     </View>
                   </TouchableOpacity>
@@ -645,7 +653,7 @@ export const MarketRadarModule: React.FC = () => {
                 return (
                   <TouchableOpacity
                     key={item.id}
-                    style={styles.k24ListItem}
+                    style={[styles.k24ListItem, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}
                     onPress={() => {
                       setSelectedItem(item);
                       setIsDetailModalOpen(true);

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { RemixIcon } from '../../../ui/RemixIcon';
 import { toast } from '../../../../store/useToastStore';
+import { useThemeStore } from '../../../../store/useThemeStore';
 import { chatStyles as styles } from './chatStyles';
 import { AttachmentItem, EMOJI_CATEGORIES } from './chatTypes';
 
@@ -30,6 +31,7 @@ export const ChatInputBar: React.FC<ChatInputBarProps> = React.memo(({
   isKh,
   onTyping,
 }) => {
+  const tokens = useThemeStore((s) => s.tokens);
   const [text, setText] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showAiMarkupMenu, setShowAiMarkupMenu] = useState(false);
@@ -324,16 +326,16 @@ export const ChatInputBar: React.FC<ChatInputBarProps> = React.memo(({
       )}
 
       {/* Modern Input Bar */}
-      <View style={styles.inputBar}>
+      <View style={[styles.inputBar, { backgroundColor: tokens.surfaceBg, borderTopColor: tokens.borderSubtle }]}>
         {/* Reply / Quote Docked Bar */}
         {replyingToMessage && (
-          <View style={styles.replyPreviewBar}>
-            <View style={styles.replyPreviewAccent} />
+          <View style={[styles.replyPreviewBar, { backgroundColor: tokens.surfaceMuted, borderBottomColor: tokens.borderSubtle }]}>
+            <View style={[styles.replyPreviewAccent, { backgroundColor: tokens.accentColor }]} />
             <View style={styles.replyPreviewInfo}>
-              <Text style={styles.replyPreviewSender} numberOfLines={1}>
+              <Text style={[styles.replyPreviewSender, { color: tokens.accentColor }]} numberOfLines={1}>
                 {replyingToMessage.senderName || 'User'}
               </Text>
-              <Text style={styles.replyPreviewText} numberOfLines={1}>
+              <Text style={[styles.replyPreviewText, { color: tokens.textSecondary }]} numberOfLines={1}>
                 {replyingToMessage.text || (replyingToMessage.mediaType ? `[${replyingToMessage.mediaType}]` : 'Message')}
               </Text>
             </View>
@@ -341,18 +343,18 @@ export const ChatInputBar: React.FC<ChatInputBarProps> = React.memo(({
               onPress={onClearReply}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
-              <RemixIcon name="close-line" size={13} color="#94A3B8" />
+              <RemixIcon name="close-line" size={13} color={tokens.textSecondary} />
             </TouchableOpacity>
           </View>
         )}
 
         {/* Edit Message Docked Bar */}
         {editingMessage && (
-          <View style={styles.editPreviewBar}>
-            <RemixIcon name="pencil-line" size={13} color="#0284C7" />
+          <View style={[styles.editPreviewBar, { backgroundColor: tokens.surfaceMuted, borderBottomColor: tokens.borderSubtle }]}>
+            <RemixIcon name="pencil-line" size={13} color={tokens.accentColor} />
             <View style={styles.editPreviewInfo}>
-              <Text style={styles.editPreviewLabel}>{isKh ? 'កំពុងកែប្រែសារ' : 'Editing Message'}</Text>
-              <Text style={styles.editPreviewText} numberOfLines={1}>
+              <Text style={[styles.editPreviewLabel, { color: tokens.accentColor }]}>{isKh ? 'កំពុងកែប្រែសារ' : 'Editing Message'}</Text>
+              <Text style={[styles.editPreviewText, { color: tokens.textSecondary }]} numberOfLines={1}>
                 {editingMessage.text}
               </Text>
             </View>
@@ -363,7 +365,7 @@ export const ChatInputBar: React.FC<ChatInputBarProps> = React.memo(({
               }}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
-              <RemixIcon name="close-line" size={13} color="#94A3B8" />
+              <RemixIcon name="close-line" size={13} color={tokens.textSecondary} />
             </TouchableOpacity>
           </View>
         )}
@@ -372,16 +374,16 @@ export const ChatInputBar: React.FC<ChatInputBarProps> = React.memo(({
         {attachments.length > 0 && (
           <View style={styles.attachmentsRow}>
             {attachments.map((att) => (
-              <View key={att.id} style={styles.attachmentBadge}>
-                <RemixIcon name="file-text-line" size={12} color="#0F172A" />
-                <Text style={styles.attachmentName} numberOfLines={1}>
+              <View key={att.id} style={[styles.attachmentBadge, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                <RemixIcon name="file-text-line" size={12} color={tokens.accentColor} />
+                <Text style={[styles.attachmentName, { color: tokens.textPrimary }]} numberOfLines={1}>
                   {att.name}
                 </Text>
                 <TouchableOpacity
                   onPress={() => removeAttachment(att.id)}
                   hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
                 >
-                  <RemixIcon name="close-line" size={11} color="#64748B" />
+                  <RemixIcon name="close-line" size={11} color={tokens.textSecondary} />
                 </TouchableOpacity>
               </View>
             ))}
@@ -396,7 +398,7 @@ export const ChatInputBar: React.FC<ChatInputBarProps> = React.memo(({
               <Text style={{ fontSize: 13, fontFamily: 'Krasar-Bold', fontWeight: '700', color: '#EF4444' }}>
                 {formatTimer(recordingSeconds)}
               </Text>
-              <Text style={{ fontSize: 11.5, fontFamily: 'Krasar-Regular', color: '#64748B' }}>
+              <Text style={{ fontSize: 11.5, fontFamily: 'Krasar-Regular', color: tokens.textSecondary }}>
                 {isKh ? 'កំពុងថតសំឡេង...' : 'Recording audio...'}
               </Text>
             </View>
@@ -404,7 +406,7 @@ export const ChatInputBar: React.FC<ChatInputBarProps> = React.memo(({
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
               {/* Cancel Button */}
               <TouchableOpacity
-                style={{ paddingHorizontal: 10, paddingVertical: 5, borderRadius: 6, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#FECACA' }}
+                style={{ paddingHorizontal: 10, paddingVertical: 5, borderRadius: 6, backgroundColor: tokens.surfaceMuted, borderWidth: 1, borderColor: '#FECACA' }}
                 onPress={cancelRecording}
                 activeOpacity={0.7}
               >
@@ -431,61 +433,62 @@ export const ChatInputBar: React.FC<ChatInputBarProps> = React.memo(({
           <View
             style={[
               styles.inputCard,
-              isFocused && styles.inputCardFocused,
+              { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+              isFocused && { borderColor: tokens.accentColor },
             ]}
           >
             {/* AI Markup & Formatting Menu */}
             {showAiMarkupMenu && (
-              <View style={styles.aiMarkupBar}>
+              <View style={[styles.aiMarkupBar, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
                 <View style={styles.aiMarkupTopRow}>
                   <View style={styles.aiMarkupTitleRow}>
-                    <RemixIcon name="sparkles-fill" size={12} color="#4338CA" />
-                    <Text style={styles.aiMarkupTitleText}>AI Markup & Format</Text>
+                    <RemixIcon name="sparkles-fill" size={12} color={tokens.accentColor} />
+                    <Text style={[styles.aiMarkupTitleText, { color: tokens.textPrimary }]}>AI Markup & Format</Text>
                   </View>
 
                   {/* Quick Format Shortcuts */}
                   <View style={styles.aiFormatGroup}>
                     <TouchableOpacity
-                      style={styles.aiFormatBtn}
+                      style={[styles.aiFormatBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                       onPress={() => applyManualFormat('bold')}
                       activeOpacity={0.7}
                     >
-                      <Text style={[styles.aiFormatBtnText, { fontWeight: '900' }]}>B</Text>
+                      <Text style={[styles.aiFormatBtnText, { color: tokens.textPrimary }]}>B</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                      style={styles.aiFormatBtn}
+                      style={[styles.aiFormatBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                       onPress={() => applyManualFormat('italic')}
                       activeOpacity={0.7}
                     >
-                      <Text style={[styles.aiFormatBtnText, { fontStyle: 'italic' }]}>I</Text>
+                      <Text style={[styles.aiFormatBtnText, { color: tokens.textPrimary }]}>I</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                      style={styles.aiFormatBtn}
+                      style={[styles.aiFormatBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                       onPress={() => applyManualFormat('strike')}
                       activeOpacity={0.7}
                     >
-                      <Text style={[styles.aiFormatBtnText, { textDecorationLine: 'line-through' }]}>S</Text>
+                      <Text style={[styles.aiFormatBtnText, { color: tokens.textPrimary }]}>S</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                      style={styles.aiFormatBtn}
+                      style={[styles.aiFormatBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                       onPress={() => applyManualFormat('code')}
                       activeOpacity={0.7}
                     >
-                      <Text style={styles.aiFormatBtnText}>&lt;&gt;</Text>
+                      <Text style={[styles.aiFormatBtnText, { color: tokens.textPrimary }]}>&lt;&gt;</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                      style={styles.aiFormatBtn}
+                      style={[styles.aiFormatBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                       onPress={() => applyManualFormat('quote')}
                       activeOpacity={0.7}
                     >
-                      <Text style={styles.aiFormatBtnText}>&quot;</Text>
+                      <Text style={[styles.aiFormatBtnText, { color: tokens.textPrimary }]}>&quot;</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                      style={styles.aiFormatBtn}
+                      style={[styles.aiFormatBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                       onPress={() => applyManualFormat('bullet')}
                       activeOpacity={0.7}
                     >
-                      <Text style={styles.aiFormatBtnText}>•</Text>
+                      <Text style={[styles.aiFormatBtnText, { color: tokens.textPrimary }]}>•</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -493,67 +496,67 @@ export const ChatInputBar: React.FC<ChatInputBarProps> = React.memo(({
                 {/* AI One-Click Transformation Actions */}
                 <View style={styles.aiActionsRow}>
                   <TouchableOpacity
-                    style={[styles.aiActionChip, isAiProcessing && { opacity: 0.6 }]}
+                    style={[styles.aiActionChip, { backgroundColor: tokens.accentSoft }, isAiProcessing && { opacity: 0.6 }]}
                     onPress={() => handleAiTransform('format')}
                     disabled={isAiProcessing}
                     activeOpacity={0.7}
                   >
-                    <RemixIcon name="sparkles-fill" size={11} color="#4338CA" />
-                    <Text style={styles.aiActionChipText}>{isKh ? 'រៀបចំ Markdown' : 'Auto Markdown'}</Text>
+                    <RemixIcon name="sparkles-fill" size={11} color={tokens.accentColor} />
+                    <Text style={[styles.aiActionChipText, { color: tokens.accentColor }]}>{isKh ? 'រៀបចំ Markdown' : 'Auto Markdown'}</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    style={[styles.aiActionChip, isAiProcessing && { opacity: 0.6 }]}
+                    style={[styles.aiActionChip, { backgroundColor: tokens.accentSoft }, isAiProcessing && { opacity: 0.6 }]}
                     onPress={() => handleAiTransform('professional')}
                     disabled={isAiProcessing}
                     activeOpacity={0.7}
                   >
-                    <RemixIcon name="briefcase-line" size={11} color="#4338CA" />
-                    <Text style={styles.aiActionChipText}>{isKh ? 'ភាសាផ្លូវការ' : 'Professional'}</Text>
+                    <RemixIcon name="briefcase-line" size={11} color={tokens.accentColor} />
+                    <Text style={[styles.aiActionChipText, { color: tokens.accentColor }]}>{isKh ? 'ភាសាផ្លូវការ' : 'Professional'}</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    style={[styles.aiActionChip, isAiProcessing && { opacity: 0.6 }]}
+                    style={[styles.aiActionChip, { backgroundColor: tokens.accentSoft }, isAiProcessing && { opacity: 0.6 }]}
                     onPress={() => handleAiTransform('fix')}
                     disabled={isAiProcessing}
                     activeOpacity={0.7}
                   >
-                    <RemixIcon name="check-double-line" size={11} color="#4338CA" />
-                    <Text style={styles.aiActionChipText}>{isKh ? 'កែអក្ខរាវិរុទ្ធ' : 'Fix Grammar'}</Text>
+                    <RemixIcon name="check-double-line" size={11} color={tokens.accentColor} />
+                    <Text style={[styles.aiActionChipText, { color: tokens.accentColor }]}>{isKh ? 'កែអក្ខរាវិរុទ្ធ' : 'Fix Grammar'}</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    style={[styles.aiActionChip, isAiProcessing && { opacity: 0.6 }]}
+                    style={[styles.aiActionChip, { backgroundColor: tokens.accentSoft }, isAiProcessing && { opacity: 0.6 }]}
                     onPress={() => handleAiTransform('translate')}
                     disabled={isAiProcessing}
                     activeOpacity={0.7}
                   >
-                    <RemixIcon name="chat-3-line" size={11} color="#4338CA" />
-                    <Text style={styles.aiActionChipText}>{isKh ? 'បកប្រែ KH ⇄ EN' : 'Translate'}</Text>
+                    <RemixIcon name="chat-3-line" size={11} color={tokens.accentColor} />
+                    <Text style={[styles.aiActionChipText, { color: tokens.accentColor }]}>{isKh ? 'បកប្រែ KH ⇄ EN' : 'Translate'}</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    style={[styles.aiActionChip, isAiProcessing && { opacity: 0.6 }]}
+                    style={[styles.aiActionChip, { backgroundColor: tokens.accentSoft }, isAiProcessing && { opacity: 0.6 }]}
                     onPress={() => handleAiTransform('summarize')}
                     disabled={isAiProcessing}
                     activeOpacity={0.7}
                   >
-                    <RemixIcon name="task-line" size={11} color="#4338CA" />
-                    <Text style={styles.aiActionChipText}>{isKh ? 'សង្ខេប' : 'Summarize'}</Text>
+                    <RemixIcon name="task-line" size={11} color={tokens.accentColor} />
+                    <Text style={[styles.aiActionChipText, { color: tokens.accentColor }]}>{isKh ? 'សង្ខេប' : 'Summarize'}</Text>
                   </TouchableOpacity>
                 </View>
               </View>
             )}
 
             <TextInput
-              style={styles.textInput}
+              style={[styles.textInput, { color: tokens.textPrimary }]}
               value={text}
               onChangeText={(val) => {
                 setText(val);
                 if (onTyping) onTyping();
               }}
               placeholder={`Message ${activeConvName}...`}
-              placeholderTextColor="#94A3B8"
+              placeholderTextColor={tokens.textMuted}
               onSubmitEditing={handleSend}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
@@ -563,7 +566,7 @@ export const ChatInputBar: React.FC<ChatInputBarProps> = React.memo(({
               <View style={styles.toolbarLeft}>
                 {/* Emoji Button */}
                 <TouchableOpacity
-                  style={[styles.toolIconBtn, showEmojiPicker && styles.toolIconBtnActive]}
+                  style={[styles.toolIconBtn, { backgroundColor: tokens.surfaceMuted }, showEmojiPicker && { backgroundColor: tokens.accentSoft }]}
                   onPress={() => setShowEmojiPicker(!showEmojiPicker)}
                   activeOpacity={0.7}
                   hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
@@ -571,28 +574,28 @@ export const ChatInputBar: React.FC<ChatInputBarProps> = React.memo(({
                   <RemixIcon
                     name="emotion-line"
                     size={15}
-                    color={showEmojiPicker ? '#0F172A' : '#64748B'}
+                    color={showEmojiPicker ? tokens.accentColor : tokens.textSecondary}
                   />
                 </TouchableOpacity>
 
                 {/* Attachment Button */}
                 <TouchableOpacity
-                  style={styles.toolIconBtn}
+                  style={[styles.toolIconBtn, { backgroundColor: tokens.surfaceMuted }]}
                   onPress={handleAddAttachment}
                   activeOpacity={0.7}
                   hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
                 >
-                  <RemixIcon name="attachment-line" size={15} color="#64748B" />
+                  <RemixIcon name="attachment-line" size={15} color={tokens.textSecondary} />
                 </TouchableOpacity>
 
                 {/* Voice Mic Button */}
                 <TouchableOpacity
-                  style={styles.toolIconBtn}
+                  style={[styles.toolIconBtn, { backgroundColor: tokens.surfaceMuted }]}
                   onPress={startRecording}
                   activeOpacity={0.7}
                   hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
                 >
-                  <RemixIcon name="mic-line" size={15} color="#64748B" />
+                  <RemixIcon name="mic-line" size={15} color={tokens.textSecondary} />
                 </TouchableOpacity>
 
                 {/* AI Markup Button */}
@@ -600,7 +603,8 @@ export const ChatInputBar: React.FC<ChatInputBarProps> = React.memo(({
                   style={[
                     styles.toolIconBtn,
                     styles.toolIconBtnAi,
-                    showAiMarkupMenu && styles.toolIconBtnAiActive,
+                    { backgroundColor: tokens.surfaceMuted },
+                    showAiMarkupMenu && { backgroundColor: tokens.accentColor },
                   ]}
                   onPress={() => setShowAiMarkupMenu(!showAiMarkupMenu)}
                   activeOpacity={0.7}
@@ -609,7 +613,7 @@ export const ChatInputBar: React.FC<ChatInputBarProps> = React.memo(({
                   <RemixIcon
                     name="sparkles-fill"
                     size={13}
-                    color={showAiMarkupMenu ? '#FFFFFF' : '#4F46E5'}
+                    color={showAiMarkupMenu ? tokens.accentFg : tokens.accentColor}
                   />
                 </TouchableOpacity>
               </View>

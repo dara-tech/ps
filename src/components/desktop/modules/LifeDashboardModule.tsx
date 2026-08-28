@@ -276,31 +276,31 @@ export const LifeDashboardModule: React.FC = () => {
               return (
                 <TouchableOpacity
                   key={proj.id}
-                  style={styles.projectCardTile}
+                  style={[styles.projectCardTile, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}
                   onPress={() => setActiveModule('goals')}
                   activeOpacity={0.8}
                 >
                   <View style={styles.projectCardTop}>
-                    <Text style={styles.projectCardTitle} numberOfLines={1}>{proj.name}</Text>
+                    <Text style={[styles.projectCardTitle, { color: tokens.textPrimary }]} numberOfLines={1}>{proj.name}</Text>
                     <View style={[styles.statusBadge, { backgroundColor: badge.bg }]}>
                       <View style={[styles.statusDot, { backgroundColor: badge.dot }]} />
                       <Text style={[styles.statusText, { color: badge.text }]}>{badge.label}</Text>
                     </View>
                   </View>
 
-                  <Text style={styles.projectCardDesc} numberOfLines={2}>
+                  <Text style={[styles.projectCardDesc, { color: tokens.textSecondary }]} numberOfLines={2}>
                     {proj.description || 'Core development initiative'}
                   </Text>
 
                   <View style={styles.projectProgressBlock}>
                     <View style={styles.projectProgressRow}>
-                      <Text style={styles.projectProgressLabel}>
+                      <Text style={[styles.projectProgressLabel, { color: tokens.textSecondary }]}>
                         {projTasks.length > 0 ? `${doneCount}/${projTasks.length} Tasks` : 'Progress'}
                       </Text>
-                      <Text style={styles.projectProgressVal}>{calcProgress}%</Text>
+                      <Text style={[styles.projectProgressVal, { color: tokens.textPrimary }]}>{calcProgress}%</Text>
                     </View>
-                    <View style={styles.progressBarBg}>
-                      <View style={[styles.progressBarFill, { width: `${calcProgress}%` }]} />
+                    <View style={[styles.progressBarBg, { backgroundColor: tokens.surfaceMuted }]}>
+                      <View style={[styles.progressBarFill, { width: `${calcProgress}%`, backgroundColor: tokens.accentColor }]} />
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -312,33 +312,33 @@ export const LifeDashboardModule: React.FC = () => {
         {/* 5. Three-Column Activity & Productivity Matrix */}
         <View style={styles.threeColGrid}>
           {/* Column 1: Priority Tasks & To-Dos */}
-          <View style={styles.matrixCol}>
-            <View style={styles.cardHeader}>
-              <Text style={styles.cardHeaderTitle}>{isKh ? 'ភារកិច្ចអាទិភាព' : 'Priority Tasks'}</Text>
+          <View style={[styles.matrixCol, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+            <View style={[styles.cardHeader, { borderBottomColor: tokens.borderSubtle }]}>
+              <Text style={[styles.cardHeaderTitle, { color: tokens.textPrimary }]}>{isKh ? 'ភារកិច្ចអាទិភាព' : 'Priority Tasks'}</Text>
               <TouchableOpacity onPress={() => setActiveModule('planner')}>
-                <Text style={styles.viewAllText}>Planner →</Text>
+                <Text style={[styles.viewAllText, { color: tokens.accentColor }]}>Planner →</Text>
               </TouchableOpacity>
             </View>
 
             {/* Quick Add Task Input */}
             <View style={styles.quickAddRow}>
               <TextInput
-                style={styles.quickAddInput}
+                style={[styles.quickAddInput, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle, color: tokens.textPrimary }]}
                 value={quickTaskTitle}
                 onChangeText={setQuickTaskTitle}
                 placeholder={isKh ? 'បញ្ចូលភារកិច្ចថ្មី...' : 'Quick add task...'}
-                placeholderTextColor="#94A3B8"
+                placeholderTextColor={tokens.textMuted}
                 onSubmitEditing={handleQuickAddTask}
               />
               <TouchableOpacity
-                style={[styles.quickAddBtn, (!quickTaskTitle.trim() || isAddingTask) && { opacity: 0.5 }]}
+                style={[styles.quickAddBtn, { backgroundColor: tokens.accentColor }, (!quickTaskTitle.trim() || isAddingTask) && { opacity: 0.5 }]}
                 onPress={handleQuickAddTask}
                 disabled={!quickTaskTitle.trim() || isAddingTask}
               >
                 {isAddingTask ? (
-                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <ActivityIndicator size="small" color={tokens.accentFg} />
                 ) : (
-                  <RemixIcon name="add-line" size={13} color="#FFFFFF" />
+                  <RemixIcon name="add-line" size={13} color={tokens.accentFg} />
                 )}
               </TouchableOpacity>
             </View>
@@ -347,19 +347,19 @@ export const LifeDashboardModule: React.FC = () => {
               {pendingTasks.length === 0 ? (
                 <View style={styles.emptyBox}>
                   <RemixIcon name="checkbox-circle-fill" size={20} color="#10B981" />
-                  <Text style={styles.emptyText}>All tasks completed for today!</Text>
+                  <Text style={[styles.emptyText, { color: tokens.textSecondary }]}>All tasks completed for today!</Text>
                 </View>
               ) : (
                 pendingTasks.slice(0, 5).map((task) => (
-                  <View key={task.id} style={styles.taskItem}>
+                  <View key={task.id} style={[styles.taskItem, { borderBottomColor: tokens.borderSubtle }]}>
                     <TouchableOpacity
                       style={styles.taskCheckBtn}
                       onPress={() => updateTaskStatus(task.id, 'done')}
                       activeOpacity={0.7}
                     >
-                      <RemixIcon name="checkbox-circle-fill" size={14} color="#CBD5E1" />
+                      <RemixIcon name="checkbox-circle-fill" size={14} color={tokens.borderSubtle} />
                     </TouchableOpacity>
-                    <Text style={styles.taskTitle} numberOfLines={1}>
+                    <Text style={[styles.taskTitle, { color: tokens.textPrimary }]} numberOfLines={1}>
                       {task.title}
                     </Text>
                     <View
@@ -371,7 +371,7 @@ export const LifeDashboardModule: React.FC = () => {
                               ? '#FEF2F2'
                               : task.priority === 'high'
                               ? '#FFFBEB'
-                              : '#F1F5F9',
+                              : tokens.surfaceMuted,
                         },
                       ]}
                     >
@@ -384,7 +384,7 @@ export const LifeDashboardModule: React.FC = () => {
                                 ? '#EF4444'
                                 : task.priority === 'high'
                                 ? '#D97706'
-                                : '#475569',
+                                : tokens.textSecondary,
                           },
                         ]}
                       >
@@ -398,19 +398,19 @@ export const LifeDashboardModule: React.FC = () => {
           </View>
 
           {/* Column 2: Financial Stream & Cash Flow */}
-          <View style={styles.matrixCol}>
-            <View style={styles.cardHeader}>
-              <Text style={styles.cardHeaderTitle}>{isKh ? 'ប្រតិបត្តិការថ្មីៗ' : 'Recent Transactions'}</Text>
+          <View style={[styles.matrixCol, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+            <View style={[styles.cardHeader, { borderBottomColor: tokens.borderSubtle }]}>
+              <Text style={[styles.cardHeaderTitle, { color: tokens.textPrimary }]}>{isKh ? 'ប្រតិបត្តិការថ្មីៗ' : 'Recent Transactions'}</Text>
               <TouchableOpacity onPress={() => setActiveModule('finances')}>
-                <Text style={styles.viewAllText}>Finance →</Text>
+                <Text style={[styles.viewAllText, { color: tokens.accentColor }]}>Finance →</Text>
               </TouchableOpacity>
             </View>
 
             <View style={styles.itemList}>
               {finances.length === 0 ? (
                 <View style={styles.emptyBox}>
-                  <RemixIcon name="bank-card-line" size={20} color="#94A3B8" />
-                  <Text style={styles.emptyText}>No financial records logged yet</Text>
+                  <RemixIcon name="bank-card-line" size={20} color={tokens.textMuted} />
+                  <Text style={[styles.emptyText, { color: tokens.textSecondary }]}>No financial records logged yet</Text>
                 </View>
               ) : (
                 finances.slice(0, 5).map((f) => {
@@ -421,16 +421,16 @@ export const LifeDashboardModule: React.FC = () => {
                   return (
                     <TouchableOpacity
                       key={f.id}
-                      style={styles.financeItem}
+                      style={[styles.financeItem, { borderBottomColor: tokens.borderSubtle }]}
                       onPress={() => setActiveModule('finances')}
                       activeOpacity={0.7}
                     >
                       <BankLogo brand={bankInfo.brand} size={28} height={28} />
                       <View style={{ flex: 1, marginLeft: 9 }}>
-                        <Text style={styles.financeTitle} numberOfLines={1}>
+                        <Text style={[styles.financeTitle, { color: tokens.textPrimary }]} numberOfLines={1}>
                           {title || f.category}
                         </Text>
-                        <Text style={styles.financeDate} numberOfLines={1}>
+                        <Text style={[styles.financeDate, { color: tokens.textSecondary }]} numberOfLines={1}>
                           {sub || f.date || 'Recent'}
                         </Text>
                       </View>
@@ -450,47 +450,47 @@ export const LifeDashboardModule: React.FC = () => {
           </View>
 
           {/* Column 3: Calendar & Engineering Timeline */}
-          <View style={styles.matrixCol}>
-            <View style={styles.cardHeader}>
-              <Text style={styles.cardHeaderTitle}>{isKh ? 'កាលវិភាគ & Git' : 'Schedule & Git Events'}</Text>
+          <View style={[styles.matrixCol, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+            <View style={[styles.cardHeader, { borderBottomColor: tokens.borderSubtle }]}>
+              <Text style={[styles.cardHeaderTitle, { color: tokens.textPrimary }]}>{isKh ? 'កាលវិភាគ & Git' : 'Schedule & Git Events'}</Text>
               <TouchableOpacity onPress={() => setActiveModule('calendar')}>
-                <Text style={styles.viewAllText}>Calendar →</Text>
+                <Text style={[styles.viewAllText, { color: tokens.accentColor }]}>Calendar →</Text>
               </TouchableOpacity>
             </View>
 
             <View style={styles.itemList}>
               {calendarEvents.length === 0 ? (
                 <View style={styles.emptyBox}>
-                  <RemixIcon name="calendar-line" size={20} color="#94A3B8" />
-                  <Text style={styles.emptyText}>No upcoming events today</Text>
+                  <RemixIcon name="calendar-line" size={20} color={tokens.textMuted} />
+                  <Text style={[styles.emptyText, { color: tokens.textSecondary }]}>No upcoming events today</Text>
                 </View>
               ) : (
                 calendarEvents.slice(0, 5).map((ev) => {
                   const isGit = ev.id.startsWith('gh-') || ev.title.includes('[Git');
                   return (
-                    <View key={ev.id} style={styles.eventItem}>
+                    <View key={ev.id} style={[styles.eventItem, { borderBottomColor: tokens.borderSubtle }]}>
                       <View
                         style={[
                           styles.eventIconBox,
-                          { backgroundColor: isGit ? '#F1F5F9' : '#EEF2FF' },
+                          { backgroundColor: tokens.surfaceMuted },
                         ]}
                       >
                         <RemixIcon
                           name={isGit ? 'time-line' : 'calendar-line'}
                           size={12}
-                          color={isGit ? '#0F172A' : '#4F46E5'}
+                          color={isGit ? tokens.textPrimary : tokens.accentColor}
                         />
                       </View>
                       <View style={{ flex: 1 }}>
-                        <Text style={styles.eventTitle} numberOfLines={1}>
+                        <Text style={[styles.eventTitle, { color: tokens.textPrimary }]} numberOfLines={1}>
                           {ev.title}
                         </Text>
-                        <Text style={styles.eventDate}>
+                        <Text style={[styles.eventDate, { color: tokens.textSecondary }]}>
                           {ev.time ? `${ev.time} • ` : ''}{ev.date}
                         </Text>
                       </View>
-                      <View style={styles.eventPill}>
-                        <Text style={styles.eventPillText}>{isGit ? 'GIT' : 'EVENT'}</Text>
+                      <View style={[styles.eventPill, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                        <Text style={[styles.eventPillText, { color: tokens.textSecondary }]}>{isGit ? 'GIT' : 'EVENT'}</Text>
                       </View>
                     </View>
                   );
@@ -502,19 +502,19 @@ export const LifeDashboardModule: React.FC = () => {
 
         {/* 6. Quick Launchpad Action Dock */}
         <View style={styles.launchpadContainer}>
-          <Text style={styles.sectionHeading}>{t.dashQuickLaunchpad}</Text>
+          <Text style={[styles.sectionHeading, { color: tokens.textPrimary }]}>{t.dashQuickLaunchpad}</Text>
           <View style={styles.launchpadGrid}>
             <TouchableOpacity
-              style={styles.launchBtn}
+              style={[styles.launchBtn, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}
               onPress={() => setActiveModule('copilot')}
               activeOpacity={0.7}
             >
-              <View style={[styles.launchIconBox, { backgroundColor: '#EEF2FF' }]}>
-                <RemixIcon name="sparkles-fill" size={15} color="#4F46E5" />
+              <View style={[styles.launchIconBox, { backgroundColor: tokens.accentSoft }]}>
+                <RemixIcon name="sparkles-fill" size={15} color={tokens.accentColor} />
               </View>
               <View style={styles.launchBtnTextCol}>
-                <Text style={styles.launchBtnTitle}>AI Copilot</Text>
-                <Text style={styles.launchBtnSub}>Brainstorm & analyze</Text>
+                <Text style={[styles.launchBtnTitle, { color: tokens.textPrimary }]}>AI Copilot</Text>
+                <Text style={[styles.launchBtnSub, { color: tokens.textSecondary }]}>Brainstorm & analyze</Text>
               </View>
             </TouchableOpacity>
 
