@@ -463,9 +463,9 @@ export const PersonalPlannerModule: React.FC = () => {
 
                   <View style={styles.taskActionsRight}>
                     {t.source === 'calendar' && (
-                      <View style={styles.calendarTag}>
-                        <RemixIcon name="calendar-line" size={11} color="#6366F1" />
-                        <Text style={styles.calendarTagText}>
+                      <View style={[styles.calendarTag, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                        <RemixIcon name="calendar-line" size={11} color={tokens.accentColor} />
+                        <Text style={[styles.calendarTagText, { color: tokens.textSecondary }]}>
                           {t.date}{t.time ? ` • ${t.time}` : ''}
                         </Text>
                       </View>
@@ -474,10 +474,7 @@ export const PersonalPlannerModule: React.FC = () => {
                     <View
                       style={[
                         styles.priorityBadge,
-                        t.priority === 'urgent' && styles.priorityUrgent,
-                        t.priority === 'high' && styles.priorityHigh,
-                        t.priority === 'medium' && styles.priorityMedium,
-                        t.priority === 'low' && styles.priorityLow,
+                        { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
                       ]}
                     >
                       <View
@@ -492,10 +489,10 @@ export const PersonalPlannerModule: React.FC = () => {
                       <Text
                         style={[
                           styles.priorityText,
-                          t.priority === 'urgent' && styles.priorityTextUrgent,
-                          t.priority === 'high' && styles.priorityTextHigh,
-                          t.priority === 'medium' && styles.priorityTextMedium,
-                          t.priority === 'low' && styles.priorityTextLow,
+                          t.priority === 'urgent' && { color: '#EF4444' },
+                          t.priority === 'high' && { color: '#F59E0B' },
+                          t.priority === 'medium' && { color: '#3B82F6' },
+                          t.priority === 'low' && { color: tokens.textSecondary },
                         ]}
                       >
                         {t.priority.toUpperCase()}
@@ -503,7 +500,7 @@ export const PersonalPlannerModule: React.FC = () => {
                     </View>
 
                     <TouchableOpacity
-                      style={styles.editTaskBtn}
+                      style={[styles.editTaskBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                       onPress={() => openEditModal(t)}
                       hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                       activeOpacity={0.6}
@@ -511,12 +508,12 @@ export const PersonalPlannerModule: React.FC = () => {
                       <RemixIcon
                         name="pencil-line"
                         size={13}
-                        color="#64748B"
+                        color={tokens.textSecondary}
                       />
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                      style={styles.deleteTaskBtn}
+                      style={[styles.deleteTaskBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                       onPress={(e) => {
                         e.stopPropagation();
                         if (t.source === 'task') {
@@ -531,7 +528,7 @@ export const PersonalPlannerModule: React.FC = () => {
                       <RemixIcon
                         name="delete-bin-line"
                         size={13}
-                        color="#94A3B8"
+                        color={tokens.textMuted}
                       />
                     </TouchableOpacity>
                   </View>
