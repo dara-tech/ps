@@ -247,6 +247,15 @@ export const RemixIcon: React.FC<RemixIconProps> = ({
     );
   }
 
+  if (name === 'calendar-line') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+        <Rect x="3" y="4" width="18" height="18" rx="2" stroke={color} strokeWidth="1.8" />
+        <Path d="M16 2V6M8 2V6M3 10H21" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      </Svg>
+    );
+  }
+
   if (name === 'at-line') {
     return (
       <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">

@@ -840,7 +840,6 @@ export const PersonalFinanceModule: React.FC = () => {
                 {/* Bank Statement Group Date Header */}
                 <View style={styles.dateGroupHeader}>
                   <View style={styles.dateGroupHeaderLeft}>
-                    <RemixIcon name="calendar-line" size={12} color="#475569" />
                     <Text style={styles.dateGroupTitle}>{group.date}</Text>
                     <Text style={styles.dateGroupCount}>({group.items.length} {language === 'kh' ? 'ប្រតិបត្តិការ' : 'items'})</Text>
                   </View>
