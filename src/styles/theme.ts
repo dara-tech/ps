@@ -2,10 +2,230 @@ export type ThemeMode = 'light' | 'dark' | 'midnight' | 'warm' | 'tiktok';
 export type AccentColor = 'blue' | 'indigo' | 'emerald' | 'amber' | 'rose' | 'graphite' | 'tiktok' | 'cyan';
 export type BubbleStyle = 'tiktok' | 'telegram' | 'capsule' | 'modern' | 'minimal';
 
+export type TikTokBubbleId =
+  | 'default'
+  | 'frog_chick'
+  | 'cat_dog'
+  | 'heart_pepe'
+  | 'pig_shark'
+  | 'doge'
+  | 'tongue_bear'
+  | 'hungry_dog'
+  | 'dino'
+  | 'dachshund'
+  | 'capybara'
+  | 'hungry_frog'
+  | 'screamer';
+
+export interface TikTokBubbleTheme {
+  id: TikTokBubbleId;
+  label: string;
+  khLabel: string;
+  bgLight: string;
+  bgDark: string;
+  borderLight: string;
+  borderDark: string;
+  textLight: string;
+  textDark: string;
+  topLeftEmoji?: string;
+  topRightEmoji?: string;
+  bottomLeftEmoji?: string;
+  bottomRightEmoji?: string;
+  previewSample?: string;
+}
+
+export const TIKTOK_BUBBLE_PRESETS: TikTokBubbleTheme[] = [
+  {
+    id: 'default',
+    label: 'Default',
+    khLabel: 'ធម្មតា',
+    bgLight: '#F1F5F9',
+    bgDark: '#243048',
+    borderLight: '#CBD5E1',
+    borderDark: '#334155',
+    textLight: '#0F172A',
+    textDark: '#F8FAFC',
+    previewSample: 'Standard crisp messaging bubble style.',
+  },
+  {
+    id: 'frog_chick',
+    label: 'Frog chick',
+    khLabel: 'កង្កែប & កូនមាន់',
+    bgLight: '#BAE6FD',
+    bgDark: '#0C4A6E',
+    borderLight: '#7DD3FC',
+    borderDark: '#0369A1',
+    textLight: '#082F49',
+    textDark: '#E0F2FE',
+    topLeftEmoji: '🐸',
+    topRightEmoji: '🐥',
+    bottomRightEmoji: '🫧',
+    previewSample: 'Did you know you can change your bubble style and all your chats get the new look? So cool!',
+  },
+  {
+    id: 'cat_dog',
+    label: 'Cat dog',
+    khLabel: 'ឆ្មា & ឆ្កែ',
+    bgLight: '#FEF3C7',
+    bgDark: '#78350F',
+    borderLight: '#FDE68A',
+    borderDark: '#92400E',
+    textLight: '#78350F',
+    textDark: '#FEF3C7',
+    topLeftEmoji: '🐱',
+    topRightEmoji: '🐶',
+    previewSample: 'Best friends forever in your chats!',
+  },
+  {
+    id: 'heart_pepe',
+    label: 'Heart Pepe',
+    khLabel: 'បេះដូង Pepe',
+    bgLight: '#FCE7F3',
+    bgDark: '#831843',
+    borderLight: '#FBCFE8',
+    borderDark: '#9D174D',
+    textLight: '#831843',
+    textDark: '#FDF2F8',
+    topLeftEmoji: '💖',
+    topRightEmoji: '🐸',
+    previewSample: 'Sending love & good vibes!',
+  },
+  {
+    id: 'pig_shark',
+    label: 'Pig shark',
+    khLabel: 'ជ្រូក & ឆ្លាម',
+    bgLight: '#EDE9FE',
+    bgDark: '#4C1D95',
+    borderLight: '#DDD6FE',
+    borderDark: '#5B21B6',
+    textLight: '#4C1D95',
+    textDark: '#F5F3FF',
+    bottomLeftEmoji: '🐷',
+    bottomRightEmoji: '🦈',
+    previewSample: 'Pastel purple duo ready to chat.',
+  },
+  {
+    id: 'doge',
+    label: 'Doge',
+    khLabel: 'ឆ្កែ Doge',
+    bgLight: '#FEF08A',
+    bgDark: '#713F12',
+    borderLight: '#FDE047',
+    borderDark: '#854D0E',
+    textLight: '#713F12',
+    textDark: '#FEF9C3',
+    topLeftEmoji: '👍',
+    topRightEmoji: '🐕',
+    previewSample: 'Much wow! Very aesthetic bubble.',
+  },
+  {
+    id: 'tongue_bear',
+    label: 'Tongue bear',
+    khLabel: 'ខ្លាឃ្មុំ Tongue',
+    bgLight: '#FFE4E6',
+    bgDark: '#881337',
+    borderLight: '#FECDD3',
+    borderDark: '#9F1239',
+    textLight: '#881337',
+    textDark: '#FFF1F2',
+    topLeftEmoji: '🐻',
+    previewSample: 'Playful pink bear chatting style.',
+  },
+  {
+    id: 'dino',
+    label: 'Dino',
+    khLabel: 'ឌីណូស័រ Dino',
+    bgLight: '#A7F3D0',
+    bgDark: '#064E3B',
+    borderLight: '#6EE7B7',
+    borderDark: '#065F46',
+    textLight: '#064E3B',
+    textDark: '#ECFDF5',
+    topLeftEmoji: '🦖',
+    previewSample: 'Rawr! Mighty dino bubble activated.',
+  },
+  {
+    id: 'dachshund',
+    label: 'Dachshund',
+    khLabel: 'ឆ្កែវែង Sausage',
+    bgLight: '#D7CCC8',
+    bgDark: '#3E2723',
+    borderLight: '#BCAAA4',
+    borderDark: '#4E342E',
+    textLight: '#3E2723',
+    textDark: '#EFEBE9',
+    topLeftEmoji: '🐕',
+    previewSample: 'Long warm brown cozy puppy bubble.',
+  },
+  {
+    id: 'capybara',
+    label: 'Capybara',
+    khLabel: 'កាពីបារ៉ា Chill',
+    bgLight: '#E2E8F0',
+    bgDark: '#1E293B',
+    borderLight: '#CBD5E1',
+    borderDark: '#334155',
+    textLight: '#0F172A',
+    textDark: '#F8FAFC',
+    topLeftEmoji: '🍊',
+    topRightEmoji: '🦫',
+    previewSample: 'Maximum chill vibes only.',
+  },
+  {
+    id: 'hungry_dog',
+    label: 'Hungry dog',
+    khLabel: 'ឆ្កែឃ្លាន',
+    bgLight: '#FECDD3',
+    bgDark: '#9F1239',
+    borderLight: '#FDA4AF',
+    borderDark: '#BE123C',
+    textLight: '#881337',
+    textDark: '#FFF1F2',
+    topLeftEmoji: '🐶',
+    bottomRightEmoji: '🦴',
+    previewSample: 'Where are the treats at?',
+  },
+  {
+    id: 'hungry_frog',
+    label: 'Hungry frog',
+    khLabel: 'កង្កែបឃ្លាន',
+    bgLight: '#DCFCE7',
+    bgDark: '#14532D',
+    borderLight: '#BBF7D0',
+    borderDark: '#166534',
+    textLight: '#14532D',
+    textDark: '#F0FDF4',
+    bottomLeftEmoji: '🐸',
+    bottomRightEmoji: '🪰',
+    previewSample: 'Catching flies and messages.',
+  },
+  {
+    id: 'screamer',
+    label: 'Screamer',
+    khLabel: 'ស្រែក Screamer',
+    bgLight: '#FDA4AF',
+    bgDark: '#BE123C',
+    borderLight: '#FB7185',
+    borderDark: '#E11D48',
+    textLight: '#881337',
+    textDark: '#FFF1F2',
+    topLeftEmoji: '😱',
+    bottomRightEmoji: '💥',
+    previewSample: 'Excited screaming energy!',
+  },
+];
+
 export interface ThemeTokens {
   mode: ThemeMode;
   accent: AccentColor;
   bubbleStyle: BubbleStyle;
+  tiktokBubbleId: TikTokBubbleId;
+  tiktokBubbleDecor?: {
+    topLeft?: string;
+    topRight?: string;
+    bottomLeft?: string;
+    bottomRight?: string;
+  };
   
   // Backgrounds & Surfaces
   windowBg: string;
@@ -168,13 +388,15 @@ export const generateThemeTokens = (
   accent: AccentColor,
   customizations?: {
     bubbleStyle?: BubbleStyle;
+    tiktokBubbleId?: TikTokBubbleId;
     customBubbleOutgoing?: string;
     customBubbleIncoming?: string;
   }
 ): ThemeTokens => {
   const pal = ACCENT_PALETTES[accent] || ACCENT_PALETTES.blue;
   const isDark = mode === 'dark' || mode === 'midnight' || mode === 'tiktok';
-  const bubbleStyle = customizations?.bubbleStyle || (mode === 'tiktok' ? 'tiktok' : 'telegram');
+  const tiktokBubbleId = customizations?.tiktokBubbleId || (mode === 'tiktok' ? 'frog_chick' : 'default');
+  const bubbleStyle = customizations?.bubbleStyle || 'tiktok';
 
   const accentColor = pal.hex;
   const accentSoft = isDark ? pal.softDark : pal.softLight;
@@ -189,6 +411,7 @@ export const generateThemeTokens = (
       mode,
       accent,
       bubbleStyle,
+      tiktokBubbleId,
       windowBg: '#121212',
       surfaceBg: '#161823',
       surfaceMuted: '#222436',
@@ -353,6 +576,21 @@ export const generateThemeTokens = (
       warning: '#F59E0B',
       warningSoft: '#FFFBEB',
     };
+  }
+
+  // Attach tiktokBubbleId and decorations
+  baseTokens.tiktokBubbleId = tiktokBubbleId;
+  const ttPreset = TIKTOK_BUBBLE_PRESETS.find((p) => p.id === tiktokBubbleId);
+  if (ttPreset && ttPreset.id !== 'default') {
+    baseTokens.tiktokBubbleDecor = {
+      topLeft: ttPreset.topLeftEmoji,
+      topRight: ttPreset.topRightEmoji,
+      bottomLeft: ttPreset.bottomLeftEmoji,
+      bottomRight: ttPreset.bottomRightEmoji,
+    };
+    baseTokens.bubbleOutgoing = isDark ? ttPreset.bgDark : ttPreset.bgLight;
+    baseTokens.bubbleOutgoingBorder = isDark ? ttPreset.borderDark : ttPreset.borderLight;
+    baseTokens.bubbleOutgoingText = isDark ? ttPreset.textDark : ttPreset.textLight;
   }
 
   // Apply custom bubble overrides if user specified custom colors

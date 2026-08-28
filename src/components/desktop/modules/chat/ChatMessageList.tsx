@@ -335,6 +335,27 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                       isVoice && styles.msgBubbleVoice,
                     ]}
                   >
+                    {/* TikTok Character Corner Badges */}
+                    {Boolean(isMe && tokens.tiktokBubbleDecor?.topLeft) && (
+                      <Text style={styles.bubbleDecorTopLeft}>
+                        {tokens.tiktokBubbleDecor.topLeft}
+                      </Text>
+                    )}
+                    {Boolean(isMe && tokens.tiktokBubbleDecor?.topRight) && (
+                      <Text style={styles.bubbleDecorTopRight}>
+                        {tokens.tiktokBubbleDecor.topRight}
+                      </Text>
+                    )}
+                    {Boolean(isMe && tokens.tiktokBubbleDecor?.bottomLeft) && (
+                      <Text style={styles.bubbleDecorBottomLeft}>
+                        {tokens.tiktokBubbleDecor.bottomLeft}
+                      </Text>
+                    )}
+                    {Boolean(isMe && tokens.tiktokBubbleDecor?.bottomRight) && (
+                      <Text style={styles.bubbleDecorBottomRight}>
+                        {tokens.tiktokBubbleDecor.bottomRight}
+                      </Text>
+                    )}
 
                     {/* Forwarded from original sender */}
                     {Boolean(msg.fwdFrom) && (
