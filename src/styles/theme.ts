@@ -1,9 +1,11 @@
 export type ThemeMode = 'light' | 'dark' | 'midnight' | 'warm' | 'tiktok';
 export type AccentColor = 'blue' | 'indigo' | 'emerald' | 'amber' | 'rose' | 'graphite' | 'tiktok' | 'cyan';
+export type BubbleStyle = 'tiktok' | 'telegram' | 'capsule' | 'modern' | 'minimal';
 
 export interface ThemeTokens {
   mode: ThemeMode;
   accent: AccentColor;
+  bubbleStyle: BubbleStyle;
   
   // Backgrounds & Surfaces
   windowBg: string;
@@ -44,6 +46,44 @@ export interface ThemeTokens {
   warning: string;
   warningSoft: string;
 }
+
+export const BUBBLE_COLOR_PRESETS = [
+  { id: 'tiktok_red', label: 'TikTok Red', khLabel: 'ក្រហម TikTok', hex: '#FE2C55' },
+  { id: 'tiktok_cyan', label: 'Electric Cyan', khLabel: 'ផ្ទៃមេឃ Cyan', hex: '#25F4EE' },
+  { id: 'tiktok_purple', label: 'Neon Violet', khLabel: 'ស្វាយ Neon', hex: '#8B5CF6' },
+  { id: 'sunset_orange', label: 'Sunset Coral', khLabel: 'ទឹកក្រូច Sunset', hex: '#FF5722' },
+  { id: 'telegram_blue', label: 'Telegram Blue', khLabel: 'ខៀវ Telegram', hex: '#2563EB' },
+  { id: 'emerald_green', label: 'Cyber Mint', khLabel: 'បៃតង Emerald', hex: '#10B981' },
+  { id: 'magenta_pink', label: 'Hot Pink', khLabel: 'ផ្កាឈូក Pink', hex: '#EC4899' },
+  { id: 'dark_slate', label: 'Slate Night', khLabel: 'ប្រផេះងងឹត', hex: '#334155' },
+];
+
+export const BUBBLE_STYLE_OPTIONS: { id: BubbleStyle; label: string; khLabel: string; desc: string }[] = [
+  { id: 'tiktok', label: 'TikTok Smooth', khLabel: 'រចនាប័ទ្ម TikTok', desc: 'Smooth curved pills with TikTok asymmetric tail' },
+  { id: 'telegram', label: 'Telegram Classic', khLabel: 'Telegram បុរាណ', desc: 'Standard Telegram message bubble radius' },
+  { id: 'capsule', label: 'Ultra Capsule', khLabel: 'គ្រាប់ថ្នាំ Capsule', desc: 'Super rounded modern pill shape' },
+  { id: 'minimal', label: 'Crisp Minimal', khLabel: 'ជ្រុងស្អាត Minimal', desc: 'Crisp, modern compact rounded corners' },
+];
+
+export const getBubbleBorderRadius = (style: BubbleStyle = 'tiktok', isMe: boolean = true) => {
+  switch (style) {
+    case 'tiktok':
+      return isMe
+        ? { borderTopLeftRadius: 18, borderTopRightRadius: 18, borderBottomLeftRadius: 18, borderBottomRightRadius: 4 }
+        : { borderTopLeftRadius: 18, borderTopRightRadius: 18, borderBottomRightRadius: 18, borderBottomLeftRadius: 4 };
+    case 'capsule':
+      return { borderRadius: 22 };
+    case 'minimal':
+      return { borderRadius: 6 };
+    case 'modern':
+      return { borderRadius: 12 };
+    case 'telegram':
+    default:
+      return isMe
+        ? { borderTopLeftRadius: 14, borderTopRightRadius: 14, borderBottomLeftRadius: 14, borderBottomRightRadius: 3 }
+        : { borderTopLeftRadius: 14, borderTopRightRadius: 14, borderBottomRightRadius: 14, borderBottomLeftRadius: 3 };
+  }
+};
 
 export const ACCENT_PALETTES: Record<
   AccentColor,
@@ -123,20 +163,32 @@ export const ACCENT_PALETTES: Record<
   },
 };
 
-export const generateThemeTokens = (mode: ThemeMode, accent: AccentColor): ThemeTokens => {
+export const generateThemeTokens = (
+  mode: ThemeMode,
+  accent: AccentColor,
+  customizations?: {
+    bubbleStyle?: BubbleStyle;
+    customBubbleOutgoing?: string;
+    customBubbleIncoming?: string;
+  }
+): ThemeTokens => {
   const pal = ACCENT_PALETTES[accent] || ACCENT_PALETTES.blue;
   const isDark = mode === 'dark' || mode === 'midnight' || mode === 'tiktok';
+  const bubbleStyle = customizations?.bubbleStyle || (mode === 'tiktok' ? 'tiktok' : 'telegram');
 
   const accentColor = pal.hex;
   const accentSoft = isDark ? pal.softDark : pal.softLight;
   const accentBorder = isDark ? pal.borderDark : pal.borderLight;
 
+  let baseTokens: ThemeTokens;
+
   if (mode === 'tiktok') {
     // TikTok Sleek Dark (#121212 / #161823) with Neon Contrast
     const effectiveAccent = accent === 'blue' ? '#FE2C55' : accentColor;
-    return {
+    baseTokens = {
       mode,
       accent,
+      bubbleStyle,
       windowBg: '#121212',
       surfaceBg: '#161823',
       surfaceMuted: '#222436',
@@ -165,13 +217,12 @@ export const generateThemeTokens = (mode: ThemeMode, accent: AccentColor): Theme
       warning: '#F59E0B',
       warningSoft: '#78350F33',
     };
-  }
-
-  if (mode === 'midnight') {
+  } else if (mode === 'midnight') {
     // Pure OLED Jet Black
-    return {
+    baseTokens = {
       mode,
       accent,
+      bubbleStyle,
       windowBg: '#05070B',
       surfaceBg: '#0B0F17',
       surfaceMuted: '#111724',
@@ -200,13 +251,12 @@ export const generateThemeTokens = (mode: ThemeMode, accent: AccentColor): Theme
       warning: '#F59E0B',
       warningSoft: '#78350F33',
     };
-  }
-
-  if (mode === 'dark') {
+  } else if (mode === 'dark') {
     // Deep Slate Navy (Telegram Night)
-    return {
+    baseTokens = {
       mode,
       accent,
+      bubbleStyle,
       windowBg: '#0F172A',
       surfaceBg: '#1E293B',
       surfaceMuted: '#243048',
@@ -235,13 +285,12 @@ export const generateThemeTokens = (mode: ThemeMode, accent: AccentColor): Theme
       warning: '#F59E0B',
       warningSoft: '#78350F33',
     };
-  }
-
-  if (mode === 'warm') {
+  } else if (mode === 'warm') {
     // Soft Tinted Ivory / Matcha Cream
-    return {
+    baseTokens = {
       mode,
       accent,
+      bubbleStyle,
       windowBg: '#F7F6F2',
       surfaceBg: '#FFFFFF',
       surfaceMuted: '#EFECE6',
@@ -270,38 +319,51 @@ export const generateThemeTokens = (mode: ThemeMode, accent: AccentColor): Theme
       warning: '#D97706',
       warningSoft: '#FEF3C7',
     };
+  } else {
+    // Default: Classic Crisp Light (Nordic)
+    baseTokens = {
+      mode: 'light',
+      accent,
+      bubbleStyle,
+      windowBg: '#FFFFFF',
+      surfaceBg: '#F8FAFC',
+      surfaceMuted: '#F1F5F9',
+      surfaceHover: '#E2E8F0',
+      surfaceActive: '#CBD5E1',
+      borderSubtle: '#E2E8F0',
+      borderStrong: '#CBD5E1',
+      textPrimary: '#0F172A',
+      textSecondary: '#475569',
+      textMuted: '#94A3B8',
+      textInverse: '#FFFFFF',
+      accentColor,
+      accentSoft,
+      accentBorder,
+      accentFg: '#FFFFFF',
+      bubbleIncoming: '#F1F5F9',
+      bubbleIncomingText: '#0F172A',
+      bubbleIncomingBorder: '#E2E8F0',
+      bubbleOutgoing: accentColor,
+      bubbleOutgoingText: '#FFFFFF',
+      bubbleOutgoingBorder: accentColor,
+      success: '#16A34A',
+      successSoft: '#ECFDF5',
+      danger: '#DC2626',
+      dangerSoft: '#FEF2F2',
+      warning: '#F59E0B',
+      warningSoft: '#FFFBEB',
+    };
   }
 
-  // Default: Classic Crisp Light (Nordic)
-  return {
-    mode: 'light',
-    accent,
-    windowBg: '#FFFFFF',
-    surfaceBg: '#F8FAFC',
-    surfaceMuted: '#F1F5F9',
-    surfaceHover: '#E2E8F0',
-    surfaceActive: '#CBD5E1',
-    borderSubtle: '#E2E8F0',
-    borderStrong: '#CBD5E1',
-    textPrimary: '#0F172A',
-    textSecondary: '#475569',
-    textMuted: '#94A3B8',
-    textInverse: '#FFFFFF',
-    accentColor,
-    accentSoft,
-    accentBorder,
-    accentFg: '#FFFFFF',
-    bubbleIncoming: '#F1F5F9',
-    bubbleIncomingText: '#0F172A',
-    bubbleIncomingBorder: '#E2E8F0',
-    bubbleOutgoing: accentColor,
-    bubbleOutgoingText: '#FFFFFF',
-    bubbleOutgoingBorder: accentColor,
-    success: '#16A34A',
-    successSoft: '#ECFDF5',
-    danger: '#DC2626',
-    dangerSoft: '#FEF2F2',
-    warning: '#F59E0B',
-    warningSoft: '#FFFBEB',
-  };
+  // Apply custom bubble overrides if user specified custom colors
+  if (customizations?.customBubbleOutgoing) {
+    baseTokens.bubbleOutgoing = customizations.customBubbleOutgoing;
+    baseTokens.bubbleOutgoingBorder = customizations.customBubbleOutgoing;
+  }
+  if (customizations?.customBubbleIncoming) {
+    baseTokens.bubbleIncoming = customizations.customBubbleIncoming;
+    baseTokens.bubbleIncomingBorder = customizations.customBubbleIncoming;
+  }
+
+  return baseTokens;
 };

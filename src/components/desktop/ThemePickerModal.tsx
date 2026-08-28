@@ -2,7 +2,15 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, Pressable } from 'react-native';
 import { useThemeStore } from '../../store/useThemeStore';
 import { useLanguageStore } from '../../store/useLanguageStore';
-import { ThemeMode, AccentColor, ACCENT_PALETTES } from '../../styles/theme';
+import {
+  ThemeMode,
+  AccentColor,
+  BubbleStyle,
+  ACCENT_PALETTES,
+  BUBBLE_COLOR_PRESETS,
+  BUBBLE_STYLE_OPTIONS,
+  getBubbleBorderRadius,
+} from '../../styles/theme';
 import { RemixIcon } from '../ui/RemixIcon';
 
 interface ThemePickerModalProps {
@@ -89,15 +97,21 @@ const THEME_OPTIONS: ThemeOption[] = [
 export const ThemePickerModal: React.FC<ThemePickerModalProps> = ({ visible, onClose }) => {
   const mode = useThemeStore((state) => state.mode);
   const accent = useThemeStore((state) => state.accent);
+  const bubbleStyle = useThemeStore((state) => state.bubbleStyle);
+  const customBubbleOutgoing = useThemeStore((state) => state.customBubbleOutgoing);
   const tokens = useThemeStore((state) => state.tokens);
   const isAutoNight = useThemeStore((state) => state.isAutoNight);
   const setMode = useThemeStore((state) => state.setMode);
   const setAccent = useThemeStore((state) => state.setAccent);
+  const setBubbleStyle = useThemeStore((state) => state.setBubbleStyle);
+  const setCustomBubbleOutgoing = useThemeStore((state) => state.setCustomBubbleOutgoing);
   const setIsAutoNight = useThemeStore((state) => state.setIsAutoNight);
   const language = useLanguageStore((state) => state.language);
   const isKh = language === 'kh';
 
   if (!visible) return null;
+
+  const currentBubbleOutgoing = customBubbleOutgoing || tokens.bubbleOutgoing;
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
@@ -114,7 +128,7 @@ export const ThemePickerModal: React.FC<ThemePickerModalProps> = ({ visible, onC
                   {isKh ? 'រូបរាង & ពណ៌ចម្បង' : 'Appearance & Themes'}
                 </Text>
                 <Text style={[styles.headerSub, { color: tokens.textSecondary }]}>
-                  {isKh ? 'កំណត់រចនាប័ទ្ម Telegram-Style តាមចំណូលចិត្ត' : 'Customize your workspace style & accent palette'}
+                  {isKh ? 'កំណត់រចនាប័ទ្ម TikTok & Telegram តាមចំណូលចិត្ត' : 'Customize your workspace style, TikTok bubbles & accent palette'}
                 </Text>
               </View>
             </View>
@@ -125,10 +139,10 @@ export const ThemePickerModal: React.FC<ThemePickerModalProps> = ({ visible, onC
           </View>
 
           <ScrollView style={styles.scrollBody} showsVerticalScrollIndicator={false}>
-            {/* Section 1: Base Themes (4 Presets) */}
+            {/* Section 1: Base Themes (5 Presets) */}
             <View style={styles.section}>
               <Text style={[styles.sectionTitle, { color: tokens.textPrimary }]}>
-                {isKh ? '១. រូបរាងផ្ទៃមេ (Base Theme)' : '1. Base Theme Mode'}
+                {isKh ? '១. រូបរាងផ្ទៃមេ (Base Theme Mode)' : '1. Base Theme Mode'}
               </Text>
 
               <View style={styles.themeGrid}>
@@ -159,7 +173,7 @@ export const ThemePickerModal: React.FC<ThemePickerModalProps> = ({ visible, onC
                           <Text style={[styles.themeCardName, { color: opt.textHex }]}>
                             {isKh ? opt.khLabel : opt.label}
                           </Text>
-                          <Text style={[styles.themeCardDesc, { color: isKh ? opt.textHex : opt.textHex, opacity: 0.6 }]} numberOfLines={1}>
+                          <Text style={[styles.themeCardDesc, { color: opt.textHex, opacity: 0.6 }]} numberOfLines={1}>
                             {isKh ? opt.khDesc : opt.desc}
                           </Text>
                         </View>
@@ -176,34 +190,44 @@ export const ThemePickerModal: React.FC<ThemePickerModalProps> = ({ visible, onC
               </View>
             </View>
 
-            {/* Section 2: Accent Color Palette Swatches */}
+            {/* Section 2: Custom Message Bubble Styles & Shapes (TikTok / Telegram / Capsule / Minimal) */}
             <View style={styles.section}>
               <Text style={[styles.sectionTitle, { color: tokens.textPrimary }]}>
-                {isKh ? '២. ពណ៌រំលេចចម្បង (Accent Color Palette)' : '2. Accent Color Highlights'}
+                {isKh ? '២. រចនាប័ទ្មរាងពពុះសារ (Bubble Shape & Style)' : '2. Message Bubble Shape'}
               </Text>
               <Text style={[styles.sectionSubtitle, { color: tokens.textSecondary }]}>
-                {isKh ? 'ជ្រើសរើសពណ៌សម្រាប់ប៊ូតុង សារផ្ញើចេញ និងចំណុច Highlight' : 'Customizes primary buttons, outgoing bubbles, and badges'}
+                {isKh ? 'ជ្រើសរើសរាងកោងនៃ Bubble សារបែប TikTok ឬ Telegram' : 'Choose curved corner styling for chat bubbles'}
               </Text>
 
-              <View style={styles.accentRow}>
-                {(Object.keys(ACCENT_PALETTES) as AccentColor[]).map((key) => {
-                  const pal = ACCENT_PALETTES[key];
-                  const isSelected = accent === key;
+              <View style={styles.bubbleStyleGrid}>
+                {BUBBLE_STYLE_OPTIONS.map((opt) => {
+                  const isSelected = bubbleStyle === opt.id;
+                  const radiusStyle = getBubbleBorderRadius(opt.id, true);
                   return (
                     <TouchableOpacity
-                      key={key}
+                      key={opt.id}
                       style={[
-                        styles.accentBtn,
-                        { borderColor: isSelected ? tokens.textPrimary : 'transparent' },
+                        styles.bubbleStyleCard,
+                        {
+                          backgroundColor: tokens.surfaceMuted,
+                          borderColor: isSelected ? tokens.accentColor : tokens.borderSubtle,
+                          borderWidth: isSelected ? 2 : 1,
+                        },
                       ]}
-                      onPress={() => setAccent(key)}
+                      onPress={() => setBubbleStyle(opt.id)}
                       activeOpacity={0.8}
                     >
-                      <View style={[styles.accentColorDot, { backgroundColor: pal.hex }]}>
-                        {isSelected && <RemixIcon name="check-line" size={14} color="#FFFFFF" />}
+                      <View
+                        style={[
+                          styles.miniBubbleDemo,
+                          radiusStyle,
+                          { backgroundColor: isSelected ? tokens.accentColor : tokens.borderStrong },
+                        ]}
+                      >
+                        <Text style={styles.miniBubbleText}>{opt.label.split(' ')[0]}</Text>
                       </View>
-                      <Text style={[styles.accentLabel, { color: isSelected ? tokens.textPrimary : tokens.textSecondary, fontWeight: isSelected ? '700' : '500' }]}>
-                        {isKh ? pal.khLabel : pal.label.split(' ')[0]}
+                      <Text style={[styles.bubbleStyleLabel, { color: isSelected ? tokens.textPrimary : tokens.textSecondary, fontWeight: isSelected ? '700' : '500' }]}>
+                        {isKh ? opt.khLabel : opt.label}
                       </Text>
                     </TouchableOpacity>
                   );
@@ -211,22 +235,77 @@ export const ThemePickerModal: React.FC<ThemePickerModalProps> = ({ visible, onC
               </View>
             </View>
 
-            {/* Section 3: Live Theme Interactive Preview */}
+            {/* Section 3: TikTok & Custom Bubble Outgoing Colors */}
+            <View style={styles.section}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Text style={[styles.sectionTitle, { color: tokens.textPrimary }]}>
+                  {isKh ? '៣. ពណ៌ពពុះសារផ្ញើចេញ (Custom Bubble Color)' : '3. Outgoing Bubble Color'}
+                </Text>
+                {Boolean(customBubbleOutgoing) && (
+                  <TouchableOpacity onPress={() => setCustomBubbleOutgoing(null)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                    <Text style={{ fontSize: 11, fontFamily: 'Krasar-Bold', color: tokens.accentColor }}>
+                      {isKh ? 'កំណត់ដើម (Reset)' : 'Reset Default'}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+              <Text style={[styles.sectionSubtitle, { color: tokens.textSecondary }]}>
+                {isKh ? 'ជ្រើសរើសពណ៌ TikTok Red, Electric Cyan, Neon Purple ឬ ពណ៌ផ្សេងៗ' : 'Choose TikTok neon coral, electric cyan, or vibrant custom tints'}
+              </Text>
+
+              <View style={styles.accentRow}>
+                {BUBBLE_COLOR_PRESETS.map((item) => {
+                  const isSelected = currentBubbleOutgoing.toLowerCase() === item.hex.toLowerCase();
+                  return (
+                    <TouchableOpacity
+                      key={item.id}
+                      style={[
+                        styles.accentBtn,
+                        { borderColor: isSelected ? tokens.textPrimary : 'transparent' },
+                      ]}
+                      onPress={() => setCustomBubbleOutgoing(item.hex)}
+                      activeOpacity={0.8}
+                    >
+                      <View style={[styles.accentColorDot, { backgroundColor: item.hex }]}>
+                        {isSelected && <RemixIcon name="check-line" size={14} color="#FFFFFF" />}
+                      </View>
+                      <Text style={[styles.accentLabel, { color: isSelected ? tokens.textPrimary : tokens.textSecondary, fontWeight: isSelected ? '700' : '500' }]}>
+                        {isKh ? item.khLabel : item.label.split(' ')[0]}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
+
+            {/* Section 4: Live Theme Interactive Preview */}
             <View style={styles.section}>
               <Text style={[styles.sectionTitle, { color: tokens.textPrimary }]}>
-                {isKh ? '៣. ទិដ្ឋភាពជាក់ស្តែង (Live Preview)' : '3. Real-Time Preview'}
+                {isKh ? '៤. ទិដ្ឋភាពជាក់ស្តែង (Live Preview)' : '4. Real-Time Preview'}
               </Text>
 
               <View style={[styles.previewContainer, { backgroundColor: tokens.windowBg, borderColor: tokens.borderSubtle }]}>
                 {/* Incoming Message Bubble */}
-                <View style={[styles.previewBubbleIn, { backgroundColor: tokens.bubbleIncoming, borderColor: tokens.bubbleIncomingBorder }]}>
+                <View
+                  style={[
+                    styles.previewBubbleIn,
+                    getBubbleBorderRadius(tokens.bubbleStyle, false),
+                    { backgroundColor: tokens.bubbleIncoming, borderColor: tokens.bubbleIncomingBorder },
+                  ]}
+                >
                   <Text style={[styles.previewBubbleTextIn, { color: tokens.bubbleIncomingText }]}>
-                    {isKh ? 'សួស្តីបង! ប្រព័ន្ធ Theme ថ្មីនេះស្អាត និងទាន់សម័យណាស់ ✨' : 'Hello! This Telegram-grade theme engine looks ultra-clean ✨'}
+                    {isKh ? 'សួស្តីបង! ប្រព័ន្ធ Theme ថ្មីនេះស្អាត និងទាន់សម័យណាស់ ✨' : 'Hello! This TikTok & Telegram theme engine looks ultra-clean ✨'}
                   </Text>
                 </View>
 
-                {/* Outgoing Message Bubble (Tinted with chosen accent) */}
-                <View style={[styles.previewBubbleOut, { backgroundColor: tokens.bubbleOutgoing, borderColor: tokens.bubbleOutgoingBorder }]}>
+                {/* Outgoing Message Bubble (Tinted with chosen bubble color/shape) */}
+                <View
+                  style={[
+                    styles.previewBubbleOut,
+                    getBubbleBorderRadius(tokens.bubbleStyle, true),
+                    { backgroundColor: tokens.bubbleOutgoing, borderColor: tokens.bubbleOutgoingBorder },
+                  ]}
+                >
                   <Text style={[styles.previewBubbleTextOut, { color: tokens.bubbleOutgoingText }]}>
                     {isKh ? 'អស្ចារ្យណាស់! ពណ៌រំលេចស៊ីគ្នាយ៉ាងឥតខ្ចោះ 🚀' : 'Super sleek! Perfectly matches my personal style 🚀'}
                   </Text>
@@ -250,7 +329,7 @@ export const ThemePickerModal: React.FC<ThemePickerModalProps> = ({ visible, onC
               </View>
             </View>
 
-            {/* Section 4: Auto-Night Follow System Setting */}
+            {/* Section 5: Auto-Night Follow System Setting */}
             <View style={[styles.settingRow, { borderTopColor: tokens.borderSubtle }]}>
               <View style={styles.settingInfo}>
                 <Text style={[styles.settingLabel, { color: tokens.textPrimary }]}>
@@ -408,6 +487,36 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: 6,
+  },
+  bubbleStyleGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 8,
+  },
+  bubbleStyleCard: {
+    width: '48.5%',
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    gap: 6,
+  },
+  miniBubbleDemo: {
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  miniBubbleText: {
+    fontSize: 9.5,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  bubbleStyleLabel: {
+    fontSize: 10.5,
+    fontFamily: 'Krasar-Bold',
+    textAlign: 'center',
   },
   accentRow: {
     flexDirection: 'row',

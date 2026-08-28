@@ -9,6 +9,7 @@ import { formatMessageDate, renderFormattedMarkdown } from './chatHelpers';
 import { QUICK_REACTION_EMOJIS, EMOJI_CATEGORIES } from './chatTypes';
 import { toast } from '../../../../store/useToastStore';
 import { useThemeStore } from '../../../../store/useThemeStore';
+import { getBubbleBorderRadius } from '../../../../styles/theme';
 
 interface ChatMessageListProps {
   messages: any[];
@@ -325,6 +326,7 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                           ]
                         : [
                             styles.msgBubble,
+                            getBubbleBorderRadius(tokens.bubbleStyle, isMe),
                             {
                               backgroundColor: bubbleBg,
                               borderColor: bubbleBorder,
