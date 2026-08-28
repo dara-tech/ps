@@ -516,22 +516,19 @@ export const CalendarModule: React.FC = () => {
             ))}
           </View>
 
-          {/* GitHub Auto-Sync Status Pill if enabled */}
-          {githubConfig.username ? (
-            <TouchableOpacity
-              style={[styles.githubStatusPill, isSyncingGh && styles.githubStatusPillSyncing]}
-              onPress={handleManualSync}
-              activeOpacity={0.75}
-              disabled={isSyncingGh}
-            >
-              <View style={[styles.githubLiveDot, isSyncingGh && styles.githubLiveDotSyncing]} />
-              <RemixIcon name="github-fill" size={12} color="#0F172A" />
-              <Text style={styles.githubStatusText}>
-                {isSyncingGh ? 'Syncing...' : (githubConfig.repo ? `${githubConfig.username}/${githubConfig.repo}` : githubConfig.username)}
-              </Text>
-              <RemixIcon name="refresh-line" size={10} color="#64748B" />
-            </TouchableOpacity>
-          ) : null}
+          {/* Refresh / Sync Button (Icon Only) */}
+          <TouchableOpacity
+            style={[styles.refreshIconBtn, isSyncingGh && styles.refreshIconBtnSyncing]}
+            onPress={handleManualSync}
+            activeOpacity={0.75}
+            disabled={isSyncingGh}
+          >
+            <RemixIcon
+              name="refresh-line"
+              size={13}
+              color={isSyncingGh ? '#2563EB' : '#475569'}
+            />
+          </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.addEventBtn}
@@ -1793,35 +1790,19 @@ const styles = StyleSheet.create({
     color: '#2563EB',
     fontWeight: '700',
   },
-  githubStatusPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    backgroundColor: '#F8FAFC',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    paddingHorizontal: 8,
-    paddingVertical: 5,
+  refreshIconBtn: {
+    width: 28,
+    height: 28,
     borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  githubStatusPillSyncing: {
+  refreshIconBtnSyncing: {
     backgroundColor: '#EFF6FF',
     borderColor: '#BFDBFE',
-  },
-  githubLiveDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#10B981',
-  },
-  githubLiveDotSyncing: {
-    backgroundColor: '#3B82F6',
-  },
-  githubStatusText: {
-    fontSize: 10.5,
-    fontFamily: 'Krasar-Bold',
-    color: '#0F172A',
-    fontWeight: '600',
   },
   addEventBtn: {
     flexDirection: 'row',
