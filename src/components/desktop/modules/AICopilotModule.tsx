@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -42,6 +42,22 @@ export const AICopilotModule: React.FC = () => {
   const clearAiMessages = useDesktopStore((state) => state.clearAiMessages);
   const breakdownGoalWithAi = useDesktopStore((state) => state.breakdownGoalWithAi);
   const logExpenseWithAi = useDesktopStore((state) => state.logExpenseWithAi);
+  const tasks = useDesktopStore((state) => state.tasks);
+  const finances = useDesktopStore((state) => state.finances);
+  const marketItems = useDesktopStore((state) => state.marketItems);
+  const setActiveModule = useDesktopStore((state) => state.setActiveModule);
+  const ghostSettings = useTelegramStore((state) => state.ghostSettings);
+
+  const pendingTasks = useMemo(() => tasks.filter((t) => t.status !== 'done'), [tasks]);
+  const todaySpent = useMemo(() => finances.filter((f) => f.type === 'expense').reduce((sum, f) => sum + (f.amount || 0), 0), [finances]);
+  const monthIncome = useMemo(() => finances.filter((f) => f.type === 'income').reduce((sum, f) => sum + (f.amount || 0), 0), [finances]);
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
+  };
 
   const [input, setInput] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -206,94 +222,289 @@ export const AICopilotModule: React.FC = () => {
         showsVerticalScrollIndicator={false}
         onContentSizeChange={() => scrollToBottom(true)}
       >
-        {aiMessages.map((msg) => {
-          const isUser = msg.role === 'user';
-          return (
-            <View
-              key={msg.id}
-              style={[
-                styles.messageRow,
-                isUser ? styles.messageRowUser : styles.messageRowAssistant,
-              ]}
-            >
-              <View
-                style={[
-                  styles.bubble,
-                  isUser ? styles.bubbleUser : styles.bubbleAssistant,
-                ]}
-              >
-                {!isUser && (
-                  <View style={styles.assistantHeaderRow}>
-                    <View style={styles.assistantMetaLeft}>
-                      <View style={styles.geminiIconBadge}>
-                        <RemixIcon name="sparkles-fill" size={11} color="#6366F1" />
-                      </View>
-                      <Text style={styles.assistantName}>Gemini</Text>
-                      <View style={styles.modelTagPill}>
-                        <Text style={styles.modelTagPillText}>{msg.model || selectedModel}</Text>
-                      </View>
-                    </View>
-                    <Text style={styles.messageTimeTag}>{msg.timestamp}</Text>
+        {/* If initial landing / welcome state: Show Executive Insight Cockpit */}
+        {aiMessages.length <= 1 ? (
+          <View style={styles.cockpitContainer}>
+            {/* 1. Header Banner: Greeting & Live Status */}
+            <View style={styles.cockpitBanner}>
+              <View style={styles.cockpitBannerLeft}>
+                <View style={styles.cockpitAvatarBadge}>
+                  <RemixIcon name="sparkles-fill" size={16} color="#6366F1" />
+                </View>
+                <View>
+                  <Text style={styles.cockpitGreetingTitle}>
+                    {getGreeting()}, Dara
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.cockpitStatusPills}>
+                <View style={[styles.cockpitStatusPill, { backgroundColor: '#F0FDF4', borderColor: '#BBF7D0' }]}>
+                  <View style={[styles.cockpitStatusDot, { backgroundColor: '#16A34A' }]} />
+                  <Text style={[styles.cockpitStatusPillText, { color: '#16A34A' }]}>{isAiOnline ? 'Gemini Active' : 'AI Offline'}</Text>
+                </View>
+                {ghostSettings?.enabled && (
+                  <View style={[styles.cockpitStatusPill, { backgroundColor: '#F5F3FF', borderColor: '#DDD6FE' }]}>
+                    <View style={[styles.cockpitStatusDot, { backgroundColor: '#7C3AED' }]} />
+                    <Text style={[styles.cockpitStatusPillText, { color: '#7C3AED' }]}>Ghost Mode</Text>
                   </View>
                 )}
-
-                <RichMarkdownView content={msg.content} isUser={isUser} />
-
-                {isUser ? (
-                  <View style={styles.bubbleFooter}>
-                    <Text style={styles.timestampUser}>{msg.timestamp}</Text>
-                  </View>
-                ) : (
-                  <View style={styles.assistantActionToolbar}>
-                    <TouchableOpacity
-                      style={[styles.msgActionBtn, copiedId === msg.id && styles.msgActionBtnActive]}
-                      onPress={() => handleCopyMessage(msg.id, msg.content)}
-                      activeOpacity={0.7}
-                    >
-                      <RemixIcon
-                        name={copiedId === msg.id ? 'check-line' : 'file-copy-line'}
-                        size={13}
-                        color={copiedId === msg.id ? '#10B981' : '#64748B'}
-                      />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      style={styles.msgActionBtn}
-                      onPress={handleRegenerate}
-                      activeOpacity={0.7}
-                    >
-                      <RemixIcon name="refresh-line" size={13} color="#64748B" />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      style={[styles.msgActionBtn, speakingId === msg.id && styles.msgActionBtnActive]}
-                      onPress={() => handleSpeakMessage(msg.id, msg.content)}
-                      activeOpacity={0.7}
-                    >
-                      <RemixIcon
-                        name="volume-up-line"
-                        size={13}
-                        color={speakingId === msg.id ? '#6366F1' : '#64748B'}
-                      />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      style={[styles.msgActionBtn, { borderColor: '#BAE6FD', backgroundColor: '#F0F9FF' }]}
-                      onPress={() => handleForwardToTelegram(msg.content)}
-                      activeOpacity={0.7}
-                    >
-                      <RemixIcon
-                        name="telegram-official"
-                        size={13}
-                        color="#0284C7"
-                      />
-                    </TouchableOpacity>
-                  </View>
-                )}
+                <View style={[styles.cockpitStatusPill, { backgroundColor: '#F0F9FF', borderColor: '#BAE6FD' }]}>
+                  <View style={[styles.cockpitStatusDot, { backgroundColor: '#0284C7' }]} />
+                  <Text style={[styles.cockpitStatusPillText, { color: '#0284C7' }]}>{pendingTasks.length} Tasks Pending</Text>
+                </View>
               </View>
             </View>
-          );
-        })}
+
+            {/* 2. Three-Column Live Insight Grid */}
+            <View style={styles.insightGrid}>
+              {/* Card 1: Today's Priorities */}
+              <TouchableOpacity
+                style={styles.insightCard}
+                onPress={() => setActiveModule('planner')}
+                activeOpacity={0.85}
+              >
+                <View style={styles.insightCardHeader}>
+                  <View style={styles.insightHeaderTitleBox}>
+                    <RemixIcon name="checkbox-circle-fill" size={14} color="#6366F1" />
+                    <Text style={styles.insightCardTitle}>Daily Priorities</Text>
+                  </View>
+                  <View style={styles.insightCountBadge}>
+                    <Text style={styles.insightCountBadgeText}>{pendingTasks.length}</Text>
+                  </View>
+                </View>
+                <View style={styles.insightCardBody}>
+                  {pendingTasks.slice(0, 3).map((task: any, idx: number) => (
+                    <View key={task.id || idx} style={styles.insightRowItem}>
+                      <View style={[styles.priorityDot, { backgroundColor: task.priority === 'HIGH' || task.priority === 'high' ? '#DC2626' : task.priority === 'MEDIUM' || task.priority === 'medium' ? '#D97706' : '#64748B' }]} />
+                      <Text style={styles.insightRowText} numberOfLines={1}>
+                        {task.title}
+                      </Text>
+                    </View>
+                  ))}
+                  {pendingTasks.length === 0 && (
+                    <Text style={styles.insightEmptyText}>All tasks completed</Text>
+                  )}
+                </View>
+                <View style={styles.insightCardFooter}>
+                  <Text style={styles.insightFooterLink}>Open Planner</Text>
+                  <RemixIcon name="arrow-right-line" size={11} color="#6366F1" />
+                </View>
+              </TouchableOpacity>
+
+              {/* Card 2: Financial Pulse */}
+              <TouchableOpacity
+                style={styles.insightCard}
+                onPress={() => setActiveModule('finances')}
+                activeOpacity={0.85}
+              >
+                <View style={styles.insightCardHeader}>
+                  <View style={styles.insightHeaderTitleBox}>
+                    <RemixIcon name="bank-card-line" size={14} color="#059669" />
+                    <Text style={styles.insightCardTitle}>Financial Pulse</Text>
+                  </View>
+                  <View style={[styles.insightCountBadge, { backgroundColor: '#ECFDF5', borderColor: '#A7F3D0' }]}>
+                    <Text style={[styles.insightCountBadgeText, { color: '#059669' }]}>USD</Text>
+                  </View>
+                </View>
+                <View style={styles.insightCardBody}>
+                  <View style={styles.financeMetricRow}>
+                    <Text style={styles.financeMetricLabel}>Today's Outflow</Text>
+                    <Text style={[styles.financeMetricVal, { color: '#DC2626' }]}>-${todaySpent.toLocaleString()}</Text>
+                  </View>
+                  <View style={styles.financeMetricRow}>
+                    <Text style={styles.financeMetricLabel}>Net Cashflow</Text>
+                    <Text style={[styles.financeMetricVal, { color: '#16A34A' }]}>+${(monthIncome - todaySpent).toLocaleString()}</Text>
+                  </View>
+                </View>
+                <View style={styles.insightCardFooter}>
+                  <Text style={[styles.insightFooterLink, { color: '#059669' }]}>Open Finances</Text>
+                  <RemixIcon name="arrow-right-line" size={11} color="#059669" />
+                </View>
+              </TouchableOpacity>
+
+              {/* Card 3: Market Radar Snipers */}
+              <TouchableOpacity
+                style={styles.insightCard}
+                onPress={() => setActiveModule('market')}
+                activeOpacity={0.85}
+              >
+                <View style={styles.insightCardHeader}>
+                  <View style={styles.insightHeaderTitleBox}>
+                    <RemixIcon name="shopping-bag-line" size={14} color="#0284C7" />
+                    <Text style={styles.insightCardTitle}>Market Radar</Text>
+                  </View>
+                  <View style={[styles.insightCountBadge, { backgroundColor: '#F0F9FF', borderColor: '#BAE6FD' }]}>
+                    <Text style={[styles.insightCountBadgeText, { color: '#0284C7' }]}>Hot Deals</Text>
+                  </View>
+                </View>
+                <View style={styles.insightCardBody}>
+                  {marketItems.slice(0, 2).map((item, idx) => (
+                    <View key={item.id || idx} style={styles.insightRowItem}>
+                      <Text style={styles.marketPriceTag}>${item.price}</Text>
+                      <Text style={styles.insightRowText} numberOfLines={1}>
+                        {item.title}
+                      </Text>
+                    </View>
+                  ))}
+                  {marketItems.length === 0 && (
+                    <Text style={styles.insightEmptyText}>Scanning Khmer24</Text>
+                  )}
+                </View>
+                <View style={styles.insightCardFooter}>
+                  <Text style={[styles.insightFooterLink, { color: '#0284C7' }]}>Open Radar</Text>
+                  <RemixIcon name="arrow-right-line" size={11} color="#0284C7" />
+                </View>
+              </TouchableOpacity>
+            </View>
+
+            {/* 3. Four Quick AI Executive Actions */}
+            <View style={styles.quickActionsSection}>
+              <Text style={styles.quickActionsHeaderTitle}>Executive AI Actions</Text>
+              <View style={styles.quickActionsGrid}>
+                <TouchableOpacity
+                  style={styles.quickActionCard}
+                  onPress={() => sendAiMessage('Please give me a complete daily executive briefing summarizing my pending tasks, cashflow, and schedule recommendations for today.')}
+                  activeOpacity={0.8}
+                >
+                  <View style={[styles.quickActionIconBox, { backgroundColor: '#EEF2FF', borderColor: '#C7D2FE' }]}>
+                    <RemixIcon name="sparkles-fill" size={14} color="#6366F1" />
+                  </View>
+                  <View style={{ flex: 1, gap: 2 }}>
+                    <Text style={styles.quickActionTitle}>Daily Executive Memo</Text>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.quickActionCard}
+                  onPress={() => sendAiMessage('Help me break down my current active project milestone into 4 actionable sprint tasks with clear criteria.')}
+                  activeOpacity={0.8}
+                >
+                  <View style={[styles.quickActionIconBox, { backgroundColor: '#F5F3FF', borderColor: '#DDD6FE' }]}>
+                    <RemixIcon name="list-check-line" size={14} color="#7C3AED" />
+                  </View>
+                  <View style={{ flex: 1, gap: 2 }}>
+                    <Text style={styles.quickActionTitle}>Break Down Milestone</Text>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.quickActionCard}
+                  onPress={() => sendAiMessage('Analyze my recent expenses and suggest optimization tips for my weekly budget and cashflow.')}
+                  activeOpacity={0.8}
+                >
+                  <View style={[styles.quickActionIconBox, { backgroundColor: '#ECFDF5', borderColor: '#A7F3D0' }]}>
+                    <RemixIcon name="bank-card-line" size={14} color="#059669" />
+                  </View>
+                  <View style={{ flex: 1, gap: 2 }}>
+                    <Text style={styles.quickActionTitle}>Audit Weekly Expenses</Text>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.quickActionCard}
+                  onPress={() => sendAiMessage('Suggest clean architecture and optimization tips for our React Native and MTProto Telegram stack.')}
+                  activeOpacity={0.8}
+                >
+                  <View style={[styles.quickActionIconBox, { backgroundColor: '#FFFBEB', borderColor: '#FDE68A' }]}>
+                    <RemixIcon name="code-line" size={14} color="#D97706" />
+                  </View>
+                  <View style={{ flex: 1, gap: 2 }}>
+                    <Text style={styles.quickActionTitle}>Code Architecture Tips</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        ) : (
+          aiMessages.map((msg) => {
+            const isUser = msg.role === 'user';
+            return (
+              <View
+                key={msg.id}
+                style={[
+                  styles.messageRow,
+                  isUser ? styles.messageRowUser : styles.messageRowAssistant,
+                ]}
+              >
+                <View
+                  style={[
+                    styles.bubble,
+                    isUser ? styles.bubbleUser : styles.bubbleAssistant,
+                  ]}
+                >
+                  {!isUser && (
+                    <View style={styles.assistantHeaderRow}>
+                      <View style={styles.assistantMetaLeft}>
+                        <View style={styles.geminiIconBadge}>
+                          <RemixIcon name="sparkles-fill" size={11} color="#6366F1" />
+                        </View>
+                        <Text style={styles.assistantName}>Gemini</Text>
+                        <View style={styles.modelTagPill}>
+                          <Text style={styles.modelTagPillText}>{msg.model || selectedModel}</Text>
+                        </View>
+                      </View>
+                      <Text style={styles.messageTimeTag}>{msg.timestamp}</Text>
+                    </View>
+                  )}
+
+                  <RichMarkdownView content={msg.content} isUser={isUser} />
+
+                  {isUser ? (
+                    <View style={styles.bubbleFooter}>
+                      <Text style={styles.timestampUser}>{msg.timestamp}</Text>
+                    </View>
+                  ) : (
+                    <View style={styles.assistantActionToolbar}>
+                      <TouchableOpacity
+                        style={[styles.msgActionBtn, copiedId === msg.id && styles.msgActionBtnActive]}
+                        onPress={() => handleCopyMessage(msg.id, msg.content)}
+                        activeOpacity={0.7}
+                      >
+                        <RemixIcon
+                          name={copiedId === msg.id ? 'check-line' : 'file-copy-line'}
+                          size={13}
+                          color={copiedId === msg.id ? '#10B981' : '#64748B'}
+                        />
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        style={styles.msgActionBtn}
+                        onPress={handleRegenerate}
+                        activeOpacity={0.7}
+                      >
+                        <RemixIcon name="refresh-line" size={13} color="#64748B" />
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        style={[styles.msgActionBtn, speakingId === msg.id && styles.msgActionBtnActive]}
+                        onPress={() => handleSpeakMessage(msg.id, msg.content)}
+                        activeOpacity={0.7}
+                      >
+                        <RemixIcon
+                          name="volume-up-line"
+                          size={13}
+                          color={speakingId === msg.id ? '#6366F1' : '#64748B'}
+                        />
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        style={[styles.msgActionBtn, { borderColor: '#BAE6FD', backgroundColor: '#F0F9FF' }]}
+                        onPress={() => handleForwardToTelegram(msg.content)}
+                        activeOpacity={0.7}
+                      >
+                        <RemixIcon
+                          name="telegram-official"
+                          size={13}
+                          color="#0284C7"
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                </View>
+              </View>
+            );
+          })
+        )}
 
         {isAiThinking && (
           <View style={[styles.messageRow, styles.messageRowAssistant]}>
@@ -994,5 +1205,226 @@ const styles = StyleSheet.create({
   sendButtonDisabled: {
     backgroundColor: '#CBD5E1',
     opacity: 0.6,
+  },
+
+  /* Cockpit Dashboard Styles */
+  cockpitContainer: {
+    gap: 14,
+    paddingBottom: 4,
+  },
+  cockpitBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    borderRadius: 10,
+    padding: 16,
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  cockpitBannerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  cockpitAvatarBadge: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    backgroundColor: '#EEF2FF',
+    borderWidth: 1,
+    borderColor: '#C7D2FE',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cockpitGreetingTitle: {
+    fontSize: 16,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
+    color: '#0F172A',
+  },
+  cockpitStatusPills: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    flexWrap: 'wrap',
+  },
+  cockpitStatusPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 8,
+    paddingVertical: 3.5,
+    borderRadius: 6,
+    borderWidth: 1,
+  },
+  cockpitStatusDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  cockpitStatusPillText: {
+    fontSize: 11,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '600',
+  },
+  insightGrid: {
+    flexDirection: 'row',
+    gap: 12,
+    width: '100%',
+  },
+  insightCard: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    borderRadius: 10,
+    padding: 14,
+    gap: 10,
+    cursor: 'pointer',
+  } as any,
+  insightCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
+  },
+  insightHeaderTitleBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  insightCardTitle: {
+    fontSize: 12.5,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
+    color: '#0F172A',
+  },
+  insightCountBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    backgroundColor: '#EEF2FF',
+    borderWidth: 1,
+    borderColor: '#C7D2FE',
+  },
+  insightCountBadgeText: {
+    fontSize: 10,
+    fontFamily: 'Krasar-Bold',
+    color: '#6366F1',
+    fontWeight: '700',
+  },
+  insightCardBody: {
+    gap: 8,
+    minHeight: 52,
+    justifyContent: 'center',
+  },
+  insightRowItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  priorityDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  marketPriceTag: {
+    fontSize: 10.5,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
+    color: '#0284C7',
+  },
+  insightRowText: {
+    flex: 1,
+    fontSize: 11.5,
+    fontFamily: 'Krasar-Regular',
+    color: '#334155',
+  },
+  insightEmptyText: {
+    fontSize: 11.5,
+    fontFamily: 'Krasar-Regular',
+    color: '#94A3B8',
+  },
+  financeMetricRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  financeMetricLabel: {
+    fontSize: 11.5,
+    fontFamily: 'Krasar-Regular',
+    color: '#64748B',
+  },
+  financeMetricVal: {
+    fontSize: 12.5,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
+  },
+  insightCardFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: 4,
+    paddingTop: 6,
+    borderTopWidth: 1,
+    borderTopColor: '#F8FAFC',
+  },
+  insightFooterLink: {
+    fontSize: 11,
+    fontFamily: 'Krasar-Bold',
+    color: '#6366F1',
+    fontWeight: '600',
+  },
+  quickActionsSection: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    borderRadius: 10,
+    padding: 14,
+    gap: 10,
+  },
+  quickActionsHeaderTitle: {
+    fontSize: 12.5,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
+    color: '#0F172A',
+  },
+  quickActionsGrid: {
+    flexDirection: 'row',
+    gap: 10,
+    flexWrap: 'wrap',
+  },
+  quickActionCard: {
+    flex: 1,
+    minWidth: 180,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    cursor: 'pointer',
+  } as any,
+  quickActionIconBox: {
+    width: 28,
+    height: 28,
+    borderRadius: 6,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  quickActionTitle: {
+    fontSize: 11.5,
+    fontFamily: 'Krasar-Bold',
+    color: '#0F172A',
+    fontWeight: '600',
   },
 });
