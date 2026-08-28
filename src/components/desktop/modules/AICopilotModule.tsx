@@ -8,6 +8,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Platform,
+  Image,
 } from 'react-native';
 import { useDesktopStore } from '../../../store/useDesktopStore';
 import { useTelegramStore } from '../../../store/useTelegramStore';
@@ -16,6 +17,14 @@ import { RemixIcon } from '../../ui/RemixIcon';
 import { RichMarkdownView } from '../../ui/RichMarkdownView';
 import { CustomSelect } from '../../ui/CustomSelect';
 import { toast } from '../../../store/useToastStore';
+
+const AI_MEMO_IMG = require('../../../../assets/copilot/ai_memo.jpg');
+const AI_MILESTONE_IMG = require('../../../../assets/copilot/ai_milestone.jpg');
+const AI_FINANCE_IMG = require('../../../../assets/copilot/ai_finance.jpg');
+const AI_CODE_IMG = require('../../../../assets/copilot/ai_code.jpg');
+const AI_PRIORITY_IMG = require('../../../../assets/copilot/ai_priority.jpg');
+const AI_PULSE_IMG = require('../../../../assets/copilot/ai_pulse.jpg');
+const AI_RADAR_IMG = require('../../../../assets/copilot/ai_radar.jpg');
 
 interface AttachmentItem {
   id: string;
@@ -272,7 +281,7 @@ export const AICopilotModule: React.FC = () => {
               >
                 <View style={[styles.insightCardHeader, { borderBottomColor: tokens.borderSubtle }]}>
                   <View style={styles.insightHeaderTitleBox}>
-                    <RemixIcon name="checkbox-circle-fill" size={14} color={tokens.accentColor} />
+                    <Image source={AI_PRIORITY_IMG} style={styles.insightHeader3dImg} resizeMode="cover" />
                     <Text style={[styles.insightCardTitle, { color: tokens.textPrimary }]}>Daily Priorities</Text>
                   </View>
                   <View style={[styles.insightCountBadge, { backgroundColor: tokens.accentSoft }]}>
@@ -283,18 +292,18 @@ export const AICopilotModule: React.FC = () => {
                   {pendingTasks.slice(0, 3).map((task: any, idx: number) => (
                     <View key={task.id || idx} style={styles.insightRowItem}>
                       <View style={[styles.priorityDot, { backgroundColor: task.priority === 'HIGH' || task.priority === 'high' ? '#DC2626' : task.priority === 'MEDIUM' || task.priority === 'medium' ? '#D97706' : '#64748B' }]} />
-                      <Text style={styles.insightRowText} numberOfLines={1}>
+                      <Text style={[styles.insightRowText, { color: tokens.textPrimary }]} numberOfLines={1}>
                         {task.title}
                       </Text>
                     </View>
                   ))}
                   {pendingTasks.length === 0 && (
-                    <Text style={styles.insightEmptyText}>All tasks completed</Text>
+                    <Text style={[styles.insightEmptyText, { color: tokens.textSecondary }]}>All tasks completed</Text>
                   )}
                 </View>
-                <View style={styles.insightCardFooter}>
-                  <Text style={styles.insightFooterLink}>Open Planner</Text>
-                  <RemixIcon name="arrow-right-line" size={11} color="#6366F1" />
+                <View style={[styles.insightCardFooter, { borderTopColor: tokens.borderSubtle }]}>
+                  <Text style={[styles.insightFooterLink, { color: tokens.accentColor }]}>Open Planner</Text>
+                  <RemixIcon name="arrow-right-line" size={11} color={tokens.accentColor} />
                 </View>
               </TouchableOpacity>
 
@@ -306,7 +315,7 @@ export const AICopilotModule: React.FC = () => {
               >
                 <View style={[styles.insightCardHeader, { borderBottomColor: tokens.borderSubtle }]}>
                   <View style={styles.insightHeaderTitleBox}>
-                    <RemixIcon name="bank-card-line" size={14} color="#10B981" />
+                    <Image source={AI_PULSE_IMG} style={styles.insightHeader3dImg} resizeMode="cover" />
                     <Text style={[styles.insightCardTitle, { color: tokens.textPrimary }]}>Financial Pulse</Text>
                   </View>
                   <View style={[styles.insightCountBadge, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
@@ -344,7 +353,7 @@ export const AICopilotModule: React.FC = () => {
               >
                 <View style={[styles.insightCardHeader, { borderBottomColor: tokens.borderSubtle }]}>
                   <View style={styles.insightHeaderTitleBox}>
-                    <RemixIcon name="shopping-bag-line" size={14} color="#0284C7" />
+                    <Image source={AI_RADAR_IMG} style={styles.insightHeader3dImg} resizeMode="cover" />
                     <Text style={[styles.insightCardTitle, { color: tokens.textPrimary }]}>Market Radar</Text>
                   </View>
                   <View style={[styles.insightCountBadge, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
@@ -380,9 +389,7 @@ export const AICopilotModule: React.FC = () => {
                   onPress={() => sendAiMessage('Please give me a complete daily executive briefing summarizing my pending tasks, cashflow, and schedule recommendations for today.')}
                   activeOpacity={0.8}
                 >
-                  <View style={[styles.quickActionIconBox, { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}>
-                    <RemixIcon name="sparkles-fill" size={14} color={tokens.accentColor} />
-                  </View>
+                  <Image source={AI_MEMO_IMG} style={styles.quickAction3dImg} resizeMode="cover" />
                   <View style={{ flex: 1, gap: 2 }}>
                     <Text style={[styles.quickActionTitle, { color: tokens.textPrimary }]}>Daily Executive Memo</Text>
                   </View>
@@ -393,9 +400,7 @@ export const AICopilotModule: React.FC = () => {
                   onPress={() => sendAiMessage('Help me break down my current active project milestone into 4 actionable sprint tasks with clear criteria.')}
                   activeOpacity={0.8}
                 >
-                  <View style={[styles.quickActionIconBox, { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}>
-                    <RemixIcon name="list-check-line" size={14} color={tokens.accentColor} />
-                  </View>
+                  <Image source={AI_MILESTONE_IMG} style={styles.quickAction3dImg} resizeMode="cover" />
                   <View style={{ flex: 1, gap: 2 }}>
                     <Text style={[styles.quickActionTitle, { color: tokens.textPrimary }]}>Break Down Milestone</Text>
                   </View>
@@ -406,9 +411,7 @@ export const AICopilotModule: React.FC = () => {
                   onPress={() => sendAiMessage('Analyze my recent expenses and suggest optimization tips for my weekly budget and cashflow.')}
                   activeOpacity={0.8}
                 >
-                  <View style={[styles.quickActionIconBox, { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}>
-                    <RemixIcon name="bank-card-line" size={14} color={tokens.accentColor} />
-                  </View>
+                  <Image source={AI_FINANCE_IMG} style={styles.quickAction3dImg} resizeMode="cover" />
                   <View style={{ flex: 1, gap: 2 }}>
                     <Text style={[styles.quickActionTitle, { color: tokens.textPrimary }]}>Audit Weekly Expenses</Text>
                   </View>
@@ -419,9 +422,7 @@ export const AICopilotModule: React.FC = () => {
                   onPress={() => sendAiMessage('Suggest clean architecture and optimization tips for our React Native and MTProto Telegram stack.')}
                   activeOpacity={0.8}
                 >
-                  <View style={[styles.quickActionIconBox, { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}>
-                    <RemixIcon name="code-line" size={14} color={tokens.accentColor} />
-                  </View>
+                  <Image source={AI_CODE_IMG} style={styles.quickAction3dImg} resizeMode="cover" />
                   <View style={{ flex: 1, gap: 2 }}>
                     <Text style={[styles.quickActionTitle, { color: tokens.textPrimary }]}>Code Architecture Tips</Text>
                   </View>
@@ -1442,5 +1443,15 @@ const styles = StyleSheet.create({
     fontFamily: 'Krasar-Bold',
     color: '#0F172A',
     fontWeight: '600',
+  },
+  quickAction3dImg: {
+    width: 32,
+    height: 32,
+    borderRadius: 7,
+  },
+  insightHeader3dImg: {
+    width: 18,
+    height: 18,
+    borderRadius: 4,
   },
 });
