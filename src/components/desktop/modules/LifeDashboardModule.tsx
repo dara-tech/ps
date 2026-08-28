@@ -260,9 +260,9 @@ export const LifeDashboardModule: React.FC = () => {
         {/* 4. Strategic Initiatives & Projects Section */}
         <View style={styles.sectionContainer}>
           <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionHeading}>{isKh ? 'គម្រោង និងគោលដៅយុទ្ធសាស្ត្រ' : 'Strategic Projects & Initiatives'}</Text>
+            <Text style={[styles.sectionHeading, { color: tokens.textPrimary }]}>{isKh ? 'គម្រោង និងគោលដៅយុទ្ធសាស្ត្រ' : 'Strategic Projects & Initiatives'}</Text>
             <TouchableOpacity onPress={() => setActiveModule('goals')} activeOpacity={0.7}>
-              <Text style={styles.viewAllText}>{isKh ? 'មើលទាំងអស់' : 'View all'} ({projects.length}) →</Text>
+              <Text style={[styles.viewAllText, { color: tokens.accentColor }]}>{isKh ? 'មើលទាំងអស់' : 'View all'} ({projects.length}) →</Text>
             </TouchableOpacity>
           </View>
 
@@ -282,7 +282,7 @@ export const LifeDashboardModule: React.FC = () => {
                 >
                   <View style={styles.projectCardTop}>
                     <Text style={[styles.projectCardTitle, { color: tokens.textPrimary }]} numberOfLines={1}>{proj.name}</Text>
-                    <View style={[styles.statusBadge, { backgroundColor: badge.bg }]}>
+                    <View style={[styles.statusBadge, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
                       <View style={[styles.statusDot, { backgroundColor: badge.dot }]} />
                       <Text style={[styles.statusText, { color: badge.text }]}>{badge.label}</Text>
                     </View>
