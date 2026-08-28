@@ -1857,8 +1857,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    borderRadius: 8,
-    overflow: 'hidden',
+    borderRadius: 0,
     backgroundColor: '#FFFFFF',
   },
   gridContainerFull: {
