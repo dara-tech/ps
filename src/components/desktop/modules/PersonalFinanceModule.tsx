@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useDesktopStore } from '../../../store/useDesktopStore';
 import { useLanguageStore } from '../../../store/useLanguageStore';
+import { useThemeStore } from '../../../store/useThemeStore';
 import { RemixIcon, RemixIconName } from '../../ui/RemixIcon';
 import { BankLogo } from '../../ui/BankLogo';
 import { DesktopPagination } from '../../ui/DesktopPagination';
@@ -61,11 +62,11 @@ export const detectBankBrand = (note: string, category: string, type: string): B
     return {
       brand: 'khqr',
       shortLabel: 'KHQR',
-      name: 'Bakong KHQR',
-      badgeBg: '#E11D48',
-      badgeText: '#FFFFFF',
-      badgeBorder: '#BE123C',
-      icon: 'apps-2-line',
+      name: 'KHQR / Bakong',
+      badgeBg: '#7F1D1D',
+      badgeText: '#FCA5A5',
+      badgeBorder: '#991B1B',
+      icon: 'bank-card-line',
     };
   }
   if (upper.includes('WING')) {
@@ -252,6 +253,7 @@ const getCategoryLabel = (cat: string, lang: string) => {
 export const PersonalFinanceModule: React.FC = () => {
   const language = useLanguageStore((state) => state.language);
   const t = useLanguageStore((state) => state.t);
+  const tokens = useThemeStore((state) => state.tokens);
   const finances = useDesktopStore((state) => state.finances);
   const logExpenseWithAi = useDesktopStore((state) => state.logExpenseWithAi);
   const deleteFinanceRecord = useDesktopStore((state) => state.deleteFinanceRecord);
@@ -383,14 +385,14 @@ export const PersonalFinanceModule: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: tokens.windowBg }]}>
       {/* Top Header Rail (44px) - Fixed */}
-      <View style={styles.topRail}>
+      <View style={[styles.topRail, { backgroundColor: tokens.surfaceBg, borderBottomColor: tokens.borderSubtle }]}>
         <View style={styles.headerLeft}>
-          <Text style={styles.moduleTitle}>{t.finTitle}</Text>
-          <View style={styles.bankLedgerBadge}>
+          <Text style={[styles.moduleTitle, { color: tokens.textPrimary }]}>{t.finTitle}</Text>
+          <View style={[styles.bankLedgerBadge, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
             <View style={styles.liveIndicatorDot} />
-            <Text style={styles.bankLedgerBadgeText}>
+            <Text style={[styles.bankLedgerBadgeText, { color: tokens.textSecondary }]}>
               {filteredFinances.length.toLocaleString()} {language === 'kh' ? 'ប្រតិបត្តិការ' : 'Transactions'}
             </Text>
           </View>
@@ -401,7 +403,8 @@ export const PersonalFinanceModule: React.FC = () => {
           <TouchableOpacity
             style={[
               styles.calendarLinkBtn,
-              selectedPeriod !== 'all' && styles.calendarLinkBtnActive,
+              { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+              selectedPeriod !== 'all' && { borderColor: tokens.accentColor, backgroundColor: tokens.accentSoft },
             ]}
             onPress={() => setShowCalendarFilterModal(true)}
             activeOpacity={0.7}
@@ -409,12 +412,13 @@ export const PersonalFinanceModule: React.FC = () => {
             <RemixIcon
               name="calendar-line"
               size={13}
-              color={selectedPeriod !== 'all' ? '#2563EB' : '#0F172A'}
+              color={selectedPeriod !== 'all' ? tokens.accentColor : tokens.textSecondary}
             />
             <Text
               style={[
                 styles.calendarLinkBtnText,
-                selectedPeriod !== 'all' && styles.calendarLinkBtnTextActive,
+                { color: tokens.textPrimary },
+                selectedPeriod !== 'all' && { color: tokens.accentColor, fontWeight: '700' },
               ]}
             >
               {selectedPeriod === 'all'
@@ -432,14 +436,14 @@ export const PersonalFinanceModule: React.FC = () => {
                 }}
                 hitSlop={4}
               >
-                <RemixIcon name="close-circle-fill" size={12} color="#2563EB" />
+                <RemixIcon name="close-circle-fill" size={12} color={tokens.accentColor} />
               </TouchableOpacity>
             )}
           </TouchableOpacity>
 
           {/* Import Statement Button */}
           <TouchableOpacity
-            style={styles.importHeaderBtn}
+            style={[styles.importHeaderBtn, { borderColor: '#86EFAC', backgroundColor: '#F0FDF4' }]}
             onPress={() => setShowImportModal(true)}
             activeOpacity={0.8}
           >
@@ -450,17 +454,26 @@ export const PersonalFinanceModule: React.FC = () => {
           </TouchableOpacity>
 
           {/* All / Expense / Income Type Filter */}
-          <View style={styles.tabGroup}>
+          <View style={[styles.tabGroup, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
             {(['all', 'expense', 'income'] as const).map((tab) => (
               <Pressable
                 key={tab}
-                style={[styles.tab, filterType === tab && styles.tabActive]}
+                style={[
+                  styles.tab,
+                  filterType === tab && { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle, borderWidth: 1 },
+                ]}
                 onPress={() => {
                   setFilterType(tab);
                   setPage(1);
                 }}
               >
-                <Text style={[styles.tabText, filterType === tab && styles.tabTextActive]}>
+                <Text
+                  style={[
+                    styles.tabText,
+                    { color: filterType === tab ? tokens.textPrimary : tokens.textSecondary },
+                    filterType === tab && { fontWeight: '700' },
+                  ]}
+                >
                   {tab === 'all' ? t.planAll : tab === 'expense' ? t.finExpense : t.finIncome}
                 </Text>
               </Pressable>
@@ -470,20 +483,20 @@ export const PersonalFinanceModule: React.FC = () => {
       </View>
 
       {/* Fixed Top Controls & Bank KPI Section (Never Scrolls) */}
-      <View style={styles.fixedTopSection}>
+      <View style={[styles.fixedTopSection, { backgroundColor: tokens.windowBg }]}>
         {/* Top Deck: 3 Clean FinTech Stat Cards */}
         <View style={styles.statsGrid}>
           {/* 1. HERO NET BALANCE CARD */}
-          <View style={styles.statCard}>
+          <View style={[styles.statCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
             <View style={styles.statTop}>
               <View style={styles.statTitleGroup}>
-                <Text style={styles.statLabel}>{language === 'kh' ? 'សមតុល្យសរុប' : 'NET BALANCE'}</Text>
-                <View style={styles.currencyBadge}>
-                  <Text style={styles.currencyBadgeText}>USD</Text>
+                <Text style={[styles.statLabel, { color: tokens.textSecondary }]}>{language === 'kh' ? 'សមតុល្យសរុប' : 'NET BALANCE'}</Text>
+                <View style={[styles.currencyBadge, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                  <Text style={[styles.currencyBadgeText, { color: tokens.textSecondary }]}>USD</Text>
                 </View>
               </View>
-              <View style={[styles.statIconBox, { backgroundColor: '#F1F5F9', borderColor: '#E2E8F0' }]}>
-                <RemixIcon name="bank-card-line" size={12} color="#0F172A" />
+              <View style={[styles.statIconBox, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                <RemixIcon name="bank-card-line" size={12} color={tokens.textPrimary} />
               </View>
             </View>
             <Text
@@ -494,7 +507,7 @@ export const PersonalFinanceModule: React.FC = () => {
             >
               {netSavings >= 0 ? '+' : '-'}${Math.abs(netSavings).toLocaleString('en-US', { minimumFractionDigits: 2 })}
             </Text>
-            <Text style={styles.statSub}>
+            <Text style={[styles.statSub, { color: tokens.textSecondary }]}>
               {selectedPeriod === 'all'
                 ? language === 'kh'
                   ? 'សមតុល្យសរុបគ្រប់ពេលវេលា'
@@ -506,9 +519,9 @@ export const PersonalFinanceModule: React.FC = () => {
           </View>
 
           {/* 2. INFLOW CARD (GREEN) */}
-          <View style={styles.statCard}>
+          <View style={[styles.statCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
             <View style={styles.statTop}>
-              <Text style={styles.statLabel}>{language === 'kh' ? 'ចំណូលសរុប (INFLOW)' : 'TOTAL INFLOW'}</Text>
+              <Text style={[styles.statLabel, { color: tokens.textSecondary }]}>{language === 'kh' ? 'ចំណូលសរុប (INFLOW)' : 'TOTAL INFLOW'}</Text>
               <View style={[styles.statIconBox, { backgroundColor: '#DCFCE7', borderColor: '#BBF7D0' }]}>
                 <RemixIcon name="arrow-down-line" size={12} color="#16A34A" />
               </View>
@@ -516,15 +529,15 @@ export const PersonalFinanceModule: React.FC = () => {
             <Text style={[styles.statValue, { color: '#16A34A' }]}>
               +${totalIncome.toLocaleString('en-US', { minimumFractionDigits: 2 })}
             </Text>
-            <Text style={styles.statSub}>
+            <Text style={[styles.statSub, { color: tokens.textSecondary }]}>
               {language === 'kh' ? 'ចំណូលសរុបចូលគណនី' : 'Total money received'}
             </Text>
           </View>
 
           {/* 3. OUTFLOW CARD (RED) */}
-          <View style={styles.statCard}>
+          <View style={[styles.statCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
             <View style={styles.statTop}>
-              <Text style={styles.statLabel}>{language === 'kh' ? 'ចំណាយសរុប (OUTFLOW)' : 'TOTAL OUTFLOW'}</Text>
+              <Text style={[styles.statLabel, { color: tokens.textSecondary }]}>{language === 'kh' ? 'ចំណាយសរុប (OUTFLOW)' : 'TOTAL OUTFLOW'}</Text>
               <View style={[styles.statIconBox, { backgroundColor: '#FEE2E2', borderColor: '#FECACA' }]}>
                 <RemixIcon name="arrow-up-line" size={12} color="#DC2626" />
               </View>
@@ -532,7 +545,7 @@ export const PersonalFinanceModule: React.FC = () => {
             <Text style={[styles.statValue, { color: '#DC2626' }]}>
               -${totalExpense.toLocaleString('en-US', { minimumFractionDigits: 2 })}
             </Text>
-            <Text style={styles.statSub}>
+            <Text style={[styles.statSub, { color: tokens.textSecondary }]}>
               {language === 'kh' ? 'ចំណាយសរុបបានទូទាត់' : 'Total expenses paid'}
             </Text>
           </View>

@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useDesktopStore } from '../../../store/useDesktopStore';
 import { useTelegramStore } from '../../../store/useTelegramStore';
+import { useThemeStore } from '../../../store/useThemeStore';
 import { RemixIcon } from '../../ui/RemixIcon';
 import { RichMarkdownView } from '../../ui/RichMarkdownView';
 import { CustomSelect } from '../../ui/CustomSelect';
@@ -32,6 +33,7 @@ const SLASH_COMMANDS = [
 ];
 
 export const AICopilotModule: React.FC = () => {
+  const tokens = useThemeStore((state) => state.tokens);
   const aiModels = useDesktopStore((state) => state.aiModels);
   const selectedModel = useDesktopStore((state) => state.selectedModel);
   const setSelectedModel = useDesktopStore((state) => state.setSelectedModel);
@@ -182,11 +184,11 @@ export const AICopilotModule: React.FC = () => {
   ];
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: tokens.windowBg }]}>
       {/* Top Header Rail */}
-      <View style={styles.topRail}>
+      <View style={[styles.topRail, { backgroundColor: tokens.surfaceBg, borderBottomColor: tokens.borderSubtle }]}>
         <View style={styles.headerLeft}>
-          <Text style={styles.moduleTitle}>Copilot</Text>
+          <Text style={[styles.moduleTitle, { color: tokens.textPrimary }]}>Copilot</Text>
 
           {/* Model Selector Pill */}
           <CustomSelect
@@ -205,7 +207,7 @@ export const AICopilotModule: React.FC = () => {
 
         <View style={styles.headerRight}>
           <TouchableOpacity
-            style={styles.clearChatBtn}
+            style={[styles.clearChatBtn, { borderColor: tokens.borderSubtle, backgroundColor: tokens.surfaceMuted }]}
             onPress={() => {
               clearAiMessages();
               toast.info('Chat Cleared', 'Conversation history reset.');
@@ -213,8 +215,8 @@ export const AICopilotModule: React.FC = () => {
             activeOpacity={0.7}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <RemixIcon name="delete-bin-line" size={13} color="#64748B" />
-            <Text style={styles.clearChatText}>Clear</Text>
+            <RemixIcon name="delete-bin-line" size={13} color={tokens.textSecondary} />
+            <Text style={[styles.clearChatText, { color: tokens.textSecondary }]}>Clear</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -231,13 +233,13 @@ export const AICopilotModule: React.FC = () => {
         {chatMessages.length === 0 ? (
           <View style={styles.cockpitContainer}>
             {/* 1. Header Banner: Greeting & Live Status */}
-            <View style={styles.cockpitBanner}>
+            <View style={[styles.cockpitBanner, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
               <View style={styles.cockpitBannerLeft}>
-                <View style={styles.cockpitAvatarBadge}>
-                  <RemixIcon name="sparkles-fill" size={16} color="#6366F1" />
+                <View style={[styles.cockpitAvatarBadge, { backgroundColor: tokens.accentSoft }]}>
+                  <RemixIcon name="sparkles-fill" size={16} color={tokens.accentColor} />
                 </View>
                 <View>
-                  <Text style={styles.cockpitGreetingTitle}>
+                  <Text style={[styles.cockpitGreetingTitle, { color: tokens.textPrimary }]}>
                     {getGreeting()}, Dara
                   </Text>
                 </View>
@@ -264,17 +266,17 @@ export const AICopilotModule: React.FC = () => {
             <View style={styles.insightGrid}>
               {/* Card 1: Today's Priorities */}
               <TouchableOpacity
-                style={styles.insightCard}
+                style={[styles.insightCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}
                 onPress={() => setActiveModule('planner')}
                 activeOpacity={0.85}
               >
-                <View style={styles.insightCardHeader}>
+                <View style={[styles.insightCardHeader, { borderBottomColor: tokens.borderSubtle }]}>
                   <View style={styles.insightHeaderTitleBox}>
-                    <RemixIcon name="checkbox-circle-fill" size={14} color="#6366F1" />
-                    <Text style={styles.insightCardTitle}>Daily Priorities</Text>
+                    <RemixIcon name="checkbox-circle-fill" size={14} color={tokens.accentColor} />
+                    <Text style={[styles.insightCardTitle, { color: tokens.textPrimary }]}>Daily Priorities</Text>
                   </View>
-                  <View style={styles.insightCountBadge}>
-                    <Text style={styles.insightCountBadgeText}>{pendingTasks.length}</Text>
+                  <View style={[styles.insightCountBadge, { backgroundColor: tokens.accentSoft }]}>
+                    <Text style={[styles.insightCountBadgeText, { color: tokens.accentColor }]}>{pendingTasks.length}</Text>
                   </View>
                 </View>
                 <View style={styles.insightCardBody}>
@@ -619,12 +621,13 @@ export const AICopilotModule: React.FC = () => {
         <View
           style={[
             styles.inputCard,
-            isInputFocused && styles.inputCardFocused,
+            { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
+            isInputFocused && { borderColor: tokens.accentColor },
             isRecording && styles.inputCardRecording,
           ]}
         >
           <TextInput
-            style={styles.input}
+            style={[styles.input, { color: tokens.textPrimary }]}
             value={input}
             onChangeText={(text) => {
               setInput(text);
@@ -635,7 +638,7 @@ export const AICopilotModule: React.FC = () => {
                 ? `Recording audio (${recordingSeconds}s)... click mic icon to complete`
                 : `Ask ${selectedModel} anything, type '/' for commands...`
             }
-            placeholderTextColor="#94A3B8"
+            placeholderTextColor={tokens.textMuted}
             onSubmitEditing={handleSend}
             returnKeyType="send"
             multiline={false}
@@ -644,21 +647,21 @@ export const AICopilotModule: React.FC = () => {
           />
 
           {/* Action Toolbar Bottom Bar */}
-          <View style={styles.inputToolbar}>
+          <View style={[styles.inputToolbar, { borderTopColor: tokens.borderSubtle }]}>
             <View style={styles.toolbarLeft}>
               {/* Attachment Button */}
               <TouchableOpacity
-                style={styles.toolIconBtn}
+                style={[styles.toolIconBtn, { backgroundColor: tokens.surfaceMuted }]}
                 onPress={handleAddAttachment}
                 activeOpacity={0.7}
                 hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
               >
-                <RemixIcon name="attachment-line" size={14} color="#64748B" />
+                <RemixIcon name="attachment-line" size={14} color={tokens.textSecondary} />
               </TouchableOpacity>
 
               {/* Slash Commands Button */}
               <TouchableOpacity
-                style={[styles.toolIconBtn, showSlashMenu && styles.toolIconBtnActive]}
+                style={[styles.toolIconBtn, { backgroundColor: tokens.surfaceMuted }, showSlashMenu && { backgroundColor: tokens.accentSoft }]}
                 onPress={() => setShowSlashMenu(!showSlashMenu)}
                 activeOpacity={0.7}
                 hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
@@ -666,13 +669,13 @@ export const AICopilotModule: React.FC = () => {
                 <RemixIcon
                   name="code-line"
                   size={14}
-                  color={showSlashMenu ? '#2563EB' : '#64748B'}
+                  color={showSlashMenu ? tokens.accentColor : tokens.textSecondary}
                 />
               </TouchableOpacity>
 
               {/* Voice / Mic Button */}
               <TouchableOpacity
-                style={[styles.toolIconBtn, isRecording && styles.toolIconBtnRecording]}
+                style={[styles.toolIconBtn, { backgroundColor: tokens.surfaceMuted }, isRecording && styles.toolIconBtnRecording]}
                 onPress={toggleRecording}
                 activeOpacity={0.7}
                 hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
@@ -680,19 +683,20 @@ export const AICopilotModule: React.FC = () => {
                 <RemixIcon
                   name="mic-line"
                   size={14}
-                  color={isRecording ? '#EF4444' : '#64748B'}
+                  color={isRecording ? '#EF4444' : tokens.textSecondary}
                 />
                 {isRecording && <View style={styles.recordingPulseDot} />}
               </TouchableOpacity>
             </View>
 
             <View style={styles.toolbarRight}>
-              <Text style={styles.shortcutHint}>↵ Send</Text>
+              <Text style={[styles.shortcutHint, { color: tokens.textMuted }]}>↵ Send</Text>
 
               {/* Send Button */}
               <TouchableOpacity
                 style={[
                   styles.sendButton,
+                  { backgroundColor: tokens.accentColor },
                   (!input.trim() && attachments.length === 0) && styles.sendButtonDisabled,
                 ]}
                 onPress={handleSend}

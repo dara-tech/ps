@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useDesktopStore } from '../../../store/useDesktopStore';
 import { useLanguageStore } from '../../../store/useLanguageStore';
+import { useThemeStore } from '../../../store/useThemeStore';
 import { RemixIcon } from '../../ui/RemixIcon';
 import { CustomTextInput } from '../../ui/CustomTextInput';
 import { CustomSelect } from '../../ui/CustomSelect';
@@ -71,6 +72,7 @@ const TIME_SLOTS = Array.from({ length: 18 }, (_, i) => {
 export const CalendarModule: React.FC = () => {
   const t = useLanguageStore((state) => state.t);
   const language = useLanguageStore((state) => state.language);
+  const tokens = useThemeStore((state) => state.tokens);
   const calendarEvents = useDesktopStore((state) => state.calendarEvents);
   const tasks = useDesktopStore((state) => state.tasks);
   const finances = useDesktopStore((state) => state.finances);
@@ -458,25 +460,25 @@ export const CalendarModule: React.FC = () => {
   const currentMinutes = new Date().getMinutes();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: tokens.windowBg }]}>
       {/* Top Header Rail */}
-      <View style={styles.topRail}>
+      <View style={[styles.topRail, { backgroundColor: tokens.surfaceBg, borderBottomColor: tokens.borderSubtle }]}>
         <View style={styles.headerLeft}>
-          <Text style={styles.moduleTitle}>{t.calTitle}</Text>
+          <Text style={[styles.moduleTitle, { color: tokens.textPrimary }]}>{t.calTitle}</Text>
 
           {/* Month / Year / Day Navigator */}
           <View style={styles.navControls}>
-            <View style={styles.monthNavPill}>
+            <View style={[styles.monthNavPill, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
               <TouchableOpacity
-                style={styles.arrowBtn}
+                style={[styles.arrowBtn, { backgroundColor: tokens.surfaceMuted }]}
                 onPress={handlePrev}
                 activeOpacity={0.7}
                 hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
               >
-                <RemixIcon name="chevron-left-line" size={13} color="#64748B" />
+                <RemixIcon name="chevron-left-line" size={13} color={tokens.textSecondary} />
               </TouchableOpacity>
 
-              <Text style={styles.monthTitle}>
+              <Text style={[styles.monthTitle, { color: tokens.textPrimary }]}>
                 {viewMode === 'year'
                   ? `${year}`
                   : viewMode === 'day'
@@ -485,31 +487,35 @@ export const CalendarModule: React.FC = () => {
               </Text>
 
               <TouchableOpacity
-                style={styles.arrowBtn}
+                style={[styles.arrowBtn, { backgroundColor: tokens.surfaceMuted }]}
                 onPress={handleNext}
                 activeOpacity={0.7}
                 hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
               >
-                <RemixIcon name="chevron-right-line" size={13} color="#64748B" />
+                <RemixIcon name="chevron-right-line" size={13} color={tokens.textSecondary} />
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={styles.todayBtn} onPress={handleToday} activeOpacity={0.7}>
-              <Text style={styles.todayBtnText}>{t.calToday}</Text>
+            <TouchableOpacity
+              style={[styles.todayBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
+              onPress={handleToday}
+              activeOpacity={0.7}
+            >
+              <Text style={[styles.todayBtnText, { color: tokens.textPrimary }]}>{t.calToday}</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.headerRight}>
-          <View style={styles.viewModeGroup}>
+          <View style={[styles.viewModeGroup, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
             {(['year', 'month', 'day', 'agenda'] as const).map((mode) => (
               <TouchableOpacity
                 key={mode}
-                style={[styles.viewModeBtn, viewMode === mode && styles.viewModeBtnActive]}
+                style={[styles.viewModeBtn, viewMode === mode && { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle, borderWidth: 1 }]}
                 onPress={() => setViewMode(mode)}
                 activeOpacity={0.7}
               >
-                <Text style={[styles.viewModeText, viewMode === mode && styles.viewModeTextActive]}>
+                <Text style={[styles.viewModeText, { color: viewMode === mode ? tokens.textPrimary : tokens.textSecondary }]}>
                   {mode === 'year' ? t.calYear : mode === 'month' ? t.calMonth : mode === 'day' ? t.calDay : t.calAgenda}
                 </Text>
               </TouchableOpacity>
@@ -517,15 +523,15 @@ export const CalendarModule: React.FC = () => {
           </View>
 
           <TouchableOpacity
-            style={styles.addEventBtn}
+            style={[styles.addEventBtn, { backgroundColor: tokens.accentColor }]}
             onPress={() => {
               setEventDate(selectedDateStr);
               setShowAddModal(true);
             }}
             activeOpacity={0.75}
           >
-            <RemixIcon name="add-line" size={13} color="#FFFFFF" />
-            <Text style={styles.addEventBtnText}>{t.calNewEvent}</Text>
+            <RemixIcon name="add-line" size={13} color={tokens.accentFg} />
+            <Text style={[styles.addEventBtnText, { color: tokens.accentFg }]}>{t.calNewEvent}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -534,49 +540,49 @@ export const CalendarModule: React.FC = () => {
       {viewMode === 'month' && (
         <View style={styles.bodyLayout}>
           {/* Monthly Calendar Grid */}
-          <View style={[styles.gridContainer, !isRightPanelVisible && styles.gridContainerFull]}>
+          <View style={[styles.gridContainer, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }, !isRightPanelVisible && styles.gridContainerFull]}>
             {/* Monthly Executive Insight Strip */}
-            <View style={styles.monthInsightStrip}>
-              <View style={styles.insightStripItem}>
+            <View style={[styles.monthInsightStrip, { backgroundColor: tokens.surfaceBg, borderBottomColor: tokens.borderSubtle }]}>
+              <View style={[styles.insightStripItem, { backgroundColor: tokens.surfaceBg, borderRightColor: tokens.borderSubtle }]}>
                 <View style={[styles.insightStripIconWrap, { backgroundColor: '#FEF2F2' }]}>
                   <RemixIcon name="bank-card-line" size={11} color="#DC2626" />
                 </View>
-                <Text style={styles.insightStripLabel}>{isKh ? 'លំហូរសាច់ប្រាក់:' : 'Cashflow:'}</Text>
+                <Text style={[styles.insightStripLabel, { color: tokens.textSecondary }]}>{isKh ? 'លំហូរសាច់ប្រាក់:' : 'Cashflow:'}</Text>
                 <Text style={[styles.insightStripVal, { color: '#DC2626' }]}>-${selectedDayFinance.expense.toLocaleString()}</Text>
-                <Text style={styles.insightStripDivider}>/</Text>
+                <Text style={[styles.insightStripDivider, { color: tokens.borderSubtle }]}>/</Text>
                 <Text style={[styles.insightStripVal, { color: '#16A34A' }]}>+${selectedDayFinance.income.toLocaleString()}</Text>
               </View>
 
-              <View style={styles.insightStripItem}>
-                <View style={[styles.insightStripIconWrap, { backgroundColor: '#F1F5F9' }]}>
-                  <RemixIcon name="github-fill" size={11} color="#0F172A" />
+              <View style={[styles.insightStripItem, { backgroundColor: tokens.surfaceBg, borderRightColor: tokens.borderSubtle }]}>
+                <View style={[styles.insightStripIconWrap, { backgroundColor: tokens.surfaceMuted }]}>
+                  <RemixIcon name="github-fill" size={11} color={tokens.textPrimary} />
                 </View>
-                <Text style={styles.insightStripLabel}>{isKh ? 'សកម្មភាព Git:' : 'Git Activity:'}</Text>
-                <Text style={styles.insightStripValDark}>{monthGitCommitsCount} {isKh ? 'commits' : 'commits'}</Text>
+                <Text style={[styles.insightStripLabel, { color: tokens.textSecondary }]}>{isKh ? 'សកម្មភាព Git:' : 'Git Activity:'}</Text>
+                <Text style={[styles.insightStripValDark, { color: tokens.textPrimary }]}>{monthGitCommitsCount} {isKh ? 'commits' : 'commits'}</Text>
               </View>
 
-              <View style={styles.insightStripItem}>
+              <View style={[styles.insightStripItem, { backgroundColor: tokens.surfaceBg, borderRightColor: tokens.borderSubtle }]}>
                 <View style={[styles.insightStripIconWrap, { backgroundColor: '#EEF2FF' }]}>
                   <RemixIcon name="checkbox-circle-fill" size={11} color="#6366F1" />
                 </View>
-                <Text style={styles.insightStripLabel}>{isKh ? 'កិច្ចការ Sprint:' : 'Sprint Tasks:'}</Text>
-                <Text style={styles.insightStripValDark}>{monthCompletedTasksCount} {isKh ? 'រួចរាល់' : 'done'} / {monthPendingTasksCount} {isKh ? 'រង់ចាំ' : 'pending'}</Text>
+                <Text style={[styles.insightStripLabel, { color: tokens.textSecondary }]}>{isKh ? 'កិច្ចការ Sprint:' : 'Sprint Tasks:'}</Text>
+                <Text style={[styles.insightStripValDark, { color: tokens.textPrimary }]}>{monthCompletedTasksCount} {isKh ? 'រួចរាល់' : 'done'} / {monthPendingTasksCount} {isKh ? 'រង់ចាំ' : 'pending'}</Text>
               </View>
 
-              <View style={[styles.insightStripItem, { borderRightWidth: 0 }]}>
+              <View style={[styles.insightStripItem, { backgroundColor: tokens.surfaceBg, borderRightWidth: 0 }]}>
                 <View style={[styles.insightStripIconWrap, { backgroundColor: '#EFF6FF' }]}>
                   <RemixIcon name="calendar-line" size={11} color="#2563EB" />
                 </View>
-                <Text style={styles.insightStripLabel}>{isKh ? 'កាលវិភាគ:' : 'Schedule:'}</Text>
-                <Text style={styles.insightStripValDark}>{monthScheduledEventsCount} {isKh ? 'ព្រឹត្តិការណ៍' : 'events'}</Text>
+                <Text style={[styles.insightStripLabel, { color: tokens.textSecondary }]}>{isKh ? 'កាលវិភាគ:' : 'Schedule:'}</Text>
+                <Text style={[styles.insightStripValDark, { color: tokens.textPrimary }]}>{monthScheduledEventsCount} {isKh ? 'ព្រឹត្តិការណ៍' : 'events'}</Text>
               </View>
             </View>
 
             {/* Days of Week Header (Seamlessly attached below insight strip) */}
-            <View style={styles.weekHeader}>
+            <View style={[styles.weekHeader, { backgroundColor: tokens.surfaceMuted, borderBottomColor: tokens.borderSubtle }]}>
               {daysOfWeek.map((d) => (
                 <View key={d} style={styles.weekHeaderCol}>
-                  <Text style={styles.weekHeaderText}>{d.toUpperCase()}</Text>
+                  <Text style={[styles.weekHeaderText, { color: tokens.textSecondary }]}>{d.toUpperCase()}</Text>
                 </View>
               ))}
             </View>
@@ -600,37 +606,33 @@ export const CalendarModule: React.FC = () => {
                     key={idx}
                     style={[
                       styles.dayCell,
-                      !item.isCurrentMonth && styles.dayCellDimmed,
-                      item.isCurrentMonth && !isSelected && !item.isToday && isHeavyBusy && styles.dayCellHeavyBg,
-                      item.isCurrentMonth && !isSelected && !item.isToday && isMediumBusy && styles.dayCellMediumBg,
-                      item.isCurrentMonth && !isSelected && !item.isToday && isLightBusy && styles.dayCellLightBg,
-                      isSelected && styles.dayCellSelected,
-                      item.isToday && styles.dayCellToday,
+                      { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
+                      !item.isCurrentMonth && { backgroundColor: tokens.surfaceMuted },
+                      isSelected && { backgroundColor: tokens.accentSoft },
+                      item.isToday && { backgroundColor: tokens.surfaceMuted },
                     ]}
                     onPress={() => handleDayCellClick(item.dateStr)}
                     activeOpacity={0.7}
                   >
                     {/* Top-Left Corner Triangle Flag */}
-                    {item.isToday && <View style={styles.todayCornerTriangle} />}
-                    {isSelected && !item.isToday && <View style={styles.selectedCornerTriangle} />}
+                    {item.isToday && <View style={[styles.todayCornerTriangle, { borderTopColor: tokens.accentColor }]} />}
+                    {isSelected && !item.isToday && <View style={[styles.selectedCornerTriangle, { borderTopColor: tokens.accentColor }]} />}
 
                     <View style={styles.dayCellTop}>
                       <View
                         style={[
                           styles.dayNumberCircle,
-                          item.isToday && styles.dayNumberCircleToday,
-                          isSelected && !item.isToday && styles.dayNumberCircleSelected,
+                          item.isToday && { backgroundColor: tokens.accentSoft },
+                          isSelected && !item.isToday && { backgroundColor: tokens.accentSoft },
                         ]}
                       >
                         <Text
                           style={[
                             styles.dayNumberText,
-                            !item.isCurrentMonth && styles.dayNumberDimmed,
-                            item.isToday && styles.dayNumberTextToday,
-                            isSelected && !item.isToday && styles.dayNumberTextSelected,
-                            !item.isToday && !isSelected && isHeavyBusy && styles.dayNumberTextHeavy,
-                            !item.isToday && !isSelected && isMediumBusy && styles.dayNumberTextMedium,
-                            !item.isToday && !isSelected && isLightBusy && styles.dayNumberTextLight,
+                            { color: tokens.textPrimary },
+                            !item.isCurrentMonth && { color: tokens.textMuted },
+                            item.isToday && { color: tokens.accentColor, fontWeight: '700' },
+                            isSelected && !item.isToday && { color: tokens.accentColor, fontWeight: '700' },
                           ]}
                         >
                           {item.dayNumber}
@@ -743,9 +745,9 @@ export const CalendarModule: React.FC = () => {
 
           {/* Right: Selected Day Timeline & Details (Toggled via Top Nav Right Panel button) */}
           {isRightPanelVisible && (
-            <View style={styles.sideAgenda}>
+            <View style={[styles.sideAgenda, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
               {/* Clean Agenda Toolbar (Search + Card/List Switcher + Close) */}
-              <View style={styles.agendaToolbar}>
+              <View style={[styles.agendaToolbar, { borderBottomColor: tokens.borderSubtle }]}>
                 <View style={styles.agendaSearchCol}>
                   <CustomTextInput
                     value={agendaSearch}
@@ -758,55 +760,54 @@ export const CalendarModule: React.FC = () => {
 
                 <View style={styles.agendaToolbarActions}>
                   {/* Card <-> List View Switcher */}
-                  <View style={styles.viewToggleGroup}>
+                  <View style={[styles.viewToggleGroup, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
                     <TouchableOpacity
-                      style={[styles.viewToggleBtn, agendaViewType === 'card' && styles.viewToggleBtnActive]}
+                      style={[styles.viewToggleBtn, agendaViewType === 'card' && { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}
                       onPress={() => setAgendaViewType('card')}
                       activeOpacity={0.7}
                     >
-                      <RemixIcon name="grid-line" size={12} color={agendaViewType === 'card' ? '#0F172A' : '#94A3B8'} />
+                      <RemixIcon name="grid-line" size={12} color={agendaViewType === 'card' ? tokens.textPrimary : tokens.textSecondary} />
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                      style={[styles.viewToggleBtn, agendaViewType === 'list' && styles.viewToggleBtnActive]}
+                      style={[styles.viewToggleBtn, agendaViewType === 'list' && { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}
                       onPress={() => setAgendaViewType('list')}
                       activeOpacity={0.7}
                     >
-                      <RemixIcon name="list-check-line" size={12} color={agendaViewType === 'list' ? '#0F172A' : '#94A3B8'} />
+                      <RemixIcon name="list-check-line" size={12} color={agendaViewType === 'list' ? tokens.textPrimary : tokens.textSecondary} />
                     </TouchableOpacity>
                   </View>
 
                   {/* Collapse Button */}
                   <TouchableOpacity
-                    style={styles.closeAgendaBtn}
+                    style={[styles.closeAgendaBtn, { borderColor: tokens.borderSubtle }]}
                     onPress={toggleRightPanel}
                     activeOpacity={0.7}
                     hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
                   >
-                    <RemixIcon name="close-line" size={13} color="#64748B" />
+                    <RemixIcon name="close-line" size={13} color={tokens.textSecondary} />
                   </TouchableOpacity>
                 </View>
               </View>
 
               {/* Scope Switcher: Selected Day vs GitHub Feed */}
-              <View style={styles.scopeTabBar}>
+              <View style={[styles.scopeTabBar, { borderBottomColor: tokens.borderSubtle, backgroundColor: tokens.surfaceMuted }]}>
                 <TouchableOpacity
-                  style={[styles.scopeTabBtn, agendaScope === 'selected' && styles.scopeTabBtnActive]}
+                  style={[styles.scopeTabBtn, agendaScope === 'selected' && { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle, borderBottomColor: tokens.surfaceBg }]}
                   onPress={() => setAgendaScope('selected')}
                   activeOpacity={0.75}
                 >
-                  <Text style={[styles.scopeTabText, agendaScope === 'selected' && styles.scopeTabTextActive]}>
+                  <Text style={[styles.scopeTabText, { color: agendaScope === 'selected' ? tokens.textPrimary : tokens.textSecondary }, agendaScope === 'selected' && { fontWeight: '700' }]}>
                     {language === 'kh' ? 'ថ្ងៃបានជ្រើស' : 'Selected Day'} ({selectedDateEvents.length})
                   </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={[styles.scopeTabBtn, agendaScope === 'github' && styles.scopeTabBtnActive]}
+                  style={[styles.scopeTabBtn, agendaScope === 'github' && { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle, borderBottomColor: tokens.surfaceBg }]}
                   onPress={() => setAgendaScope('github')}
                   activeOpacity={0.75}
                 >
-                  <RemixIcon name="github-fill" size={11} color={agendaScope === 'github' ? '#0F172A' : '#64748B'} />
-                  <Text style={[styles.scopeTabText, agendaScope === 'github' && styles.scopeTabTextActive]}>
+                  <Text style={[styles.scopeTabText, { color: agendaScope === 'github' ? tokens.textPrimary : tokens.textSecondary }, agendaScope === 'github' && { fontWeight: '700' }]}>
                     {language === 'kh' ? 'GitHub Feed' : 'Git Feed'} ({totalGhEvents.length})
                   </Text>
                 </TouchableOpacity>
@@ -815,11 +816,11 @@ export const CalendarModule: React.FC = () => {
               <ScrollView style={styles.agendaScroll} showsVerticalScrollIndicator={false}>
                 {filteredAgendaEvents.length === 0 && filteredAgendaTasks.length === 0 ? (
                   <View style={styles.agendaEmpty}>
-                    <View style={styles.agendaEmptyIcon}>
-                      <RemixIcon name="calendar-line" size={18} color="#94A3B8" />
+                    <View style={[styles.agendaEmptyIcon, { backgroundColor: tokens.surfaceMuted }]}>
+                      <RemixIcon name="calendar-line" size={18} color={tokens.textSecondary} />
                     </View>
-                    <Text style={styles.agendaEmptyTitle}>{t.calNoItemsFound}</Text>
-                    <Text style={styles.agendaEmptySub}>
+                    <Text style={[styles.agendaEmptyTitle, { color: tokens.textPrimary }]}>{t.calNoItemsFound}</Text>
+                    <Text style={[styles.agendaEmptySub, { color: tokens.textSecondary }]}>
                       {agendaSearch ? t.calNoMatches : t.calNothingScheduled}
                     </Text>
                   </View>
@@ -829,7 +830,11 @@ export const CalendarModule: React.FC = () => {
                     {paginatedSideEvents.map((ev) => (
                       <TouchableOpacity
                         key={ev.id}
-                        style={[styles.agendaCard, ev.isCompleted && styles.agendaCardCompleted]}
+                        style={[
+                          styles.agendaCard,
+                          { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
+                          ev.isCompleted && styles.agendaCardCompleted,
+                        ]}
                         onPress={() => {
                           if (ev.date) {
                             const parts = ev.date.split('-');
