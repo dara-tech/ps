@@ -390,12 +390,6 @@ export const PersonalFinanceModule: React.FC = () => {
       <View style={[styles.topRail, { backgroundColor: tokens.surfaceBg, borderBottomColor: tokens.borderSubtle }]}>
         <View style={styles.headerLeft}>
           <Text style={[styles.moduleTitle, { color: tokens.textPrimary }]}>{t.finTitle}</Text>
-          <View style={[styles.bankLedgerBadge, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
-            <View style={styles.liveIndicatorDot} />
-            <Text style={[styles.bankLedgerBadgeText, { color: tokens.textSecondary }]}>
-              {filteredFinances.length.toLocaleString()} {language === 'kh' ? 'ប្រតិបត្តិការ' : 'Transactions'}
-            </Text>
-          </View>
         </View>
 
         <View style={styles.headerRight}>
