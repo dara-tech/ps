@@ -1176,12 +1176,9 @@ export const CalendarModule: React.FC = () => {
                                 style={[
                                   styles.timelineEventCard,
                                   { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
-                                  isUrgent
-                                    ? styles.tlUrgent
-                                    : isHigh
-                                    ? styles.tlHigh
-                                    : styles.tlNormal,
-                                  ev.isCompleted && styles.tlCompleted,
+                                  isUrgent && { borderColor: '#EF4444' },
+                                  isHigh && { borderColor: '#F59E0B' },
+                                  ev.isCompleted && { opacity: 0.55 },
                                 ]}
                               >
                                 <View style={styles.tlCardHeader}>
@@ -1194,14 +1191,14 @@ export const CalendarModule: React.FC = () => {
                                             ? '#EF4444'
                                             : isHigh
                                             ? '#F59E0B'
-                                            : '#3B82F6',
+                                            : tokens.accentColor,
                                         },
                                       ]}
                                     />
                                     <Text
                                       style={[
                                         styles.tlEventTitle,
-                                        { color: tokens.textPrimary },
+                                        { color: ev.isCompleted ? tokens.textMuted : tokens.textPrimary },
                                         ev.isCompleted && styles.tlEventTitleCompleted,
                                       ]}
                                     >
@@ -2595,22 +2592,15 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     width: '100%',
   },
-  tlNormal: {
-    backgroundColor: '#EFF6FF',
-    borderColor: '#BFDBFE',
-  },
+  tlNormal: {},
   tlUrgent: {
-    backgroundColor: '#FEF2F2',
-    borderColor: '#FECACA',
+    borderColor: '#EF4444',
   },
   tlHigh: {
-    backgroundColor: '#FFFBEB',
-    borderColor: '#FDE68A',
+    borderColor: '#F59E0B',
   },
   tlCompleted: {
     opacity: 0.55,
-    backgroundColor: '#F8FAFC',
-    borderColor: '#E2E8F0',
   },
   tlCardHeader: {
     flexDirection: 'row',
