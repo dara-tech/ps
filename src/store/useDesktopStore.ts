@@ -214,27 +214,11 @@ export const useDesktopStore = create<DesktopState>((set, get) => ({
     }
     set({ personalContext: context });
   },
-  aiMessages: [
-    {
-      id: 'welcome-msg',
-      role: 'assistant',
-      content: GEMINI_WELCOME_MESSAGE,
-      timestamp: 'Just now',
-    },
-  ],
+  aiMessages: [],
 
   setSelectedModel: (model) => set({ selectedModel: model }),
 
-  clearAiMessages: () => set({
-    aiMessages: [
-      {
-        id: `welcome-msg-${Date.now()}`,
-        role: 'assistant',
-        content: GEMINI_WELCOME_MESSAGE,
-        timestamp: 'Just now',
-      },
-    ],
-  }),
+  clearAiMessages: () => set({ aiMessages: [] }),
 
   sendAiMessage: async (content: string) => {
     if (!content.trim()) return;

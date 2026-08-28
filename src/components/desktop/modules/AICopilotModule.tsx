@@ -52,6 +52,11 @@ export const AICopilotModule: React.FC = () => {
   const todaySpent = useMemo(() => finances.filter((f) => f.type === 'expense').reduce((sum, f) => sum + (f.amount || 0), 0), [finances]);
   const monthIncome = useMemo(() => finances.filter((f) => f.type === 'income').reduce((sum, f) => sum + (f.amount || 0), 0), [finances]);
 
+  const chatMessages = useMemo(
+    () => aiMessages.filter((msg) => !msg.id.startsWith('welcome-msg') && !msg.content.includes('Welcome to Gemini Copilot')),
+    [aiMessages]
+  );
+
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return 'Good morning';
@@ -222,8 +227,8 @@ export const AICopilotModule: React.FC = () => {
         showsVerticalScrollIndicator={false}
         onContentSizeChange={() => scrollToBottom(true)}
       >
-        {/* If initial landing / welcome state: Show Executive Insight Cockpit */}
-        {aiMessages.length <= 1 ? (
+        {/* If initial landing / empty state: Show Executive Insight Cockpit */}
+        {chatMessages.length === 0 ? (
           <View style={styles.cockpitContainer}>
             {/* 1. Header Banner: Greeting & Live Status */}
             <View style={styles.cockpitBanner}>
@@ -416,7 +421,7 @@ export const AICopilotModule: React.FC = () => {
             </View>
           </View>
         ) : (
-          aiMessages.map((msg) => {
+          chatMessages.map((msg) => {
             const isUser = msg.role === 'user';
             return (
               <View
