@@ -548,9 +548,13 @@ export const CalendarModule: React.FC = () => {
                   <RemixIcon name="bank-card-line" size={11} color="#DC2626" />
                 </View>
                 <Text style={[styles.insightStripLabel, { color: tokens.textSecondary }]}>{isKh ? 'លំហូរសាច់ប្រាក់:' : 'Cashflow:'}</Text>
-                <Text style={[styles.insightStripVal, { color: '#DC2626' }]}>-${selectedDayFinance.expense.toLocaleString()}</Text>
+                <Text style={[styles.insightStripVal, { color: selectedDayFinance.expense > 0 ? '#DC2626' : tokens.textSecondary }]}>
+                  {selectedDayFinance.expense > 0 ? `-$${selectedDayFinance.expense.toLocaleString()}` : '$0'}
+                </Text>
                 <Text style={[styles.insightStripDivider, { color: tokens.borderSubtle }]}>/</Text>
-                <Text style={[styles.insightStripVal, { color: '#16A34A' }]}>+${selectedDayFinance.income.toLocaleString()}</Text>
+                <Text style={[styles.insightStripVal, { color: selectedDayFinance.income > 0 ? '#16A34A' : tokens.textSecondary }]}>
+                  {selectedDayFinance.income > 0 ? `+$${selectedDayFinance.income.toLocaleString()}` : '$0'}
+                </Text>
               </View>
 
               <View style={[styles.insightStripItem, { backgroundColor: tokens.surfaceBg, borderRightColor: tokens.borderSubtle }]}>
@@ -607,7 +611,7 @@ export const CalendarModule: React.FC = () => {
                     style={[
                       styles.dayCell,
                       { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
-                      !item.isCurrentMonth && { backgroundColor: tokens.surfaceMuted },
+                      !item.isCurrentMonth && { opacity: 0.38, backgroundColor: tokens.surfaceMuted },
                       isSelected && { backgroundColor: tokens.accentSoft },
                       item.isToday && { backgroundColor: tokens.surfaceMuted },
                     ]}
@@ -629,8 +633,7 @@ export const CalendarModule: React.FC = () => {
                         <Text
                           style={[
                             styles.dayNumberText,
-                            { color: tokens.textPrimary },
-                            !item.isCurrentMonth && { color: tokens.textMuted },
+                            { color: item.isCurrentMonth ? tokens.textPrimary : tokens.textMuted },
                             item.isToday && { color: tokens.accentColor, fontWeight: '700' },
                             isSelected && !item.isToday && { color: tokens.accentColor, fontWeight: '700' },
                           ]}
