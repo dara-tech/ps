@@ -68,8 +68,8 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
   isKh,
 }) => {
   const tokens = useThemeStore((s) => s.tokens);
-  const pinTelegramChat = useTelegramStore((state) => state.pinChat);
-  const deleteTelegramChat = useTelegramStore((state) => state.deleteChat);
+  const typingStatus = useTelegramStore((s) => s.typingStatus);
+  const togglePinDialog = useTelegramStore((s) => s.togglePinDialog);
 
   const [contextMenu, setContextMenu] = useState<{
     visible: boolean;
