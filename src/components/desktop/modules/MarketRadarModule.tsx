@@ -317,13 +317,13 @@ export const MarketRadarModule: React.FC = () => {
                 setSelectedBrandId(null);
               }}
             >
-              <RemixIcon name="building-line" size={13} color="#0284C7" />
-              <Text style={styles.breadcrumbLink}>Home</Text>
+              <RemixIcon name="building-line" size={13} color={tokens.accentColor} />
+              <Text style={[styles.breadcrumbLink, { color: tokens.textSecondary }]}>Home</Text>
             </TouchableOpacity>
 
             {activeCategory && (
               <>
-                <Text style={styles.breadcrumbSep}>›</Text>
+                <Text style={[styles.breadcrumbSep, { color: tokens.textMuted }]}>›</Text>
                 <TouchableOpacity
                   style={styles.breadcrumbItem}
                   onPress={() => {
@@ -331,7 +331,7 @@ export const MarketRadarModule: React.FC = () => {
                     setSelectedBrandId(null);
                   }}
                 >
-                  <Text style={[styles.breadcrumbLink, !activeSubCategory && styles.breadcrumbActive]}>
+                  <Text style={[styles.breadcrumbLink, { color: tokens.textSecondary }, !activeSubCategory && { color: tokens.textPrimary, fontFamily: 'Krasar-Bold' }]}>
                     {activeCategory.name} in Cambodia
                   </Text>
                 </TouchableOpacity>
@@ -340,9 +340,9 @@ export const MarketRadarModule: React.FC = () => {
 
             {activeSubCategory && (
               <>
-                <Text style={styles.breadcrumbSep}>›</Text>
+                <Text style={[styles.breadcrumbSep, { color: tokens.textMuted }]}>›</Text>
                 <TouchableOpacity style={styles.breadcrumbItem} onPress={() => setSelectedBrandId(null)}>
-                  <Text style={[styles.breadcrumbLink, !selectedBrand && styles.breadcrumbActive]}>
+                  <Text style={[styles.breadcrumbLink, { color: tokens.textSecondary }, !selectedBrand && { color: tokens.textPrimary, fontFamily: 'Krasar-Bold' }]}>
                     {activeSubCategory.name} in Cambodia
                   </Text>
                 </TouchableOpacity>
@@ -351,8 +351,8 @@ export const MarketRadarModule: React.FC = () => {
 
             {selectedBrand && (
               <>
-                <Text style={styles.breadcrumbSep}>›</Text>
-                <Text style={styles.breadcrumbActive}>{selectedBrand.name}</Text>
+                <Text style={[styles.breadcrumbSep, { color: tokens.textMuted }]}>›</Text>
+                <Text style={[styles.breadcrumbActive, { color: tokens.textPrimary }]}>{selectedBrand.name}</Text>
               </>
             )}
           </View>
@@ -360,7 +360,7 @@ export const MarketRadarModule: React.FC = () => {
 
         {/* Clean Page Title (Title-Only Rule) */}
         <View style={styles.pageTitleRow}>
-          <Text style={styles.pageTitleText}>{currentHeading}</Text>
+          <Text style={[styles.pageTitleText, { color: tokens.textPrimary }]}>{currentHeading}</Text>
         </View>
 
         {/* Khmer24 Exact Filter Toolbar */}
@@ -368,74 +368,94 @@ export const MarketRadarModule: React.FC = () => {
           <View style={styles.filterLeftPills}>
             {/* Location Filter */}
             <TouchableOpacity
-              style={[styles.k24FilterPill, selectedLocation !== 'Location' && styles.k24FilterPillActive]}
+              style={[
+                styles.k24FilterPill,
+                { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+                selectedLocation !== 'Location' && { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder },
+              ]}
               onPress={() => setIsLocationModalOpen(true)}
               activeOpacity={0.8}
             >
-              <RemixIcon name="pushpin-line" size={13} color={selectedLocation !== 'Location' ? '#0284C7' : '#475569'} />
-              <Text style={[styles.k24FilterPillText, selectedLocation !== 'Location' && styles.k24FilterPillTextActive]}>
+              <RemixIcon name="pushpin-line" size={13} color={selectedLocation !== 'Location' ? tokens.accentColor : tokens.textSecondary} />
+              <Text style={[styles.k24FilterPillText, { color: selectedLocation !== 'Location' ? tokens.accentColor : tokens.textSecondary }]}>
                 {selectedLocation}
               </Text>
             </TouchableOpacity>
 
             {/* Sort Filter */}
             <TouchableOpacity
-              style={[styles.k24FilterPill, selectedSort !== 'newest' && styles.k24FilterPillActive]}
+              style={[
+                styles.k24FilterPill,
+                { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+                selectedSort !== 'newest' && { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder },
+              ]}
               onPress={() => setIsSortModalOpen(true)}
               activeOpacity={0.8}
             >
-              <Text style={[styles.k24FilterPillText, selectedSort !== 'newest' && styles.k24FilterPillTextActive]}>
+              <Text style={[styles.k24FilterPillText, { color: selectedSort !== 'newest' ? tokens.accentColor : tokens.textSecondary }]}>
                 {SORT_OPTIONS.find((s) => s.value === selectedSort)?.label}
               </Text>
             </TouchableOpacity>
 
             {/* Price Filter */}
             <TouchableOpacity
-              style={styles.k24FilterPill}
+              style={[styles.k24FilterPill, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
               onPress={() => setIsConditionModalOpen(true)}
               activeOpacity={0.8}
             >
-              <Text style={styles.k24FilterPillText}>Price</Text>
+              <Text style={[styles.k24FilterPillText, { color: tokens.textSecondary }]}>Price</Text>
             </TouchableOpacity>
 
             {/* Condition Filter */}
             <TouchableOpacity
-              style={[styles.k24FilterPill, selectedCondition !== 'all' && styles.k24FilterPillActive]}
+              style={[
+                styles.k24FilterPill,
+                { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+                selectedCondition !== 'all' && { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder },
+              ]}
               onPress={() => setIsConditionModalOpen(true)}
               activeOpacity={0.8}
             >
-              <Text style={[styles.k24FilterPillText, selectedCondition !== 'all' && styles.k24FilterPillTextActive]}>
+              <Text style={[styles.k24FilterPillText, { color: selectedCondition !== 'all' ? tokens.accentColor : tokens.textSecondary }]}>
                 {selectedCondition === 'all' ? 'Condition' : selectedCondition.toUpperCase()}
               </Text>
             </TouchableOpacity>
 
             {/* More Filters */}
             <TouchableOpacity
-              style={styles.k24FilterPill}
+              style={[styles.k24FilterPill, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
               onPress={() => setIsConditionModalOpen(true)}
               activeOpacity={0.8}
             >
-              <RemixIcon name="filter-3-line" size={13} color="#475569" />
-              <Text style={styles.k24FilterPillText}>More Filters</Text>
+              <RemixIcon name="filter-3-line" size={13} color={tokens.textSecondary} />
+              <Text style={[styles.k24FilterPillText, { color: tokens.textSecondary }]}>More Filters</Text>
             </TouchableOpacity>
           </View>
 
           {/* Right Toolbar View Toggles */}
           <View style={styles.filterRightTools}>
             <TouchableOpacity
-              style={[styles.toolIconBtn, viewMode === 'list' && styles.toolIconBtnActive]}
+              style={[
+                styles.toolIconBtn,
+                { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+                viewMode === 'list' && { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder },
+              ]}
               onPress={() => setViewMode('list')}
               activeOpacity={0.8}
             >
-              <RemixIcon name="list-check-line" size={15} color={viewMode === 'list' ? '#0284C7' : '#64748B'} />
+              <RemixIcon name="list-check-line" size={15} color={viewMode === 'list' ? tokens.accentColor : tokens.textSecondary} />
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.toolIconBtn, viewMode === 'grid' && styles.toolIconBtnActive]}
+              style={[
+                styles.toolIconBtn,
+                { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+                viewMode === 'grid' && { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder },
+              ]}
               onPress={() => setViewMode('grid')}
               activeOpacity={0.8}
             >
-              <RemixIcon name="grid-line" size={15} color={viewMode === 'grid' ? '#0284C7' : '#64748B'} />
+              <RemixIcon name="grid-line" size={15} color={viewMode === 'grid' ? tokens.accentColor : tokens.textSecondary} />
             </TouchableOpacity>
           </View>
         </View>
@@ -670,18 +690,18 @@ export const MarketRadarModule: React.FC = () => {
 
                     <View style={styles.k24ListBody}>
                       <View style={styles.k24ListTop}>
-                        <Text style={styles.k24ListTitle} numberOfLines={1}>
+                        <Text style={[styles.k24ListTitle, { color: tokens.textPrimary }]} numberOfLines={1}>
                           {item.title}
                         </Text>
                         <Text style={styles.k24ListPrice}>${item.price.toLocaleString()}</Text>
                       </View>
 
                       <View style={styles.k24ListBottom}>
-                        <Text style={styles.k24ListLocation}>📍 {item.location || 'Phnom Penh'}</Text>
-                        <View style={styles.k24ConditionChip}>
-                          <Text style={styles.k24ConditionChipText}>{item.condition || 'Used'}</Text>
+                        <Text style={[styles.k24ListLocation, { color: tokens.textSecondary }]}>📍 {item.location || 'Phnom Penh'}</Text>
+                        <View style={[styles.k24ConditionChip, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                          <Text style={[styles.k24ConditionChipText, { color: tokens.textSecondary }]}>{item.condition || 'Used'}</Text>
                         </View>
-                        <Text style={styles.k24DateText}>{item.postedDate || 'Active'}</Text>
+                        <Text style={[styles.k24DateText, { color: tokens.textSecondary }]}>{item.postedDate || 'Active'}</Text>
                       </View>
                     </View>
                   </TouchableOpacity>
