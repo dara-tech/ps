@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useDesktopStore, DesktopNavModule } from '../../store/useDesktopStore';
 import { useLanguageStore } from '../../store/useLanguageStore';
+import { useThemeStore } from '../../store/useThemeStore';
 import { MultiColorSidebarIcon } from '../ui/MultiColorSidebarIcon';
 
 interface NavItem {
@@ -14,6 +15,7 @@ export const DesktopSidebar: React.FC = () => {
   const setActiveModule = useDesktopStore((state) => state.setActiveModule);
   const sidebarMode = useDesktopStore((state) => state.sidebarMode);
   const isTopNavVisible = useDesktopStore((state) => state.isTopNavVisible);
+  const tokens = useThemeStore((state) => state.tokens);
   const t = useLanguageStore((state) => state.t);
 
   const isExpanded = sidebarMode === 'expanded';
@@ -33,6 +35,7 @@ export const DesktopSidebar: React.FC = () => {
     <View
       style={[
         styles.sidebar,
+        { backgroundColor: tokens.surfaceBg, borderRightColor: tokens.borderSubtle },
         isExpanded && styles.sidebarExpanded,
         !isTopNavVisible && { paddingTop: 38 },
       ]}
@@ -47,7 +50,10 @@ export const DesktopSidebar: React.FC = () => {
               style={[
                 styles.iconButton,
                 isExpanded && styles.iconButtonExpanded,
-                isActive && (isExpanded ? styles.iconButtonActiveExpanded : styles.iconButtonActive),
+                isActive && {
+                  backgroundColor: tokens.accentSoft,
+                  borderColor: tokens.accentBorder,
+                },
               ]}
               onPress={() => setActiveModule(item.id)}
               activeOpacity={0.75}
@@ -59,7 +65,11 @@ export const DesktopSidebar: React.FC = () => {
               />
               {isExpanded && (
                 <Text
-                  style={[styles.navLabel, isActive && styles.navLabelActive]}
+                  style={[
+                    styles.navLabel,
+                    { color: isActive ? tokens.textPrimary : tokens.textSecondary },
+                    isActive && { fontFamily: 'Krasar-Bold', fontWeight: '700' },
+                  ]}
                   numberOfLines={1}
                 >
                   {item.label}
@@ -76,7 +86,10 @@ export const DesktopSidebar: React.FC = () => {
           style={[
             styles.iconButton,
             isExpanded && styles.iconButtonExpanded,
-            activeModule === 'settings' && (isExpanded ? styles.iconButtonActiveExpanded : styles.iconButtonActive),
+            activeModule === 'settings' && {
+              backgroundColor: tokens.accentSoft,
+              borderColor: tokens.accentBorder,
+            },
           ]}
           onPress={() => setActiveModule('settings')}
           activeOpacity={0.75}
@@ -88,7 +101,11 @@ export const DesktopSidebar: React.FC = () => {
           />
           {isExpanded && (
             <Text
-              style={[styles.navLabel, activeModule === 'settings' && styles.navLabelActive]}
+              style={[
+                styles.navLabel,
+                { color: activeModule === 'settings' ? tokens.textPrimary : tokens.textSecondary },
+                activeModule === 'settings' && { fontFamily: 'Krasar-Bold', fontWeight: '700' },
+              ]}
               numberOfLines={1}
             >
               {t.navSettings}

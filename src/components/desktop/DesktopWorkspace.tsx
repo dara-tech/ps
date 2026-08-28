@@ -3,6 +3,7 @@ import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { useDesktopStore } from '../../store/useDesktopStore';
 import { DesktopHeader } from './DesktopHeader';
 import { DesktopSidebar } from './DesktopSidebar';
+import { useThemeStore } from '../../store/useThemeStore';
 import { AICopilotModule } from './modules/AICopilotModule';
 import { PersonalPlannerModule } from './modules/PersonalPlannerModule';
 import { PersonalFinanceModule } from './modules/PersonalFinanceModule';
@@ -21,6 +22,7 @@ export const DesktopWorkspace: React.FC = () => {
   const isLoading = useDesktopStore((state) => state.isLoading);
   const isSidebarVisible = useDesktopStore((state) => state.isSidebarVisible);
   const isTopNavVisible = useDesktopStore((state) => state.isTopNavVisible);
+  const tokens = useThemeStore((state) => state.tokens);
 
   useEffect(() => {
     fetchInitialData();
@@ -53,7 +55,7 @@ export const DesktopWorkspace: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: tokens.windowBg }]}>
       {/* Top Titlebar Header */}
       {isTopNavVisible && <DesktopHeader />}
 
@@ -63,10 +65,10 @@ export const DesktopWorkspace: React.FC = () => {
         {isSidebarVisible && <DesktopSidebar />}
 
         {/* Dynamic Domain Canvas */}
-        <View style={styles.canvasContainer}>
+        <View style={[styles.canvasContainer, { backgroundColor: tokens.windowBg }]}>
           {isLoading ? (
             <View style={styles.loadingBox}>
-              <ActivityIndicator size="large" color="#6366F1" />
+              <ActivityIndicator size="large" color={tokens.accentColor} />
             </View>
           ) : (
             renderActiveModule()

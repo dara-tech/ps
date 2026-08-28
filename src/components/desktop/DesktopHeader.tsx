@@ -4,6 +4,7 @@ import Svg, { Rect, Path, Circle } from 'react-native-svg';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useDesktopStore } from '../../store/useDesktopStore';
 import { useLanguageStore } from '../../store/useLanguageStore';
+import { useThemeStore } from '../../store/useThemeStore';
 import { RemixIcon } from '../ui/RemixIcon';
 import { LanguageToggle } from '../ui/LanguageToggle';
 import { ModernAvatar } from '../ui/ModernAvatar';
@@ -60,6 +61,7 @@ export const DesktopHeader: React.FC = () => {
   const isRightPanelVisible = useDesktopStore((state) => state.isRightPanelVisible);
   const toggleRightPanel = useDesktopStore((state) => state.toggleRightPanel);
   const t = useLanguageStore((state) => state.t);
+  const tokens = useThemeStore((state) => state.tokens);
 
   const syncGithubEvents = useDesktopStore((state) => state.syncGithubEvents);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -83,7 +85,7 @@ export const DesktopHeader: React.FC = () => {
   const isSidebarExpanded = sidebarMode === 'expanded';
 
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, { backgroundColor: tokens.surfaceBg, borderBottomColor: tokens.borderSubtle }]}>
       {/* 1. Left: Native macOS Traffic Light Spacing */}
       <View style={styles.leftSpacer} />
 
@@ -91,82 +93,86 @@ export const DesktopHeader: React.FC = () => {
       <View style={styles.rightSection}>
         {/* Left Sidebar Panel Toggle (Expands / Collapses Labels) */}
         <TouchableOpacity
-          style={[styles.toolIconBtn, isSidebarExpanded && styles.toolIconBtnActive]}
+          style={[styles.toolIconBtn, isSidebarExpanded && { backgroundColor: tokens.accentSoft }]}
           onPress={toggleSidebarMode}
           activeOpacity={0.7}
         >
-          <PanelLeftIcon active={isSidebarExpanded} size={15} color={isSidebarExpanded ? '#0F172A' : '#64748B'} />
+          <PanelLeftIcon active={isSidebarExpanded} size={15} color={isSidebarExpanded ? tokens.accentColor : tokens.textSecondary} />
         </TouchableOpacity>
 
         {/* Bottom Panel Toggle */}
         <TouchableOpacity
-          style={[styles.toolIconBtn, isBottomOpen && styles.toolIconBtnActive]}
+          style={[styles.toolIconBtn, isBottomOpen && { backgroundColor: tokens.accentSoft }]}
           onPress={() => setIsBottomOpen(!isBottomOpen)}
           activeOpacity={0.7}
         >
-          <PanelBottomIcon active={isBottomOpen} size={15} color={isBottomOpen ? '#0F172A' : '#64748B'} />
+          <PanelBottomIcon active={isBottomOpen} size={15} color={isBottomOpen ? tokens.accentColor : tokens.textSecondary} />
         </TouchableOpacity>
 
         {/* Right Sidebar / Details Panel Toggle (Only in Calendar Module) */}
         {activeModule === 'calendar' && (
           <TouchableOpacity
-            style={[styles.toolIconBtn, isRightPanelVisible && styles.toolIconBtnActive]}
+            style={[styles.toolIconBtn, isRightPanelVisible && { backgroundColor: tokens.accentSoft }]}
             onPress={toggleRightPanel}
             activeOpacity={0.7}
           >
-            <PanelRightIcon active={isRightPanelVisible} size={15} color={isRightPanelVisible ? '#0F172A' : '#64748B'} />
+            <PanelRightIcon active={isRightPanelVisible} size={15} color={isRightPanelVisible ? tokens.accentColor : tokens.textSecondary} />
           </TouchableOpacity>
         )}
 
         {/* Global Refresh / Sync Action Button (Icon Only) */}
         <TouchableOpacity
-          style={[styles.toolIconBtn, isSyncing && styles.toolIconBtnActive]}
+          style={[styles.toolIconBtn, isSyncing && { backgroundColor: tokens.accentSoft }]}
           onPress={handleGlobalRefresh}
           activeOpacity={0.7}
           disabled={isSyncing}
         >
-          <RemixIcon name="refresh-line" size={14} color={isSyncing ? '#2563EB' : '#64748B'} />
+          <RemixIcon name="refresh-line" size={14} color={isSyncing ? tokens.accentColor : tokens.textSecondary} />
         </TouchableOpacity>
 
         {/* Quick Search Button */}
         <TouchableOpacity style={styles.toolIconBtn} activeOpacity={0.7}>
-          <RemixIcon name="search-line" size={14} color="#64748B" />
+          <RemixIcon name="search-line" size={14} color={tokens.textSecondary} />
         </TouchableOpacity>
 
         {/* Subtle Vertical Divider */}
-        <View style={styles.vDivider} />
+        <View style={[styles.vDivider, { backgroundColor: tokens.borderSubtle }]} />
 
         {/* AI Copilot Quick Jump Button */}
         <TouchableOpacity
-          style={[styles.toolIconBtn, activeModule === 'copilot' && styles.toolIconBtnActive]}
+          style={[styles.toolIconBtn, activeModule === 'copilot' && { backgroundColor: tokens.accentSoft }]}
           onPress={() => setActiveModule('copilot')}
           activeOpacity={0.7}
         >
-          <RemixIcon name="sparkles-fill" size={14} color={activeModule === 'copilot' ? '#6366F1' : '#64748B'} />
+          <RemixIcon name="sparkles-fill" size={14} color={activeModule === 'copilot' ? tokens.accentColor : tokens.textSecondary} />
         </TouchableOpacity>
 
         {/* Theme Palette Customizer Button */}
         <TouchableOpacity
-          style={[styles.toolIconBtn, themeModalOpen && styles.toolIconBtnActive]}
+          style={[styles.toolIconBtn, themeModalOpen && { backgroundColor: tokens.accentSoft }]}
           onPress={() => setThemeModalOpen(true)}
           activeOpacity={0.7}
         >
-          <RemixIcon name="palette-line" size={14} color={themeModalOpen ? '#6366F1' : '#64748B'} />
+          <RemixIcon name="palette-line" size={14} color={themeModalOpen ? tokens.accentColor : tokens.textSecondary} />
         </TouchableOpacity>
 
         {/* Settings Gear Button */}
         <TouchableOpacity
-          style={[styles.toolIconBtn, activeModule === 'settings' && styles.toolIconBtnActive]}
+          style={[styles.toolIconBtn, activeModule === 'settings' && { backgroundColor: tokens.accentSoft }]}
           onPress={() => setActiveModule('settings')}
           activeOpacity={0.7}
         >
-          <RemixIcon name="settings-3-line" size={14} color={activeModule === 'settings' ? '#0F172A' : '#64748B'} />
+          <RemixIcon name="settings-3-line" size={14} color={activeModule === 'settings' ? tokens.accentColor : tokens.textSecondary} />
         </TouchableOpacity>
 
         {/* Unified Profile Pill with Avatar & Dropdown Chevron */}
         {user ? (
           <TouchableOpacity
-            style={[styles.userProfileBtn, menuOpen && styles.userProfileBtnActive]}
+            style={[
+              styles.userProfileBtn,
+              { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+              menuOpen && { borderColor: tokens.accentColor },
+            ]}
             onPress={() => setMenuOpen(!menuOpen)}
             activeOpacity={0.8}
           >
@@ -177,7 +183,7 @@ export const DesktopHeader: React.FC = () => {
               showPresence={true}
               isOnline={true}
             />
-            <RemixIcon name="chevron-down-line" size={11} color="#64748B" />
+            <RemixIcon name="chevron-down-line" size={11} color={tokens.textSecondary} />
           </TouchableOpacity>
         ) : null}
       </View>
@@ -186,7 +192,7 @@ export const DesktopHeader: React.FC = () => {
       {menuOpen && (
         <Modal transparent visible={menuOpen} onRequestClose={() => setMenuOpen(false)}>
           <Pressable style={styles.modalBackdrop} onPress={() => setMenuOpen(false)}>
-            <Pressable style={styles.menuDropdown} onPress={(e) => e.stopPropagation()}>
+            <Pressable style={[styles.menuDropdown, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]} onPress={(e) => e.stopPropagation()}>
               {/* Profile Card Header -> Opens Profile Modal */}
               {user && (
                 <TouchableOpacity
@@ -205,46 +211,46 @@ export const DesktopHeader: React.FC = () => {
                     isOnline={true}
                   />
                   <View style={styles.menuProfileInfo}>
-                    <Text style={styles.menuProfileName} numberOfLines={1}>
+                    <Text style={[styles.menuProfileName, { color: tokens.textPrimary }]} numberOfLines={1}>
                       {user.name}
                     </Text>
-                    <Text style={styles.menuProfileEmail} numberOfLines={1}>
+                    <Text style={[styles.menuProfileEmail, { color: tokens.textSecondary }]} numberOfLines={1}>
                       {user.email || 'Admin'}
                     </Text>
                   </View>
-                  <RemixIcon name="arrow-right-s-line" size={14} color="#94A3B8" />
+                  <RemixIcon name="arrow-right-s-line" size={14} color={tokens.textSecondary} />
                 </TouchableOpacity>
               )}
 
-              <View style={styles.menuDivider} />
+              <View style={[styles.menuDivider, { backgroundColor: tokens.borderSubtle }]} />
 
               {/* Theme Settings Item */}
               <TouchableOpacity
-                style={styles.menuItemBtn}
+                style={[styles.menuItemBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                 onPress={() => {
                   setMenuOpen(false);
                   setThemeModalOpen(true);
                 }}
                 activeOpacity={0.7}
               >
-                <RemixIcon name="palette-line" size={14} color="#64748B" />
-                <Text style={styles.menuItemText}>Appearance & Theme</Text>
+                <RemixIcon name="palette-line" size={14} color={tokens.textSecondary} />
+                <Text style={[styles.menuItemText, { color: tokens.textPrimary }]}>Appearance & Theme</Text>
               </TouchableOpacity>
 
               {/* Settings Item */}
               <TouchableOpacity
-                style={styles.menuItemBtn}
+                style={[styles.menuItemBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                 onPress={() => {
                   setMenuOpen(false);
                   setActiveModule('settings');
                 }}
                 activeOpacity={0.7}
               >
-                <RemixIcon name="settings-3-line" size={14} color="#64748B" />
-                <Text style={styles.menuItemText}>Settings</Text>
+                <RemixIcon name="settings-3-line" size={14} color={tokens.textSecondary} />
+                <Text style={[styles.menuItemText, { color: tokens.textPrimary }]}>Settings</Text>
               </TouchableOpacity>
 
-              <View style={styles.menuDivider} />
+              <View style={[styles.menuDivider, { backgroundColor: tokens.borderSubtle }]} />
 
               {/* Sign Out Button */}
               <TouchableOpacity
