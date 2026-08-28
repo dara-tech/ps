@@ -8,6 +8,7 @@ import { chatStyles as styles } from './chatStyles';
 import { formatMessageDate, renderFormattedMarkdown } from './chatHelpers';
 import { QUICK_REACTION_EMOJIS, EMOJI_CATEGORIES } from './chatTypes';
 import { toast } from '../../../../store/useToastStore';
+import { useThemeStore } from '../../../../store/useThemeStore';
 
 interface ChatMessageListProps {
   messages: any[];
@@ -274,12 +275,19 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
           const prevDate = prevMsg ? (prevMsg.rawDate || prevMsg.date || prevMsg.timestamp || '') : '';
           const showDateSeparator = idx === 0 || (currDate && prevDate && formatMessageDate(currDate, isKh) !== formatMessageDate(prevDate, isKh));
 
+          const bubbleBg = isMe
+            ? (tokens.isDark ? '#064E3B' : '#EFFCEE')
+            : tokens.surfaceBg;
+          const bubbleBorder = isMe
+            ? (tokens.isDark ? '#047857' : '#BBF7D0')
+            : tokens.borderSubtle;
+
           return (
             <React.Fragment key={`msg-${msg.id ?? ''}-${idx}`}>
               {showDateSeparator && (
                 <View style={styles.dateSeparatorRow}>
-                  <View style={styles.dateSeparatorBadge}>
-                    <Text style={styles.dateSeparatorText}>
+                  <View style={[styles.dateSeparatorBadge, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle, borderWidth: 1 }]}>
+                    <Text style={[styles.dateSeparatorText, { color: tokens.textSecondary }]}>
                       {formatMessageDate(currDate, isKh) || (isKh ? 'ថ្ងៃនេះ' : 'Today')}
                     </Text>
                   </View>
@@ -308,8 +316,20 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                         : isMediaOnly
                         ? styles.msgBubblePhoto
                         : isMediaWithCaption
-                        ? [styles.msgBubbleWithCaption, isMe ? styles.msgBubbleMe : styles.msgBubbleOther]
-                        : [styles.msgBubble, isMe ? styles.msgBubbleMe : styles.msgBubbleOther],
+                        ? [
+                            styles.msgBubbleWithCaption,
+                            {
+                              backgroundColor: bubbleBg,
+                              borderColor: bubbleBorder,
+                            },
+                          ]
+                        : [
+                            styles.msgBubble,
+                            {
+                              backgroundColor: bubbleBg,
+                              borderColor: bubbleBorder,
+                            },
+                          ],
                       isVoice && styles.msgBubbleVoice,
                     ]}
                   >
@@ -317,10 +337,10 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                     {/* Forwarded from original sender */}
                     {Boolean(msg.fwdFrom) && (
                       <View style={styles.tgForwardHeader}>
-                        <RemixIcon name="share-forward-line" size={12} color="#0284C7" />
-                        <Text style={[styles.tgForwardLabel, isMe && styles.tgForwardLabelMe]}>
+                        <RemixIcon name="share-forward-line" size={12} color={tokens.accentColor} />
+                        <Text style={[styles.tgForwardLabel, { color: tokens.textSecondary }]}>
                           {isKh ? 'បញ្ជូនបន្តពី' : 'Forwarded from'}{' '}
-                          <Text style={[styles.tgForwardSender, isMe && styles.tgForwardSenderMe]}>
+                          <Text style={[styles.tgForwardSender, { color: tokens.accentColor }]}>
                             {msg.fwdFrom.senderName || 'Original Sender'}
                           </Text>
                         </Text>
@@ -329,13 +349,23 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
 
                     {/* Reply / Quote Preview */}
                     {Boolean(msg.replyToMsgId) && (
-                      <View style={[styles.tgQuoteBox, isMe ? styles.tgQuoteBoxMe : styles.tgQuoteBoxOther]}>
-                        <View style={[styles.tgQuoteAccent, isMe ? styles.tgQuoteAccentMe : styles.tgQuoteAccentOther]} />
+                      <View
+                        style={[
+                          styles.tgQuoteBox,
+                          {
+                            backgroundColor: isMe
+                              ? (tokens.isDark ? 'rgba(0, 0, 0, 0.25)' : '#DCFCE7')
+                              : tokens.surfaceMuted,
+                            borderLeftColor: tokens.accentColor,
+                          },
+                        ]}
+                      >
+                        <View style={[styles.tgQuoteAccent, { backgroundColor: tokens.accentColor }]} />
                         <View style={styles.tgQuoteBody}>
-                          <Text style={[styles.tgQuoteSender, isMe && styles.tgQuoteSenderMe]} numberOfLines={1}>
+                          <Text style={[styles.tgQuoteSender, { color: tokens.accentColor }]} numberOfLines={1}>
                             {msg.replyToMsg?.senderName || 'Reply'}
                           </Text>
-                          <Text style={[styles.tgQuoteText, isMe && styles.tgQuoteTextMe]} numberOfLines={1}>
+                          <Text style={[styles.tgQuoteText, { color: tokens.textSecondary }]} numberOfLines={1}>
                             {msg.replyToMsg?.text || 'Original message'}
                           </Text>
                         </View>
@@ -347,34 +377,34 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                       <View style={styles.tgFileBubbleBlock}>
                         <View style={styles.tgFileMainRow}>
                           <TouchableOpacity
-                            style={styles.tgDownloadCircleBtn}
+                            style={[styles.tgDownloadCircleBtn, { backgroundColor: tokens.accentColor }]}
                             onPress={() => msg.mediaUrl && window.open(msg.mediaUrl, '_blank')}
                             activeOpacity={0.8}
                           >
-                            <RemixIcon name="arrow-down-line" size={18} color="#FFFFFF" />
+                            <RemixIcon name="arrow-down-line" size={18} color={tokens.accentFg} />
                           </TouchableOpacity>
                           <View style={styles.tgFileInfoBox}>
-                            <Text style={styles.tgFileName} numberOfLines={1}>
+                            <Text style={[styles.tgFileName, { color: tokens.textPrimary }]} numberOfLines={1}>
                               {msg.fileName || 'Document.pdf'}
                             </Text>
                             <View style={styles.tgFileSizeRow}>
-                              <Text style={styles.tgFileSize}>{msg.fileSize || 'File'}</Text>
-                              <Text style={styles.tgFileDot}>•</Text>
-                              <Text style={styles.tgFileDownloadLink}>Download</Text>
+                              <Text style={[styles.tgFileSize, { color: tokens.textSecondary }]}>{msg.fileSize || 'File'}</Text>
+                              <Text style={[styles.tgFileDot, { color: tokens.textMuted }]}>•</Text>
+                              <Text style={[styles.tgFileDownloadLink, { color: tokens.accentColor }]}>Download</Text>
                             </View>
                           </View>
                         </View>
                         <View style={styles.tgMsgMetaRow}>
-                          {msg.isPinned && <RemixIcon name="pushpin-fill" size={10} color="#0284C7" />}
-                          {msg.isEdited && <Text style={styles.tgEditedLabel}>edited</Text>}
-                          <Text style={[styles.tgMsgTime, isMe && styles.tgMsgTimeMe]}>
+                          {msg.isPinned && <RemixIcon name="pushpin-fill" size={10} color={tokens.accentColor} />}
+                          {msg.isEdited && <Text style={[styles.tgEditedLabel, { color: tokens.textMuted }]}>edited</Text>}
+                          <Text style={[styles.tgMsgTime, { color: tokens.textMuted }]}>
                             {msg.date || msg.timestamp}
                           </Text>
                           {isMe && (
                             <RemixIcon
                               name={msg.isSeen ? 'check-double-line' : 'check-line'}
                               size={13}
-                              color="#16A34A"
+                              color={tokens.isDark ? '#34D399' : '#16A34A'}
                             />
                           )}
                         </View>
@@ -385,14 +415,14 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                     {isVoice && (
                       <View style={styles.tgVoiceMainRow}>
                         <TouchableOpacity
-                          style={[styles.tgVoicePlayBtn, isMe ? styles.tgVoicePlayBtnMe : styles.tgVoicePlayBtnOther]}
+                          style={[styles.tgVoicePlayBtn, { backgroundColor: tokens.accentColor }]}
                           onPress={() => onPlayVoiceNote(msg.id, msg.mediaUrl, msg.duration)}
                           activeOpacity={0.8}
                         >
                           <RemixIcon
                             name={playingAudioId === msg.id ? 'pause-fill' : 'play-fill'}
                             size={14}
-                            color="#FFFFFF"
+                            color={tokens.accentFg}
                           />
                         </TouchableOpacity>
 
@@ -419,21 +449,21 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                             })}
                           </View>
                           <View style={styles.tgVoiceMetaRow}>
-                            <Text style={[styles.tgVoiceDuration, isMe && styles.tgVoiceDurationMe]}>
+                            <Text style={[styles.tgVoiceDuration, { color: tokens.textSecondary }]}>
                               {playingAudioId === msg.id
                                 ? formatTimer(audioCurrentTime)
                                 : formatTimer(msg.duration)}
                             </Text>
                             <View style={styles.tgVoiceTimeBox}>
-                              {msg.isPinned && <RemixIcon name="pushpin-fill" size={10} color="#0284C7" />}
-                              <Text style={[styles.tgVoiceTimeText, isMe && styles.tgVoiceTimeTextMe]}>
+                              {msg.isPinned && <RemixIcon name="pushpin-fill" size={10} color={tokens.accentColor} />}
+                              <Text style={[styles.tgVoiceTimeText, { color: tokens.textMuted }]}>
                                 {msg.date || msg.timestamp}
                               </Text>
                               {isMe && (
                                 <RemixIcon
                                   name={msg.isSeen ? 'check-double-line' : 'check-line'}
                                   size={12}
-                                  color="#16A34A"
+                                  color={tokens.isDark ? '#34D399' : '#16A34A'}
                                 />
                               )}
                             </View>
@@ -753,21 +783,21 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                     {/* 5. Real Text Content / Caption */}
                     {captionText && !isMediaOnly && !isSticker ? (
                       <View style={isMediaWithCaption ? styles.tgCaptionTextBox : null}>
-                        <Text style={[styles.msgText, isMe && styles.msgTextMe]}>
-                          {renderFormattedMarkdown(captionText, [styles.msgText, isMe && styles.msgTextMe], `msg-${msg.id}`)}
+                        <Text style={[styles.msgText, { color: tokens.textPrimary }, isMe && (tokens.isDark ? { color: '#ECFDF5' } : styles.msgTextMe)]}>
+                          {renderFormattedMarkdown(captionText, [styles.msgText, { color: tokens.textPrimary }, isMe && (tokens.isDark ? { color: '#ECFDF5' } : styles.msgTextMe)], `msg-${msg.id}`)}
                         </Text>
                         {!isVoice && !isDoc && (
                           <View style={styles.tgMsgMetaRow}>
-                            {msg.isPinned && <RemixIcon name="pushpin-fill" size={10} color="#0284C7" />}
-                            {msg.isEdited && <Text style={styles.tgEditedLabel}>edited</Text>}
-                            <Text style={[styles.tgMsgTime, isMe && styles.tgMsgTimeMe]}>
+                            {msg.isPinned && <RemixIcon name="pushpin-fill" size={10} color={tokens.accentColor} />}
+                            {msg.isEdited && <Text style={[styles.tgEditedLabel, { color: tokens.textMuted }]}>edited</Text>}
+                            <Text style={[styles.tgMsgTime, { color: tokens.textMuted }]}>
                               {msg.date || msg.timestamp}
                             </Text>
                             {isMe && (
                               <RemixIcon
                                 name={msg.isSeen ? 'check-double-line' : 'check-line'}
                                 size={13}
-                                color="#16A34A"
+                                color={tokens.isDark ? '#34D399' : '#16A34A'}
                               />
                             )}
                           </View>
@@ -782,13 +812,17 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                       {msg.reactions.map((r: any, rIdx: number) => (
                         <TouchableOpacity
                           key={rIdx}
-                          style={[styles.tgReactionPill, r.isChosen && styles.tgReactionPillChosen]}
+                          style={[
+                            styles.tgReactionPill,
+                            { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
+                            r.isChosen && { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder },
+                          ]}
                           onPress={() => onSendReaction(msg.id, r.emoticon)}
                           activeOpacity={0.7}
                         >
                           <Text style={styles.tgReactionEmoji}>{r.emoticon}</Text>
                           {r.count > 1 && (
-                            <Text style={styles.tgReactionCount}>
+                            <Text style={[styles.tgReactionCount, { color: tokens.textSecondary }, r.isChosen && { color: tokens.accentColor, fontWeight: '700' }]}>
                               {r.count}
                             </Text>
                           )}
@@ -806,11 +840,11 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
       {/* Floating Scroll To Bottom Button */}
       {showScrollBottomBtn && (
         <TouchableOpacity
-          style={styles.floatingScrollBottomBtn}
+          style={[styles.floatingScrollBottomBtn, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}
           onPress={onScrollToBottom}
           activeOpacity={0.8}
         >
-          <RemixIcon name="arrow-down-line" size={16} color="#0284C7" />
+          <RemixIcon name="arrow-down-line" size={16} color={tokens.accentColor} />
         </TouchableOpacity>
       )}
 
@@ -822,9 +856,9 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
             onPress={() => setContextMenu(null)}
             activeOpacity={1}
           />
-          <View style={[styles.tgContextMenu, { top: contextMenu.y, left: contextMenu.x }]}>
+          <View style={[styles.tgContextMenu, { top: contextMenu.y, left: contextMenu.x, backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
             {/* Quick Reactions Bar inside Menu */}
-            <View style={styles.tgContextMenuReactionsRow}>
+            <View style={[styles.tgContextMenuReactionsRow, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
               {QUICK_REACTION_EMOJIS.slice(0, 6).map((em) => (
                 <TouchableOpacity
                   key={em}
@@ -843,7 +877,7 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                 onPress={() => setShowFullReactions(!showFullReactions)}
                 activeOpacity={0.7}
               >
-                <RemixIcon name="add-line" size={14} color="#64748B" />
+                <RemixIcon name="add-line" size={14} color={tokens.textSecondary} />
               </TouchableOpacity>
             </View>
 
@@ -852,7 +886,7 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
               <ScrollView style={{ maxHeight: 130, paddingVertical: 4, marginBottom: 4 }} showsVerticalScrollIndicator={false}>
                 {EMOJI_CATEGORIES.map((cat, cIdx) => (
                   <View key={cIdx} style={{ marginBottom: 4 }}>
-                    <Text style={{ fontSize: 9, fontFamily: 'Krasar-Bold', color: '#94A3B8', marginBottom: 2 }}>{cat.title}</Text>
+                    <Text style={{ fontSize: 9, fontFamily: 'Krasar-Bold', color: tokens.textMuted, marginBottom: 2 }}>{cat.title}</Text>
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 3 }}>
                       {cat.emojis.map((em, emIdx) => (
                         <TouchableOpacity
@@ -872,7 +906,7 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
               </ScrollView>
             )}
 
-            <View style={styles.tgContextMenuDivider} />
+            <View style={[styles.tgContextMenuDivider, { backgroundColor: tokens.borderSubtle }]} />
 
             {/* Reply */}
             <TouchableOpacity
@@ -883,8 +917,8 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
               }}
               activeOpacity={0.7}
             >
-              <RemixIcon name="reply-line" size={13} color="#475569" />
-              <Text style={styles.tgContextItemText}>{isKh ? 'ឆ្លើយតប' : 'Reply'}</Text>
+              <RemixIcon name="reply-line" size={13} color={tokens.textSecondary} />
+              <Text style={[styles.tgContextItemText, { color: tokens.textPrimary }]}>{isKh ? 'ឆ្លើយតប' : 'Reply'}</Text>
             </TouchableOpacity>
 
             {/* Forward */}
@@ -898,8 +932,8 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
               }}
               activeOpacity={0.7}
             >
-              <RemixIcon name="share-forward-line" size={13} color="#475569" />
-              <Text style={styles.tgContextItemText}>{isKh ? 'បញ្ជូនបន្ត' : 'Forward'}</Text>
+              <RemixIcon name="share-forward-line" size={13} color={tokens.textSecondary} />
+              <Text style={[styles.tgContextItemText, { color: tokens.textPrimary }]}>{isKh ? 'បញ្ជូនបន្ត' : 'Forward'}</Text>
             </TouchableOpacity>
 
             {/* Copy Text */}
@@ -916,8 +950,8 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                 }}
                 activeOpacity={0.7}
               >
-                <RemixIcon name="file-copy-line" size={13} color="#475569" />
-                <Text style={styles.tgContextItemText}>{isKh ? 'ចម្លងអត្ថបទ' : 'Copy Text'}</Text>
+                <RemixIcon name="file-copy-line" size={13} color={tokens.textSecondary} />
+                <Text style={[styles.tgContextItemText, { color: tokens.textPrimary }]}>{isKh ? 'ចម្លងអត្ថបទ' : 'Copy Text'}</Text>
               </TouchableOpacity>
             )}
 
@@ -933,9 +967,9 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
               <RemixIcon
                 name={contextMenu.msg.isPinned ? 'pushpin-fill' : 'pushpin-line'}
                 size={13}
-                color={contextMenu.msg.isPinned ? '#0284C7' : '#475569'}
+                color={contextMenu.msg.isPinned ? tokens.accentColor : tokens.textSecondary}
               />
-              <Text style={styles.tgContextItemText}>
+              <Text style={[styles.tgContextItemText, { color: tokens.textPrimary }]}>
                 {contextMenu.msg.isPinned ? (isKh ? 'ដក Pin សារ' : 'Unpin Message') : (isKh ? 'Pin សារនេះ' : 'Pin Message')}
               </Text>
             </TouchableOpacity>
