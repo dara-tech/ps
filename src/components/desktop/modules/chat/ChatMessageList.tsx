@@ -68,7 +68,8 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
   const [seenModalMsg, setSeenModalMsg] = useState<any | null>(null);
   const [readParticipants, setReadParticipants] = useState<Array<{ id: string; name: string; avatarUrl?: string; date?: string }>>([]);
   const [loadingReadParticipants, setLoadingReadParticipants] = useState(false);
-  const tokens = useThemeStore((state) => state.tokens);
+  const { tokens, mode } = useThemeStore((state) => ({ tokens: state.tokens, mode: state.mode }));
+  const isDark = mode !== 'light';
 
   useEffect(() => {
     if (!seenModalMsg) {
@@ -277,10 +278,10 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
           const showDateSeparator = idx === 0 || (currDate && prevDate && formatMessageDate(currDate, isKh) !== formatMessageDate(prevDate, isKh));
 
           const bubbleBg = isMe
-            ? (tokens.isDark ? '#064E3B' : '#EFFCEE')
+            ? (isDark ? '#064E3B' : '#EFFCEE')
             : tokens.surfaceBg;
           const bubbleBorder = isMe
-            ? (tokens.isDark ? '#047857' : '#BBF7D0')
+            ? (isDark ? '#047857' : '#BBF7D0')
             : tokens.borderSubtle;
 
           return (
@@ -355,7 +356,7 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                           styles.tgQuoteBox,
                           {
                             backgroundColor: isMe
-                              ? (tokens.isDark ? 'rgba(0, 0, 0, 0.25)' : '#DCFCE7')
+                              ? (isDark ? 'rgba(0, 0, 0, 0.25)' : '#DCFCE7')
                               : tokens.surfaceMuted,
                             borderLeftColor: tokens.accentColor,
                           },
@@ -405,7 +406,7 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                             <RemixIcon
                               name={msg.isSeen ? 'check-double-line' : 'check-line'}
                               size={13}
-                              color={tokens.isDark ? '#34D399' : '#16A34A'}
+                              color={isDark ? '#34D399' : '#16A34A'}
                             />
                           )}
                         </View>
@@ -464,7 +465,7 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                                 <RemixIcon
                                   name={msg.isSeen ? 'check-double-line' : 'check-line'}
                                   size={12}
-                                  color={tokens.isDark ? '#34D399' : '#16A34A'}
+                                  color={isDark ? '#34D399' : '#16A34A'}
                                 />
                               )}
                             </View>
@@ -784,8 +785,8 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                     {/* 5. Real Text Content / Caption */}
                     {captionText && !isMediaOnly && !isSticker ? (
                       <View style={isMediaWithCaption ? styles.tgCaptionTextBox : null}>
-                        <Text style={[styles.msgText, { color: tokens.textPrimary }, isMe && (tokens.isDark ? { color: '#ECFDF5' } : styles.msgTextMe)]}>
-                          {renderFormattedMarkdown(captionText, [styles.msgText, { color: tokens.textPrimary }, isMe && (tokens.isDark ? { color: '#ECFDF5' } : styles.msgTextMe)], `msg-${msg.id}`)}
+                        <Text style={[styles.msgText, { color: tokens.textPrimary }, isMe && (isDark ? { color: '#ECFDF5' } : styles.msgTextMe)]}>
+                          {renderFormattedMarkdown(captionText, [styles.msgText, { color: tokens.textPrimary }, isMe && (isDark ? { color: '#ECFDF5' } : styles.msgTextMe)], `msg-${msg.id}`)}
                         </Text>
                         {!isVoice && !isDoc && (
                           <View style={styles.tgMsgMetaRow}>
@@ -798,7 +799,7 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                               <RemixIcon
                                 name={msg.isSeen ? 'check-double-line' : 'check-line'}
                                 size={13}
-                                color={tokens.isDark ? '#34D399' : '#16A34A'}
+                                color={isDark ? '#34D399' : '#16A34A'}
                               />
                             )}
                           </View>
