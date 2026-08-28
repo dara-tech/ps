@@ -1276,10 +1276,19 @@ export class TelegramService {
 
     try {
       const entity = await this.client.getEntity(chatId);
-      const res = await this.client.sendMessage(entity, {
-        message: text,
-        replyTo: replyToMsgId ? Number(replyToMsgId) : undefined,
-      });
+      let res: any;
+      try {
+        res = await this.client.sendMessage(entity, {
+          message: text,
+          replyTo: replyToMsgId ? Number(replyToMsgId) : undefined,
+          parseMode: 'markdown',
+        });
+      } catch {
+        res = await this.client.sendMessage(entity, {
+          message: text,
+          replyTo: replyToMsgId ? Number(replyToMsgId) : undefined,
+        });
+      }
 
       const msgItem: TelegramMessageItem = {
         id: res.id,

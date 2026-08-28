@@ -10,6 +10,7 @@ import {
   Platform,
 } from 'react-native';
 import { useDesktopStore } from '../../../store/useDesktopStore';
+import { useTelegramStore } from '../../../store/useTelegramStore';
 import { RemixIcon } from '../../ui/RemixIcon';
 import { RichMarkdownView } from '../../ui/RichMarkdownView';
 import { CustomSelect } from '../../ui/CustomSelect';
@@ -145,6 +146,13 @@ export const AICopilotModule: React.FC = () => {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  const openShareTextModal = useTelegramStore((state) => state.openShareTextModal);
+  const isTelegramConnected = useTelegramStore((state) => state.isConnected);
+
+  const handleForwardToTelegram = (content: string) => {
+    openShareTextModal(content, 'AI Copilot Response');
+  };
+
   const promptSuggestions = [
     { label: 'Plan a goal', prompt: 'Break down my goal to launch a side project' },
     { label: 'Log expense', prompt: 'Spent $15 for lunch with team' },
@@ -273,6 +281,21 @@ export const AICopilotModule: React.FC = () => {
                       />
                       <Text style={[styles.msgActionBtnText, speakingId === msg.id && { color: '#6366F1' }]}>
                         {speakingId === msg.id ? 'Stop' : 'Read'}
+                      </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={[styles.msgActionBtn, { borderColor: '#BAE6FD', backgroundColor: '#F0F9FF' }]}
+                      onPress={() => handleForwardToTelegram(msg.content)}
+                      activeOpacity={0.7}
+                    >
+                      <RemixIcon
+                        name="telegram-official"
+                        size={12}
+                        color="#0284C7"
+                      />
+                      <Text style={[styles.msgActionBtnText, { color: '#0284C7', fontWeight: '700' }]}>
+                        Telegram
                       </Text>
                     </TouchableOpacity>
                   </View>

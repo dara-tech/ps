@@ -12,6 +12,7 @@ import {
   Platform,
 } from 'react-native';
 import { useDesktopStore } from '../../../store/useDesktopStore';
+import { useTelegramStore } from '../../../store/useTelegramStore';
 import { useLanguageStore } from '../../../store/useLanguageStore';
 import { RemixIcon, RemixIconName } from '../../ui/RemixIcon';
 import { ModernAvatar } from '../../ui/ModernAvatar';
@@ -872,17 +873,30 @@ export const MarketRadarModule: React.FC = () => {
                   <View style={styles.scriptItemBox}>
                     <View style={styles.scriptItemHeader}>
                       <Text style={styles.scriptItemLabel}>ស្គ្រីបតថ្លៃបែបសុភាពរាបសារ</Text>
-                      <TouchableOpacity
-                        style={styles.iconActionBtn}
-                        onPress={() => {
-                          const script = currentEval?.khmerNegotiationScript ||
-                            `សួស្តីបង របស់នេះនៅមានអត់បង? តើអាចចុះបានត្រឹម $${Math.round(Number(selectedItem.price || 0) * 0.92)} ខ្ញុំយកផ្ទាល់ថ្ងៃនេះបានទេបង?`;
-                          copyToClipboard(script, 'ស្គ្រីបភាសាខ្មែរ');
-                        }}
-                        activeOpacity={0.8}
-                      >
-                        <RemixIcon name="file-copy-line" size={13} color="#0284C7" />
-                      </TouchableOpacity>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                        <TouchableOpacity
+                          style={styles.iconActionBtn}
+                          onPress={() => {
+                            const script = currentEval?.khmerNegotiationScript ||
+                              `សួស្តីបង របស់នេះនៅមានអត់បង? តើអាចចុះបានត្រឹម $${Math.round(Number(selectedItem.price || 0) * 0.92)} ខ្ញុំយកផ្ទាល់ថ្ងៃនេះបានទេបង?`;
+                            copyToClipboard(script, 'ស្គ្រីបភាសាខ្មែរ');
+                          }}
+                          activeOpacity={0.8}
+                        >
+                          <RemixIcon name="file-copy-line" size={13} color="#0284C7" />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={[styles.iconActionBtn, { borderColor: '#BAE6FD', backgroundColor: '#F0F9FF' }]}
+                          onPress={() => {
+                            const script = currentEval?.khmerNegotiationScript ||
+                              `សួស្តីបង របស់នេះនៅមានអត់បង? តើអាចចុះបានត្រឹម $${Math.round(Number(selectedItem.price || 0) * 0.92)} ខ្ញុំយកផ្ទាល់ថ្ងៃនេះបានទេបង?`;
+                            useTelegramStore.getState().openShareTextModal(script, 'ស្គ្រីបតថ្លៃ Telegram');
+                          }}
+                          activeOpacity={0.8}
+                        >
+                          <RemixIcon name="telegram-official" size={13} color="#0284C7" />
+                        </TouchableOpacity>
+                      </View>
                     </View>
                     <Text style={styles.scriptItemBody}>
                       {currentEval?.khmerNegotiationScript ||
@@ -894,16 +908,28 @@ export const MarketRadarModule: React.FC = () => {
                   <View style={styles.scriptItemBox}>
                     <View style={styles.scriptItemHeader}>
                       <Text style={styles.scriptItemLabel}>ស្គ្រីបទិញយកភ្លាមៗប្រគល់លុយសុទ្ធ</Text>
-                      <TouchableOpacity
-                        style={styles.iconActionBtn}
-                        onPress={() => {
-                          const script = `ជម្រាបសួរលោកបង បើខ្ញុំប្រគល់លុយសុទ្ធយកភ្លាមៗ អាចសម្រួលតម្លៃមកត្រឹម $${Math.round(Number(selectedItem.price || 0) * 0.9)} បានអត់បង? ខ្ញុំអាចទៅយកផ្ទាល់បានបង។`;
-                          copyToClipboard(script, 'ស្គ្រីបប្រគល់លុយសុទ្ធ');
-                        }}
-                        activeOpacity={0.8}
-                      >
-                        <RemixIcon name="file-copy-line" size={13} color="#0284C7" />
-                      </TouchableOpacity>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                        <TouchableOpacity
+                          style={styles.iconActionBtn}
+                          onPress={() => {
+                            const script = `ជម្រាបសួរលោកបង បើខ្ញុំប្រគល់លុយសុទ្ធយកភ្លាមៗ អាចសម្រួលតម្លៃមកត្រឹម $${Math.round(Number(selectedItem.price || 0) * 0.9)} បានអត់បង? ខ្ញុំអាចទៅយកផ្ទាល់បានបង។`;
+                            copyToClipboard(script, 'ស្គ្រីបប្រគល់លុយសុទ្ធ');
+                          }}
+                          activeOpacity={0.8}
+                        >
+                          <RemixIcon name="file-copy-line" size={13} color="#0284C7" />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={[styles.iconActionBtn, { borderColor: '#BAE6FD', backgroundColor: '#F0F9FF' }]}
+                          onPress={() => {
+                            const script = `ជម្រាបសួរលោកបង បើខ្ញុំប្រគល់លុយសុទ្ធយកភ្លាមៗ អាចសម្រួលតម្លៃមកត្រឹម $${Math.round(Number(selectedItem.price || 0) * 0.9)} បានអត់បង? ខ្ញុំអាចទៅយកផ្ទាល់បានបង។`;
+                            useTelegramStore.getState().openShareTextModal(script, 'ស្គ្រីបលុយសុទ្ធ Telegram');
+                          }}
+                          activeOpacity={0.8}
+                        >
+                          <RemixIcon name="telegram-official" size={13} color="#0284C7" />
+                        </TouchableOpacity>
+                      </View>
                     </View>
                     <Text style={styles.scriptItemBody}>
                       ជម្រាបសួរលោកបង បើខ្ញុំប្រគល់លុយសុទ្ធយកភ្លាមៗ អាចសម្រួលតម្លៃមកត្រឹម ${Math.round(Number(selectedItem.price || 0) * 0.9)} បានអត់បង? ខ្ញុំអាចទៅយកផ្ទាល់បានបង។
@@ -914,16 +940,28 @@ export const MarketRadarModule: React.FC = () => {
                   <View style={styles.scriptItemBox}>
                     <View style={styles.scriptItemHeader}>
                       <Text style={styles.scriptItemLabel}>ស្គ្រីបសួរនាំការធានា & ស្ថានភាពម៉ាស៊ីន</Text>
-                      <TouchableOpacity
-                        style={styles.iconActionBtn}
-                        onPress={() => {
-                          const script = `សួស្តីបង ទំនិញនេះនៅមានការធានា (Warranty) និងគ្រឿងបន្លាស់ដើមគ្រប់អត់បង? ខ្ញុំអាចចូលទៅមើលតេស្តផ្ទាល់បានទេបង?`;
-                          copyToClipboard(script, 'ស្គ្រីបសួរនាំការធានា');
-                        }}
-                        activeOpacity={0.8}
-                      >
-                        <RemixIcon name="file-copy-line" size={13} color="#0284C7" />
-                      </TouchableOpacity>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                        <TouchableOpacity
+                          style={styles.iconActionBtn}
+                          onPress={() => {
+                            const script = `សួស្តីបង ទំនិញនេះនៅមានការធានា (Warranty) និងគ្រឿងបន្លាស់ដើមគ្រប់អត់បង? ខ្ញុំអាចចូលទៅមើលតេស្តផ្ទាល់បានទេបង?`;
+                            copyToClipboard(script, 'ស្គ្រីបសួរនាំការធានា');
+                          }}
+                          activeOpacity={0.8}
+                        >
+                          <RemixIcon name="file-copy-line" size={13} color="#0284C7" />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={[styles.iconActionBtn, { borderColor: '#BAE6FD', backgroundColor: '#F0F9FF' }]}
+                          onPress={() => {
+                            const script = `សួស្តីបង ទំនិញនេះនៅមានការធានា (Warranty) និងគ្រឿងបន្លាស់ដើមគ្រប់អត់បង? ខ្ញុំអាចចូលទៅមើលតេស្តផ្ទាល់បានទេបង?`;
+                            useTelegramStore.getState().openShareTextModal(script, 'ស្គ្រីបធានា Telegram');
+                          }}
+                          activeOpacity={0.8}
+                        >
+                          <RemixIcon name="telegram-official" size={13} color="#0284C7" />
+                        </TouchableOpacity>
+                      </View>
                     </View>
                     <Text style={styles.scriptItemBody}>
                       សួស្តីបង ទំនិញនេះនៅមានការធានា (Warranty) និងគ្រឿងបន្លាស់ដើមគ្រប់អត់បង? ខ្ញុំអាចចូលទៅមើលតេស្តផ្ទាល់បានទេបង?

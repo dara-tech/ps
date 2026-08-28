@@ -12,6 +12,7 @@ import { ChatModule } from './modules/ChatModule';
 import { CalendarModule } from './modules/CalendarModule';
 import { MarketRadarModule } from './modules/MarketRadarModule';
 import { SettingsModule } from './modules/SettingsModule';
+import { ForwardMessageModal } from './modules/chat/ForwardMessageModal';
 
 export const DesktopWorkspace: React.FC = () => {
   const activeModule = useDesktopStore((state) => state.activeModule);
@@ -72,6 +73,9 @@ export const DesktopWorkspace: React.FC = () => {
           )}
         </View>
       </View>
+
+      {/* Global Telegram Forward / Share Modal */}
+      <ForwardMessageModal />
     </View>
   );
 };

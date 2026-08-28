@@ -19,6 +19,8 @@ export const ForwardMessageModal: React.FC = () => {
   const isForwardModalOpen = useTelegramStore((state) => state.isForwardModalOpen);
   const forwardingMessage = useTelegramStore((state) => state.forwardingMessage);
   const forwardMessageIds = useTelegramStore((state) => state.forwardMessageIds);
+  const shareText = useTelegramStore((state) => state.shareText);
+  const shareTitle = useTelegramStore((state) => state.shareTitle);
   const closeForwardModal = useTelegramStore((state) => state.closeForwardModal);
   const forwardMessage = useTelegramStore((state) => state.forwardMessage);
   const dialogs = useTelegramStore((state) => state.dialogs);
@@ -47,10 +49,13 @@ export const ForwardMessageModal: React.FC = () => {
     }
   };
 
-  if (!isForwardModalOpen || !forwardingMessage) return null;
+  if (!isForwardModalOpen || (!forwardingMessage && !shareText)) return null;
 
-  const count = forwardMessageIds.length || 1;
-  const snippet = forwardingMessage.text || (forwardingMessage.mediaType ? `[${forwardingMessage.mediaType.toUpperCase()}]` : 'Message');
+  const isShareMode = Boolean(shareText);
+  const count = isShareMode ? 1 : (forwardMessageIds.length || 1);
+  const snippet = isShareMode
+    ? (shareText || '')
+    : (forwardingMessage?.text || (forwardingMessage?.mediaType ? `[${forwardingMessage.mediaType.toUpperCase()}]` : 'Message'));
 
   return (
     <Modal
@@ -64,7 +69,9 @@ export const ForwardMessageModal: React.FC = () => {
           {/* 1. Header */}
           <View style={styles.header}>
             <Text style={styles.headerTitle}>
-              {isKh ? 'បញ្ជូនសារបន្តទៅកាន់...' : 'Forward to...'}
+              {isShareMode
+                ? (isKh ? 'ផ្ញើទៅកាន់ Telegram...' : 'Send to Telegram...')
+                : (isKh ? 'បញ្ជូនសារបន្តទៅកាន់...' : 'Forward to...')}
             </Text>
             <TouchableOpacity
               style={styles.closeBtn}
@@ -163,32 +170,34 @@ export const ForwardMessageModal: React.FC = () => {
               <View style={styles.previewAccent} />
               <View style={styles.previewContent}>
                 <View style={styles.previewHeaderRow}>
-                  <RemixIcon name="share-forward-line" size={12} color="#0284C7" />
+                  <RemixIcon name={isShareMode ? 'sparkles-fill' : 'share-forward-line'} size={12} color="#0284C7" />
                   <Text style={styles.previewSender}>
                     {hideAuthor
                       ? (isKh ? 'លាក់ឈ្មោះអ្នកផ្ញើ' : 'Sender hidden')
-                      : (forwardingMessage.senderName || 'Original Sender')}
+                      : (isShareMode ? (shareTitle || 'AI Copilot Note') : (forwardingMessage?.senderName || 'Original Sender'))}
                   </Text>
                 </View>
-                <Text style={styles.previewSnippet} numberOfLines={1}>
+                <Text style={styles.previewSnippet} numberOfLines={2}>
                   {snippet}
                 </Text>
               </View>
             </View>
 
-            {/* Toggle: Hide Author Name */}
-            <TouchableOpacity
-              style={styles.hideAuthorRow}
-              onPress={() => setHideAuthor(!hideAuthor)}
-              activeOpacity={0.7}
-            >
-              <View style={[styles.checkboxBox, hideAuthor && styles.checkboxBoxChecked]}>
-                {hideAuthor && <RemixIcon name="check-line" size={10} color="#FFFFFF" />}
-              </View>
-              <Text style={styles.hideAuthorLabel}>
-                {isKh ? 'លាក់ឈ្មោះអ្នកផ្ញើដើម (Hide sender name)' : 'Hide sender name'}
-              </Text>
-            </TouchableOpacity>
+            {/* Toggle: Hide Author Name (Only in forward mode) */}
+            {!isShareMode && (
+              <TouchableOpacity
+                style={styles.hideAuthorRow}
+                onPress={() => setHideAuthor(!hideAuthor)}
+                activeOpacity={0.7}
+              >
+                <View style={[styles.checkboxBox, hideAuthor && styles.checkboxBoxChecked]}>
+                  {hideAuthor && <RemixIcon name="check-line" size={10} color="#FFFFFF" />}
+                </View>
+                <Text style={styles.hideAuthorLabel}>
+                  {isKh ? 'លាក់ឈ្មោះម្ចាស់សារដើម (Drop Author)' : 'Hide sender name (Drop author)'}
+                </Text>
+              </TouchableOpacity>
+            )}
 
             {/* Send / Cancel Actions */}
             <View style={styles.actionRow}>

@@ -37,8 +37,10 @@ interface TelegramState {
   forwardingMessage: TelegramMessage | null;
   forwardMessageIds: number[];
   isForwardModalOpen: boolean;
-
-  // Forward Actions
+  // Forward & Share Actions
+  shareText: string | null;
+  shareTitle: string | null;
+  openShareTextModal: (text: string, title?: string) => void;
   openForwardModal: (msg: TelegramMessage | TelegramMessage[]) => void;
   closeForwardModal: () => void;
   forwardMessage: (toChatId: string, dropAuthor?: boolean) => Promise<boolean>;
@@ -424,21 +426,41 @@ export const useTelegramStore = create<TelegramState>((set, get) => ({
     set({ editingMessage: msg, replyingToMessage: null });
   },
 
+  shareText: null,
+  shareTitle: null,
+
+  openShareTextModal: (text: string, title?: string) => {
+    if (!text) return;
+    set({
+      shareText: text,
+      shareTitle: title || 'AI Markdown Note',
+      forwardingMessage: null,
+      forwardMessageIds: [],
+      isForwardModalOpen: true,
+    });
+  },
+
   openForwardModal: (msg: TelegramMessage | TelegramMessage[] | any) => {
     if (Array.isArray(msg)) {
       set({
+        shareText: null,
+        shareTitle: null,
         forwardingMessage: msg[0] || null,
         forwardMessageIds: msg.map((m) => m.id),
         isForwardModalOpen: true,
       });
     } else if (msg?.albumPhotos && Array.isArray(msg.albumPhotos) && msg.albumPhotos.length > 0) {
       set({
+        shareText: null,
+        shareTitle: null,
         forwardingMessage: msg,
         forwardMessageIds: msg.albumPhotos.map((m: any) => m.id),
         isForwardModalOpen: true,
       });
     } else if (msg) {
       set({
+        shareText: null,
+        shareTitle: null,
         forwardingMessage: msg,
         forwardMessageIds: [msg.id],
         isForwardModalOpen: true,
@@ -451,11 +473,39 @@ export const useTelegramStore = create<TelegramState>((set, get) => ({
       isForwardModalOpen: false,
       forwardingMessage: null,
       forwardMessageIds: [],
+      shareText: null,
+      shareTitle: null,
     });
   },
 
   forwardMessage: async (toChatId: string, dropAuthor = false) => {
-    const { activeChatId, forwardMessageIds } = get();
+    const { activeChatId, forwardMessageIds, shareText } = get();
+
+    // If forwarding AI text / markdown directly to Telegram
+    if (shareText) {
+      try {
+        const newMsg = await telegramApi.sendMessage(toChatId, shareText);
+        if (toChatId === activeChatId && newMsg) {
+          set((state) => {
+            const updated = [...state.messages, newMsg];
+            return {
+              messages: updated,
+              messagesCache: {
+                ...state.messagesCache,
+                [activeChatId]: updated,
+              },
+            };
+          });
+        }
+        set({ isForwardModalOpen: false, shareText: null, shareTitle: null });
+        toast.success('Sent to Telegram', 'AI Markdown message delivered successfully');
+        return true;
+      } catch (err: any) {
+        toast.error('Send Failed', err.message || 'Could not send message to Telegram');
+        return false;
+      }
+    }
+
     if (!activeChatId || forwardMessageIds.length === 0) return false;
 
     try {
