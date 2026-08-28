@@ -22,6 +22,9 @@ const AI_MEMO_IMG = require('../../../../assets/copilot/ai_memo_soft.jpg');
 const AI_MILESTONE_IMG = require('../../../../assets/copilot/ai_milestone_soft.jpg');
 const AI_FINANCE_IMG = require('../../../../assets/copilot/ai_finance_soft.jpg');
 const AI_CODE_IMG = require('../../../../assets/copilot/ai_code_soft.jpg');
+const AI_PRIORITY_IMG = require('../../../../assets/copilot/ai_priority.jpg');
+const AI_PULSE_IMG = require('../../../../assets/copilot/ai_pulse.jpg');
+const AI_RADAR_IMG = require('../../../../assets/copilot/ai_radar.jpg');
 const TIME_MORNING_IMG = require('../../../../assets/copilot/time_morning.jpg');
 const TIME_AFTERNOON_IMG = require('../../../../assets/copilot/time_afternoon.jpg');
 
@@ -88,14 +91,14 @@ export const AICopilotModule: React.FC = () => {
     if (hour >= 17 && hour < 21) {
       return {
         text: 'Good evening',
-        image: null,
+        image: TIME_AFTERNOON_IMG,
         fallbackIcon: 'sparkles-fill' as const,
         iconColor: '#F97316',
       };
     }
     return {
       text: 'Good night',
-      image: null,
+      image: TIME_MORNING_IMG,
       fallbackIcon: 'sparkles-fill' as const,
       iconColor: '#8B5CF6',
     };
@@ -307,7 +310,7 @@ export const AICopilotModule: React.FC = () => {
               >
                 <View style={[styles.insightCardHeader, { borderBottomColor: tokens.borderSubtle }]}>
                   <View style={styles.insightHeaderTitleBox}>
-                    <RemixIcon name="checkbox-circle-fill" size={14} color={tokens.accentColor} />
+                    <Image source={AI_PRIORITY_IMG} style={styles.insightHeader3dImg} resizeMode="cover" />
                     <Text style={[styles.insightCardTitle, { color: tokens.textPrimary }]}>Daily Priorities</Text>
                   </View>
                   <View style={[styles.insightCountBadge, { backgroundColor: tokens.accentSoft }]}>
@@ -341,7 +344,7 @@ export const AICopilotModule: React.FC = () => {
               >
                 <View style={[styles.insightCardHeader, { borderBottomColor: tokens.borderSubtle }]}>
                   <View style={styles.insightHeaderTitleBox}>
-                    <RemixIcon name="bank-card-line" size={14} color="#10B981" />
+                    <Image source={AI_PULSE_IMG} style={styles.insightHeader3dImg} resizeMode="cover" />
                     <Text style={[styles.insightCardTitle, { color: tokens.textPrimary }]}>Financial Pulse</Text>
                   </View>
                   <View style={[styles.insightCountBadge, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
@@ -379,7 +382,7 @@ export const AICopilotModule: React.FC = () => {
               >
                 <View style={[styles.insightCardHeader, { borderBottomColor: tokens.borderSubtle }]}>
                   <View style={styles.insightHeaderTitleBox}>
-                    <RemixIcon name="shopping-bag-line" size={14} color="#0284C7" />
+                    <Image source={AI_RADAR_IMG} style={styles.insightHeader3dImg} resizeMode="cover" />
                     <Text style={[styles.insightCardTitle, { color: tokens.textPrimary }]}>Market Radar</Text>
                   </View>
                   <View style={[styles.insightCountBadge, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
@@ -1273,9 +1276,9 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   cockpitAvatarBadge: {
-    width: 36,
-    height: 36,
-    borderRadius: 8,
+    width: 40,
+    height: 40,
+    borderRadius: 10,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
@@ -1443,14 +1446,14 @@ const styles = StyleSheet.create({
   },
   quickActionCard: {
     flex: 1,
-    minWidth: 200,
+    minWidth: 220,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 14,
     borderWidth: 1,
-    borderRadius: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
     cursor: 'pointer',
   } as any,
   quickActionIconBox: {
@@ -1462,23 +1465,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   quickActionTitle: {
-    fontSize: 12,
+    fontSize: 12.5,
     fontFamily: 'Krasar-Bold',
     fontWeight: '700',
   },
   quickAction3dImg: {
-    width: 44,
-    height: 44,
-    borderRadius: 9,
+    width: 52,
+    height: 52,
+    borderRadius: 12,
   },
   insightHeader3dImg: {
-    width: 22,
-    height: 22,
-    borderRadius: 5,
+    width: 24,
+    height: 24,
+    borderRadius: 6,
   },
   greeting3dImg: {
-    width: 36,
-    height: 36,
-    borderRadius: 8,
+    width: 40,
+    height: 40,
+    borderRadius: 10,
   },
 });
