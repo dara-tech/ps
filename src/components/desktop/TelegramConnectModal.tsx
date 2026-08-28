@@ -20,7 +20,7 @@ interface TelegramConnectModalProps {
   onClose: () => void;
 }
 
-type SettingsTab = 'account' | 'chats' | 'storage';
+type SettingsTab = 'account' | 'ghost' | 'chats' | 'storage';
 
 export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
   visible,
@@ -43,6 +43,9 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
   const updateProfile = useTelegramStore((state) => state.updateProfile);
   const uploadProfilePhoto = useTelegramStore((state) => state.uploadProfilePhoto);
   const dialogsCount = useTelegramStore((state) => state.dialogs.length);
+
+  const ghostSettings = useTelegramStore((state) => state.ghostSettings);
+  const updateGhostSettings = useTelegramStore((state) => state.updateGhostSettings);
 
   // Settings State
   const [activeTab, setActiveTab] = useState<SettingsTab>('account');
@@ -211,7 +214,7 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
               </View>
             </View>
 
-            {/* Consistent 3-Segment Tab Bar */}
+            {/* Consistent 4-Segment Tab Bar */}
             <View style={styles.tabBar}>
               <TouchableOpacity
                 style={[styles.tabBtn, activeTab === 'account' && styles.tabBtnActive]}
@@ -231,6 +234,23 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                   numberOfLines={1}
                 >
                   {isKh ? 'គណនី' : 'Account'}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.tabBtn, activeTab === 'ghost' && styles.tabBtnActive]}
+                onPress={() => setActiveTab('ghost')}
+                activeOpacity={0.7}
+              >
+                <Text style={{ fontSize: 13 }}>👻</Text>
+                <Text
+                  style={[
+                    styles.tabBtnText,
+                    activeTab === 'ghost' && styles.tabBtnTextActive,
+                  ]}
+                  numberOfLines={1}
+                >
+                  {isKh ? 'Ghost Mode' : 'Ghost Mode'}
                 </Text>
               </TouchableOpacity>
 
@@ -429,7 +449,163 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
               </View>
             )}
 
-            {/* Tab 2: Chat & Notification Settings */}
+            {/* Tab: Ghost Mode (Stealth & Ninja Mode) */}
+            {activeTab === 'ghost' && (
+              <View style={styles.tabContent}>
+                {/* Master Ghost Mode Banner Card */}
+                <View style={[styles.cardSection, ghostSettings.enabled && styles.ghostCardActive]}>
+                  <View style={styles.settingRow}>
+                    <View style={styles.settingTextCol}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                        <Text style={[styles.settingLabel, { fontSize: 13, color: ghostSettings.enabled ? '#7C3AED' : '#0F172A' }]}>
+                          👻 {isKh ? 'មុខងារសម្ងាត់ (Master Ghost Mode)' : 'Master Ghost Mode'}
+                        </Text>
+                        <View style={[styles.ghostBadge, { backgroundColor: ghostSettings.enabled ? '#EDE9FE' : '#F1F5F9' }]}>
+                          <Text style={[styles.ghostBadgeText, { color: ghostSettings.enabled ? '#7C3AED' : '#64748B' }]}>
+                            {ghostSettings.enabled ? (isKh ? 'សកម្ម (Active)' : 'Stealth Active') : (isKh ? 'បិទ' : 'Disabled')}
+                          </Text>
+                        </View>
+                      </View>
+                      <Text style={styles.settingDesc}>
+                        {isKh
+                          ? 'អានសារ និងប្រើប្រាស់ Telegram ដោយលាក់វត្តមាន Online និង Read Receipts មិនឱ្យអ្នកដទៃដឹង។'
+                          : 'Read messages and use Telegram completely invisibly without sending read receipts or online status.'}
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      style={[styles.toggleBtn, ghostSettings.enabled && styles.toggleBtnGhostActive]}
+                      onPress={() => updateGhostSettings({ enabled: !ghostSettings.enabled })}
+                      activeOpacity={0.8}
+                    >
+                      <View style={[styles.toggleThumb, ghostSettings.enabled && styles.toggleThumbGhostActive]} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                {/* Granular Ghost Mode Capabilities */}
+                <View style={styles.cardSection}>
+                  {/* 1. Stealth Read (Don't Send Read Receipts) */}
+                  <View style={styles.settingRow}>
+                    <View style={styles.settingTextCol}>
+                      <Text style={styles.settingLabel}>
+                        👁️ {isKh ? 'អានសារដោយសម្ងាត់ (Don’t Send Read Receipts)' : 'Stealth Read (No Double Checks)'}
+                      </Text>
+                      <Text style={styles.settingDesc}>
+                        {isKh
+                          ? 'អ្នកអាចបើកមើលសារទាំងអស់បាន ប៉ុន្តែអ្នកផ្ញើនឹងនៅតែឃើញសញ្ញាធីក ១ (Unread) ដដែល។'
+                          : 'Open and read chats without sending read receipts. Senders still see single check mark.'}
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      style={[styles.toggleBtn, ghostSettings.noReadReceipts && styles.toggleBtnActive]}
+                      onPress={() => updateGhostSettings({ noReadReceipts: !ghostSettings.noReadReceipts })}
+                      disabled={!ghostSettings.enabled}
+                      activeOpacity={0.8}
+                    >
+                      <View style={[styles.toggleThumb, ghostSettings.noReadReceipts && styles.toggleThumbActive]} />
+                    </TouchableOpacity>
+                  </View>
+
+                  <View style={styles.rowDivider} />
+
+                  {/* 2. Hide Online Status (Always Offline) */}
+                  <View style={styles.settingRow}>
+                    <View style={styles.settingTextCol}>
+                      <Text style={styles.settingLabel}>
+                        📴 {isKh ? 'លាក់ស្ថានភាព Online (Stay Invisible)' : 'Hide Online Status (Stay Invisible)'}
+                      </Text>
+                      <Text style={styles.settingDesc}>
+                        {isKh
+                          ? 'កុំផ្ញើស្ថានភាព Online ទៅកាន់ Server។ អ្នកដទៃនឹងឃើញត្រឹម «Last seen recently»។'
+                          : 'Do not broadcast online presence to Telegram. Always appear offline / last seen recently.'}
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      style={[styles.toggleBtn, ghostSettings.hideOnline && styles.toggleBtnActive]}
+                      onPress={() => updateGhostSettings({ hideOnline: !ghostSettings.hideOnline })}
+                      disabled={!ghostSettings.enabled}
+                      activeOpacity={0.8}
+                    >
+                      <View style={[styles.toggleThumb, ghostSettings.hideOnline && styles.toggleThumbActive]} />
+                    </TouchableOpacity>
+                  </View>
+
+                  <View style={styles.rowDivider} />
+
+                  {/* 3. Hide Typing Broadcast */}
+                  <View style={styles.settingRow}>
+                    <View style={styles.settingTextCol}>
+                      <Text style={styles.settingLabel}>
+                        ✍️ {isKh ? 'លាក់ស្ថានភាពពេលវាយអក្សរ (Hide Typing Status)' : 'Hide Typing Status'}
+                      </Text>
+                      <Text style={styles.settingDesc}>
+                        {isKh
+                          ? 'មិនបង្ហាញសញ្ញា «Typing...» ឬ «Recording audio...» ពេលអ្នកកំពុងសរសេរឡើយ។'
+                          : 'Never broadcast typing or voice recording actions to chats.'}
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      style={[styles.toggleBtn, ghostSettings.hideTyping && styles.toggleBtnActive]}
+                      onPress={() => updateGhostSettings({ hideTyping: !ghostSettings.hideTyping })}
+                      disabled={!ghostSettings.enabled}
+                      activeOpacity={0.8}
+                    >
+                      <View style={[styles.toggleThumb, ghostSettings.hideTyping && styles.toggleThumbActive]} />
+                    </TouchableOpacity>
+                  </View>
+
+                  <View style={styles.rowDivider} />
+
+                  {/* 4. Anti-Delete Message Vault */}
+                  <View style={styles.settingRow}>
+                    <View style={styles.settingTextCol}>
+                      <Text style={styles.settingLabel}>
+                        🛡️ {isKh ? 'ការពារការលុបសារ (Anti-Delete Messages)' : 'Anti-Delete Message Vault'}
+                      </Text>
+                      <Text style={styles.settingDesc}>
+                        {isKh
+                          ? 'ប្រសិនបើដៃគូសន្ទនាលុបសារសម្រាប់មនុស្សគ្រប់គ្នា ប្រព័ន្ធនឹងរក្សាទុកច្បាប់ដើមជាមួយស្លាក [Deleted]។'
+                          : 'Retain cached copies of messages revoked/deleted by the sender with a [Deleted] tag.'}
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      style={[styles.toggleBtn, ghostSettings.antiDelete && styles.toggleBtnActive]}
+                      onPress={() => updateGhostSettings({ antiDelete: !ghostSettings.antiDelete })}
+                      disabled={!ghostSettings.enabled}
+                      activeOpacity={0.8}
+                    >
+                      <View style={[styles.toggleThumb, ghostSettings.antiDelete && styles.toggleThumbActive]} />
+                    </TouchableOpacity>
+                  </View>
+
+                  <View style={styles.rowDivider} />
+
+                  {/* 5. Stealth Story Viewing */}
+                  <View style={styles.settingRow}>
+                    <View style={styles.settingTextCol}>
+                      <Text style={styles.settingLabel}>
+                        🎭 {isKh ? 'មើល Story ដោយសម្ងាត់ (Anonymous Story View)' : 'Anonymous Story Viewer'}
+                      </Text>
+                      <Text style={styles.settingDesc}>
+                        {isKh
+                          ? 'មើល Telegram Stories ដោយមិនឱ្យម្ចាស់ Story ឃើញឈ្មោះរបស់អ្នកក្នុងបញ្ជីអ្នកមើល។'
+                          : 'View contact stories anonymously without appearing on their viewer list.'}
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      style={[styles.toggleBtn, ghostSettings.stealthStories && styles.toggleBtnActive]}
+                      onPress={() => updateGhostSettings({ stealthStories: !ghostSettings.stealthStories })}
+                      disabled={!ghostSettings.enabled}
+                      activeOpacity={0.8}
+                    >
+                      <View style={[styles.toggleThumb, ghostSettings.stealthStories && styles.toggleThumbActive]} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            )}
+
+            {/* Tab 3: Chat & Notification Settings */}
             {activeTab === 'chats' && (
               <View style={styles.tabContent}>
                 <View style={styles.cardSection}>
@@ -1047,6 +1223,9 @@ const styles = StyleSheet.create({
   toggleBtnActive: {
     backgroundColor: '#0284C7',
   },
+  toggleBtnGhostActive: {
+    backgroundColor: '#7C3AED',
+  },
   toggleThumb: {
     width: 16,
     height: 16,
@@ -1055,6 +1234,24 @@ const styles = StyleSheet.create({
   },
   toggleThumbActive: {
     alignSelf: 'flex-end',
+  },
+  toggleThumbGhostActive: {
+    alignSelf: 'flex-end',
+    backgroundColor: '#FFFFFF',
+  },
+  ghostCardActive: {
+    borderColor: '#C4B5FD',
+    backgroundColor: '#FAF5FF',
+  },
+  ghostBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  ghostBadgeText: {
+    fontSize: 9.5,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
   },
   statsCard: {
     flexDirection: 'row',

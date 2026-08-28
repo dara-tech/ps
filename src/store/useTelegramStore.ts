@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { telegramApi, TelegramDialog, TelegramMessage, TelegramStatus, TelegramContact } from '../services/telegramApi';
+import { telegramApi, TelegramDialog, TelegramMessage, TelegramStatus, TelegramContact, TelegramGhostSettings } from '../services/telegramApi';
 import { toast } from './useToastStore';
 
 export type TelegramFolderFilter = 'all' | 'direct' | 'groups' | 'channels' | 'bots' | 'unread';
@@ -24,6 +24,12 @@ interface TelegramState {
   sendingMessage: boolean;
   activeFolder: TelegramFolderFilter;
   activeSidebarTab: TelegramSidebarTab;
+
+  // Ghost Mode State
+  ghostSettings: TelegramGhostSettings;
+  loadingGhostSettings: boolean;
+  fetchGhostSettings: () => Promise<void>;
+  updateGhostSettings: (settings: Partial<TelegramGhostSettings>) => Promise<boolean>;
 
   // New features state
   replyingToMessage: TelegramMessage | null;
@@ -98,6 +104,45 @@ export const useTelegramStore = create<TelegramState>((set, get) => ({
   sendingMessage: false,
   activeFolder: 'all',
   activeSidebarTab: 'chats',
+
+  // Ghost Mode Initial State
+  ghostSettings: {
+    enabled: false,
+    noReadReceipts: true,
+    hideOnline: true,
+    hideTyping: true,
+    antiDelete: true,
+    stealthStories: true,
+  },
+  loadingGhostSettings: false,
+
+  fetchGhostSettings: async () => {
+    try {
+      set({ loadingGhostSettings: true });
+      const settings = await telegramApi.getGhostSettings();
+      if (settings) {
+        set({ ghostSettings: settings, loadingGhostSettings: false });
+      }
+    } catch {
+      set({ loadingGhostSettings: false });
+    }
+  },
+
+  updateGhostSettings: async (settings: Partial<TelegramGhostSettings>) => {
+    try {
+      const updated = await telegramApi.updateGhostSettings(settings);
+      set({ ghostSettings: updated });
+      toast.success(
+        'Ghost Mode',
+        updated.enabled ? 'Ghost Mode is active (Stealth)' : 'Ghost Mode settings updated'
+      );
+      return true;
+    } catch (err: any) {
+      toast.error('Error', err.message || 'Failed to update Ghost Mode settings');
+      return false;
+    }
+  },
+
   replyingToMessage: null,
   editingMessage: null,
   forwardingMessage: null,
@@ -120,8 +165,11 @@ export const useTelegramStore = create<TelegramState>((set, get) => ({
         user: data.user,
       });
 
-      if (data.isConnected && get().dialogs.length === 0) {
-        get().fetchDialogs();
+      if (data.isConnected) {
+        get().fetchGhostSettings();
+        if (get().dialogs.length === 0) {
+          get().fetchDialogs();
+        }
       }
     } catch (e) {
       set({ isConnected: false });

@@ -127,6 +127,17 @@ sqlite.exec(`
     connectedAt TEXT
   );
 
+  CREATE TABLE IF NOT EXISTS telegram_ghost_settings (
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    enabled INTEGER DEFAULT 0,
+    noReadReceipts INTEGER DEFAULT 1,
+    hideOnline INTEGER DEFAULT 1,
+    hideTyping INTEGER DEFAULT 1,
+    antiDelete INTEGER DEFAULT 1,
+    stealthStories INTEGER DEFAULT 1,
+    updatedAt TEXT
+  );
+
   CREATE TABLE IF NOT EXISTS calendar_events (
     id TEXT PRIMARY KEY,
     title TEXT NOT NULL,
@@ -538,6 +549,71 @@ class PersistentDatabase {
 
   public clearTelegramAuth(): void {
     sqlite.prepare('DELETE FROM telegram_auth WHERE id = 1').run();
+  }
+
+  // Telegram Ghost Mode Settings
+  public getTelegramGhostSettings(): {
+    enabled: boolean;
+    noReadReceipts: boolean;
+    hideOnline: boolean;
+    hideTyping: boolean;
+    antiDelete: boolean;
+    stealthStories: boolean;
+  } {
+    const row = sqlite.prepare('SELECT * FROM telegram_ghost_settings WHERE id = 1').get() as any;
+    if (!row) {
+      return {
+        enabled: false,
+        noReadReceipts: true,
+        hideOnline: true,
+        hideTyping: true,
+        antiDelete: true,
+        stealthStories: true,
+      };
+    }
+    return {
+      enabled: Boolean(row.enabled),
+      noReadReceipts: Boolean(row.noReadReceipts),
+      hideOnline: Boolean(row.hideOnline),
+      hideTyping: Boolean(row.hideTyping),
+      antiDelete: Boolean(row.antiDelete),
+      stealthStories: Boolean(row.stealthStories),
+    };
+  }
+
+  public setTelegramGhostSettings(settings: Partial<{
+    enabled: boolean;
+    noReadReceipts: boolean;
+    hideOnline: boolean;
+    hideTyping: boolean;
+    antiDelete: boolean;
+    stealthStories: boolean;
+  }>): {
+    enabled: boolean;
+    noReadReceipts: boolean;
+    hideOnline: boolean;
+    hideTyping: boolean;
+    antiDelete: boolean;
+    stealthStories: boolean;
+  } {
+    const current = this.getTelegramGhostSettings();
+    const updated = {
+      ...current,
+      ...settings,
+    };
+    sqlite.prepare(`
+      INSERT OR REPLACE INTO telegram_ghost_settings (id, enabled, noReadReceipts, hideOnline, hideTyping, antiDelete, stealthStories, updatedAt)
+      VALUES (1, @enabled, @noReadReceipts, @hideOnline, @hideTyping, @antiDelete, @stealthStories, @updatedAt)
+    `).run({
+      enabled: updated.enabled ? 1 : 0,
+      noReadReceipts: updated.noReadReceipts ? 1 : 0,
+      hideOnline: updated.hideOnline ? 1 : 0,
+      hideTyping: updated.hideTyping ? 1 : 0,
+      antiDelete: updated.antiDelete ? 1 : 0,
+      stealthStories: updated.stealthStories ? 1 : 0,
+      updatedAt: new Date().toISOString(),
+    });
+    return updated;
   }
 
   // Calendar Events

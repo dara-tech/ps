@@ -188,6 +188,7 @@ export class TelegramService {
   private currentUser: any = null;
   private connectPromise: Promise<boolean> | null = null;
   private peerEntityCache = new Map<string, any>();
+  public ghostSettings = db.getTelegramGhostSettings();
   private avatarBufferCache = new Map<string, { buffer: Buffer; timestamp: number }>();
 
   constructor() {
@@ -1200,6 +1201,12 @@ export class TelegramService {
   }
 
   public async markAsRead(chatId: string, maxId?: number): Promise<boolean> {
+    // Ghost Mode check: Stealth Read (do not send read receipts)
+    if (this.ghostSettings.enabled && this.ghostSettings.noReadReceipts) {
+      console.log('[Telegram Ghost Mode] Suppressed markAsRead to keep unread status for sender');
+      return true;
+    }
+
     if (!this.client || !this.isConnected || !this.client.connected) {
       await this.initSavedSession();
       if (!this.client) return false;
@@ -1429,6 +1436,11 @@ export class TelegramService {
   }
 
   public async setTyping(chatId: string): Promise<boolean> {
+    // Ghost Mode check: Stealth Typing (do not broadcast typing)
+    if (this.ghostSettings.enabled && this.ghostSettings.hideTyping) {
+      return true;
+    }
+
     if (!this.client || !this.isConnected) return false;
     try {
       const entity = await this.client.getEntity(chatId);
@@ -1586,6 +1598,29 @@ export class TelegramService {
       console.error('[Telegram forwardMessages error]', err);
       throw new Error(err?.errorMessage || err?.message || 'Failed to forward Telegram message');
     }
+  }
+
+  public getGhostSettings() {
+    this.ghostSettings = db.getTelegramGhostSettings();
+    return this.ghostSettings;
+  }
+
+  public updateGhostSettings(settings: Partial<{
+    enabled: boolean;
+    noReadReceipts: boolean;
+    hideOnline: boolean;
+    hideTyping: boolean;
+    antiDelete: boolean;
+    stealthStories: boolean;
+  }>) {
+    this.ghostSettings = db.setTelegramGhostSettings(settings);
+    if (this.ghostSettings.enabled && this.ghostSettings.hideOnline && this.client && this.isConnected) {
+      try {
+        this.client.invoke(new Api.account.UpdateStatus({ offline: true })).catch(() => {});
+      } catch {}
+    }
+    console.log('[Telegram Ghost Mode] Updated settings:', this.ghostSettings);
+    return this.ghostSettings;
   }
 
   public async disconnect(): Promise<void> {

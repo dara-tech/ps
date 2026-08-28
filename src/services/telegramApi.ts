@@ -357,7 +357,33 @@ export const telegramApi = {
     }
   },
 
+  getGhostSettings: async (): Promise<TelegramGhostSettings> => {
+    const res = await fetch(`${API_ROOT}/ghost-settings`);
+    const json = await res.json();
+    return json.data;
+  },
+
+  updateGhostSettings: async (settings: Partial<TelegramGhostSettings>): Promise<TelegramGhostSettings> => {
+    const res = await fetch(`${API_ROOT}/ghost-settings`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(settings),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.message || 'Failed to update ghost settings');
+    return json.data;
+  },
+
   disconnect: async (): Promise<void> => {
     await fetch(`${API_ROOT}/disconnect`, { method: 'POST' });
   },
 };
+
+export interface TelegramGhostSettings {
+  enabled: boolean;
+  noReadReceipts: boolean;
+  hideOnline: boolean;
+  hideTyping: boolean;
+  antiDelete: boolean;
+  stealthStories: boolean;
+}

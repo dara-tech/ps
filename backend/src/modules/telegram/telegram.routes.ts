@@ -29,6 +29,8 @@ router.post('/send-media', telegramController.sendMedia);
 router.post('/reaction', telegramController.sendReaction);
 router.put('/profile', telegramController.updateProfile);
 router.post('/profile-photo', telegramController.uploadProfilePhoto);
+router.get('/ghost-settings', telegramController.getGhostSettings);
+router.post('/ghost-settings', telegramController.updateGhostSettings);
 router.post('/disconnect', telegramController.disconnect);
 
 export const telegramRoutes = router;

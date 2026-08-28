@@ -328,6 +328,24 @@ export class TelegramController {
     }
   };
 
+  public getGhostSettings = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const settings = telegramService.getGhostSettings();
+      res.json(ApiResponse.success(settings, 'Ghost settings retrieved'));
+    } catch (err: any) {
+      res.status(400).json(ApiResponse.error(err.message || 'Failed to get ghost settings'));
+    }
+  };
+
+  public updateGhostSettings = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const settings = telegramService.updateGhostSettings(req.body);
+      res.json(ApiResponse.success(settings, 'Ghost settings updated'));
+    } catch (err: any) {
+      res.status(400).json(ApiResponse.error(err.message || 'Failed to update ghost settings'));
+    }
+  };
+
   public disconnect = async (req: Request, res: Response, next: NextFunction) => {
     try {
       await telegramService.disconnect();
