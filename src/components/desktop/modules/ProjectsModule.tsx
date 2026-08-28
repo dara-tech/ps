@@ -357,7 +357,7 @@ export const ProjectsModule: React.FC = () => {
                         <Text style={[styles.deptText, { color: tokens.textSecondary }]}>{proj.department || 'General'}</Text>
                       </View>
                     </View>
-                    <View style={[styles.statusBadge, { backgroundColor: badge.bg }]}>
+                    <View style={[styles.statusBadge, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
                       <View style={[styles.statusDot, { backgroundColor: badge.dot }]} />
                       <Text style={[styles.statusText, { color: badge.text }]}>
                         {badge.label}
@@ -383,7 +383,7 @@ export const ProjectsModule: React.FC = () => {
                   </View>
 
                   {/* Milestones / Recent Tasks Checklist */}
-                  <View style={styles.milestonesList}>
+                  <View style={[styles.milestonesList, { borderTopColor: tokens.borderSubtle }]}>
                     {projectTasks.length > 0 ? (
                       projectTasks.slice(0, 2).map((tItem) => (
                         <View key={tItem.id} style={styles.milestoneItem}>
@@ -394,11 +394,11 @@ export const ProjectsModule: React.FC = () => {
                             <RemixIcon
                               name={tItem.status === 'done' ? 'checkbox-circle-fill' : 'time-line'}
                               size={13}
-                              color={tItem.status === 'done' ? '#10B981' : '#94A3B8'}
+                              color={tItem.status === 'done' ? '#10B981' : tokens.textMuted}
                             />
                           </TouchableOpacity>
                           <Text
-                            style={[styles.milestoneText, tItem.status === 'done' && styles.milestoneTextDone]}
+                            style={[styles.milestoneText, { color: tokens.textSecondary }, tItem.status === 'done' && styles.milestoneTextDone]}
                             numberOfLines={1}
                           >
                             {tItem.title}
@@ -411,45 +411,45 @@ export const ProjectsModule: React.FC = () => {
                           <RemixIcon
                             name={m.completed ? 'checkbox-circle-fill' : 'time-line'}
                             size={13}
-                            color={m.completed ? '#10B981' : '#94A3B8'}
+                            color={m.completed ? '#10B981' : tokens.textMuted}
                           />
-                          <Text style={[styles.milestoneText, m.completed && styles.milestoneTextDone]} numberOfLines={1}>
+                          <Text style={[styles.milestoneText, { color: tokens.textSecondary }, m.completed && styles.milestoneTextDone]} numberOfLines={1}>
                             {m.title}
                           </Text>
                         </View>
                       ))
                     ) : (
-                      <Text style={styles.noTaskSub}>{isKh ? 'មិនទាន់មាន Task នៅឡើយ' : 'No subtasks attached'}</Text>
+                      <Text style={[styles.noTaskSub, { color: tokens.textMuted }]}>{isKh ? 'មិនទាន់មាន Task នៅឡើយ' : 'No subtasks attached'}</Text>
                     )}
                   </View>
 
                   {/* Card Footer Actions */}
-                  <View style={styles.cardFooter}>
+                  <View style={[styles.cardFooter, { borderTopColor: tokens.borderSubtle }]}>
                     <TouchableOpacity
-                      style={styles.drillDownBtn}
+                      style={[styles.drillDownBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                       onPress={() => setDrillDownProject(proj)}
                       activeOpacity={0.7}
                     >
-                      <RemixIcon name="task-line" size={12} color="#0F172A" />
-                      <Text style={styles.drillDownBtnText}>
+                      <RemixIcon name="task-line" size={12} color={tokens.textPrimary} />
+                      <Text style={[styles.drillDownBtnText, { color: tokens.textPrimary }]}>
                         {totalTasks > 0 ? `${totalTasks} Tasks` : 'View Details'}
                       </Text>
                     </TouchableOpacity>
 
                     <View style={styles.actionBtnsRow}>
                       <TouchableOpacity
-                        style={styles.iconBtn}
+                        style={[styles.iconBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                         onPress={() => openEditModal(proj)}
                         activeOpacity={0.7}
                       >
-                        <RemixIcon name="pencil-line" size={13} color="#64748B" />
+                        <RemixIcon name="pencil-line" size={13} color={tokens.textSecondary} />
                       </TouchableOpacity>
                       <TouchableOpacity
-                        style={styles.iconBtn}
+                        style={[styles.iconBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                         onPress={() => handleDeleteProject(proj)}
                         activeOpacity={0.7}
                       >
-                        <RemixIcon name="delete-bin-line" size={13} color="#94A3B8" />
+                        <RemixIcon name="delete-bin-line" size={13} color={tokens.textMuted} />
                       </TouchableOpacity>
                     </View>
                   </View>
