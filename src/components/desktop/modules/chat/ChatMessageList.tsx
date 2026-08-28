@@ -223,10 +223,10 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
         {/* Telegram Instant Skeleton Shimmer when switching to a new chat */}
         {loadingMessages && groupedItems.length === 0 && (
           <View style={{ width: '100%', gap: 12, paddingVertical: 20 }}>
-            <View style={{ width: 260, height: 42, borderRadius: 14, backgroundColor: '#F1F5F9', alignSelf: 'flex-start' }} />
-            <View style={{ width: 320, height: 180, borderRadius: 14, backgroundColor: '#F1F5F9', alignSelf: 'flex-start' }} />
-            <View style={{ width: 220, height: 38, borderRadius: 14, backgroundColor: '#EFFCEE', alignSelf: 'flex-end' }} />
-            <View style={{ width: 280, height: 50, borderRadius: 14, backgroundColor: '#F1F5F9', alignSelf: 'flex-start' }} />
+            <View style={{ width: 260, height: 42, borderRadius: 14, backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle, borderWidth: 1, alignSelf: 'flex-start' }} />
+            <View style={{ width: 320, height: 180, borderRadius: 14, backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle, borderWidth: 1, alignSelf: 'flex-start' }} />
+            <View style={{ width: 220, height: 38, borderRadius: 14, backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder, borderWidth: 1, alignSelf: 'flex-end' }} />
+            <View style={{ width: 280, height: 50, borderRadius: 14, backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle, borderWidth: 1, alignSelf: 'flex-start' }} />
           </View>
         )}
 
