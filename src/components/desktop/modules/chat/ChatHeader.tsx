@@ -166,15 +166,15 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
 
       {/* Pinned Message Top Banner */}
       {pinnedMsg && (
-        <View style={styles.pinnedBanner}>
-          <View style={styles.pinnedAccentBar} />
+        <View style={[styles.pinnedBanner, { backgroundColor: tokens.surfaceMuted, borderBottomColor: tokens.borderSubtle }]}>
+          <View style={[styles.pinnedAccentBar, { backgroundColor: tokens.accentColor }]} />
           <View style={styles.pinnedInfo}>
-            <Text style={styles.pinnedLabel}>{isKh ? 'សារបាន Pin' : 'Pinned Message'}</Text>
-            <Text style={styles.pinnedText} numberOfLines={1}>
+            <Text style={[styles.pinnedLabel, { color: tokens.accentColor }]}>{isKh ? 'សារបាន Pin' : 'Pinned Message'}</Text>
+            <Text style={[styles.pinnedText, { color: tokens.textSecondary }]} numberOfLines={1}>
               {pinnedMsg.content || pinnedMsg.text || `[${pinnedMsg.mediaType || 'Media'}]`}
             </Text>
           </View>
-          <RemixIcon name="pushpin-fill" size={13} color="#0284C7" />
+          <RemixIcon name="pushpin-fill" size={13} color={tokens.accentColor} />
         </View>
       )}
     </>
