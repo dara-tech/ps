@@ -1110,18 +1110,6 @@ export const CalendarModule: React.FC = () => {
                 </Text>
               </View>
             </View>
-
-            <TouchableOpacity
-              style={[styles.daySubAddBtn, { backgroundColor: tokens.accentColor }]}
-              onPress={() => {
-                setEventDate(selectedDateStr);
-                setShowAddModal(true);
-              }}
-              activeOpacity={0.75}
-            >
-              <RemixIcon name="add-line" size={13} color={tokens.accentFg} />
-              <Text style={[styles.daySubAddText, { color: tokens.accentFg }]}>Add Event</Text>
-            </TouchableOpacity>
           </View>
 
           {/* Top Pinned Tasks / All-day Section */}
