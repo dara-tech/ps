@@ -810,9 +810,12 @@ export const CalendarModule: React.FC = () => {
               </View>
 
               {/* Scope Switcher: Selected Day vs GitHub Feed */}
-              <View style={[styles.scopeTabBar, { borderBottomColor: tokens.borderSubtle, backgroundColor: tokens.surfaceMuted }]}>
+              <View style={[styles.scopeTabBar, { borderColor: tokens.borderSubtle, backgroundColor: tokens.surfaceMuted }]}>
                 <TouchableOpacity
-                  style={[styles.scopeTabBtn, agendaScope === 'selected' && { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle, borderBottomColor: tokens.surfaceBg }]}
+                  style={[
+                    styles.scopeTabBtn,
+                    agendaScope === 'selected' && { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle, borderWidth: 1 },
+                  ]}
                   onPress={() => setAgendaScope('selected')}
                   activeOpacity={0.75}
                 >
@@ -822,7 +825,10 @@ export const CalendarModule: React.FC = () => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={[styles.scopeTabBtn, agendaScope === 'github' && { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle, borderBottomColor: tokens.surfaceBg }]}
+                  style={[
+                    styles.scopeTabBtn,
+                    agendaScope === 'github' && { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle, borderWidth: 1 },
+                  ]}
                   onPress={() => setAgendaScope('github')}
                   activeOpacity={0.75}
                 >
@@ -1163,7 +1169,7 @@ export const CalendarModule: React.FC = () => {
                   currentHour === slot.hour;
 
                 return (
-                  <View key={slot.hour} style={styles.timelineRow}>
+                  <View key={slot.hour} style={[styles.timelineRow, { borderBottomColor: tokens.borderSubtle }]}>
                     {/* Left Hour Label */}
                     <View style={[styles.timeCol, { backgroundColor: tokens.surfaceBg, borderRightColor: tokens.borderSubtle, borderBottomColor: tokens.borderSubtle }]}>
                       <Text style={[styles.timeColText, { color: tokens.textSecondary }, isCurrentHourSlot && { color: tokens.accentColor, fontWeight: '700' }]}>
@@ -1263,7 +1269,7 @@ export const CalendarModule: React.FC = () => {
                                       style={[styles.tlIconBtn, { backgroundColor: tokens.surfaceMuted }]}
                                       hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
                                     >
-                                      <RemixIcon name="close-line" size={13} color={tokens.textSecondary} />
+                                      <RemixIcon name="close-line" size={13} color={tokens.textMuted} />
                                     </TouchableOpacity>
                                   </View>
                                 </View>
@@ -1295,7 +1301,7 @@ export const CalendarModule: React.FC = () => {
           <ScrollView style={[styles.agendaViewContainer, { backgroundColor: tokens.windowBg }]} showsVerticalScrollIndicator={false}>
             <View style={styles.agendaViewContent}>
               {/* Full Agenda Search Toolbar */}
-              <View style={[styles.fullAgendaToolbar, { backgroundColor: tokens.surfaceBg, borderBottomColor: tokens.borderSubtle }]}>
+              <View style={[styles.fullAgendaToolbar, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
                 <View style={{ width: 280 }}>
                   <CustomTextInput
                     value={fullAgendaSearch}
@@ -2173,7 +2179,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8FAFC',
     padding: 14,
     borderLeftWidth: 1,
-    borderLeftColor: '#E2E8F0',
+    borderLeftColor: 'transparent',
   },
   agendaToolbar: {
     flexDirection: 'row',
@@ -2183,9 +2189,7 @@ const styles = StyleSheet.create({
   },
   scopeTabBar: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
     borderRadius: 6,
     padding: 2,
     marginBottom: 10,
@@ -2200,19 +2204,13 @@ const styles = StyleSheet.create({
     paddingVertical: 4.5,
     borderRadius: 4,
   },
-  scopeTabBtnActive: {
-    backgroundColor: '#F1F5F9',
-    borderWidth: 1,
-    borderColor: '#CBD5E1',
-  },
+  scopeTabBtnActive: {},
   scopeTabText: {
     fontSize: 10.5,
     fontFamily: 'Krasar-Bold',
-    color: '#64748B',
     fontWeight: '600',
   },
   scopeTabTextActive: {
-    color: '#0F172A',
     fontWeight: '700',
   },
   agendaSearchCol: {
@@ -2225,9 +2223,7 @@ const styles = StyleSheet.create({
   },
   viewToggleGroup: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#CBD5E1',
     borderRadius: 6,
     padding: 2,
   },
@@ -2238,16 +2234,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 4,
   },
-  viewToggleBtnActive: {
-    backgroundColor: '#EEF2F6',
-  },
+  viewToggleBtnActive: {},
   closeAgendaBtn: {
     width: 26,
     height: 26,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -2560,7 +2552,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     minHeight: 56,
     borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
+    borderBottomColor: 'transparent',
   },
   timeCol: {
     width: 86,
@@ -2568,8 +2560,7 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     alignItems: 'flex-end',
     borderRightWidth: 1,
-    borderRightColor: '#E2E8F0',
-    backgroundColor: '#FAFAFC',
+    borderRightColor: 'transparent',
   },
   timeColText: {
     fontSize: 10.5,
@@ -2750,9 +2741,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
     borderRadius: 8,
     padding: 10,
     marginBottom: 4,
