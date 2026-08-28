@@ -242,11 +242,16 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                 onPress={() => setActiveTab('ghost')}
                 activeOpacity={0.7}
               >
-                <Text style={{ fontSize: 13 }}>👻</Text>
+                <RemixIcon
+                  name="ghost-line"
+                  size={14}
+                  color={activeTab === 'ghost' ? '#7C3AED' : '#64748B'}
+                />
                 <Text
                   style={[
                     styles.tabBtnText,
                     activeTab === 'ghost' && styles.tabBtnTextActive,
+                    activeTab === 'ghost' && { color: '#7C3AED' },
                   ]}
                   numberOfLines={1}
                 >
@@ -456,7 +461,11 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                 <View style={[styles.ghostHeroCard, ghostSettings.enabled && styles.ghostHeroCardActive]}>
                   <View style={styles.ghostHeroLeft}>
                     <View style={[styles.ghostHeroIconBox, ghostSettings.enabled && styles.ghostHeroIconBoxActive]}>
-                      <Text style={{ fontSize: 22 }}>👻</Text>
+                      <RemixIcon
+                        name="ghost-fill"
+                        size={18}
+                        color={ghostSettings.enabled ? '#7C3AED' : '#64748B'}
+                      />
                     </View>
                     <View style={{ flex: 1, gap: 2 }}>
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
@@ -490,7 +499,7 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                   {/* 1. Stealth Read (Don't Send Read Receipts) */}
                   <View style={styles.settingRow}>
                     <View style={[styles.stealthIconBox, { backgroundColor: '#F0F9FF', borderColor: '#BAE6FD' }]}>
-                      <Text style={{ fontSize: 14 }}>👁️</Text>
+                      <RemixIcon name="eye-off-line" size={14} color="#0284C7" />
                     </View>
                     <View style={styles.settingTextCol}>
                       <Text style={styles.settingLabel}>
@@ -517,7 +526,7 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                   {/* 2. Hide Online Status (Always Offline) */}
                   <View style={styles.settingRow}>
                     <View style={[styles.stealthIconBox, { backgroundColor: '#F5F3FF', borderColor: '#DDD6FE' }]}>
-                      <Text style={{ fontSize: 14 }}>📴</Text>
+                      <RemixIcon name="wifi-off-line" size={14} color="#7C3AED" />
                     </View>
                     <View style={styles.settingTextCol}>
                       <Text style={styles.settingLabel}>
@@ -544,7 +553,7 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                   {/* 3. Hide Typing Broadcast */}
                   <View style={styles.settingRow}>
                     <View style={[styles.stealthIconBox, { backgroundColor: '#FFFBEB', borderColor: '#FDE68A' }]}>
-                      <Text style={{ fontSize: 14 }}>✍️</Text>
+                      <RemixIcon name="edit-line" size={14} color="#D97706" />
                     </View>
                     <View style={styles.settingTextCol}>
                       <Text style={styles.settingLabel}>
@@ -571,7 +580,7 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                   {/* 4. Anti-Delete Message Vault */}
                   <View style={styles.settingRow}>
                     <View style={[styles.stealthIconBox, { backgroundColor: '#FEF2F2', borderColor: '#FECACA' }]}>
-                      <Text style={{ fontSize: 14 }}>🛡️</Text>
+                      <RemixIcon name="shield-check-line" size={14} color="#DC2626" />
                     </View>
                     <View style={styles.settingTextCol}>
                       <Text style={styles.settingLabel}>
@@ -598,7 +607,7 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                   {/* 5. Stealth Story Viewing */}
                   <View style={styles.settingRow}>
                     <View style={[styles.stealthIconBox, { backgroundColor: '#ECFDF5', borderColor: '#A7F3D0' }]}>
-                      <Text style={{ fontSize: 14 }}>🎭</Text>
+                      <RemixIcon name="movie-line" size={14} color="#059669" />
                     </View>
                     <View style={styles.settingTextCol}>
                       <Text style={styles.settingLabel}>
@@ -1264,8 +1273,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FAF5FF',
     borderWidth: 1,
     borderColor: '#E9D5FF',
-    borderRadius: 10,
-    padding: 14,
+    borderRadius: 8,
+    padding: 10,
   },
   ghostHeroCardActive: {
     backgroundColor: '#FAF5FF',
@@ -1275,13 +1284,13 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    marginRight: 10,
+    gap: 10,
+    marginRight: 8,
   },
   ghostHeroIconBox: {
-    width: 44,
-    height: 44,
-    borderRadius: 10,
+    width: 32,
+    height: 32,
+    borderRadius: 6,
     backgroundColor: '#F3E8FF',
     borderWidth: 1,
     borderColor: '#DDD6FE',
@@ -1293,34 +1302,34 @@ const styles = StyleSheet.create({
     borderColor: '#C4B5FD',
   },
   ghostHeroTitle: {
-    fontSize: 13.5,
+    fontSize: 12.5,
     fontFamily: 'Krasar-Bold',
     fontWeight: '800',
     color: '#0F172A',
   },
   ghostHeroDesc: {
-    fontSize: 11,
+    fontSize: 10.5,
     fontFamily: 'Krasar-Regular',
     color: '#64748B',
-    lineHeight: 16,
+    lineHeight: 14,
   },
   stealthIconBox: {
-    width: 32,
-    height: 32,
-    borderRadius: 7,
+    width: 26,
+    height: 26,
+    borderRadius: 5,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 2,
   },
   ghostBadge: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
+    paddingHorizontal: 5,
+    paddingVertical: 1.5,
     borderRadius: 4,
     borderWidth: 1,
   },
   ghostBadgeText: {
-    fontSize: 9.5,
+    fontSize: 9,
     fontFamily: 'Krasar-Bold',
     fontWeight: '700',
   },

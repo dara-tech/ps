@@ -9,6 +9,14 @@ export type RemixIconName =
   | 'user-3-line'
   | 'eye-line'
   | 'eye-off-line'
+  | 'ghost-line'
+  | 'ghost-fill'
+  | 'spy-line'
+  | 'spy-fill'
+  | 'wifi-off-line'
+  | 'edit-line'
+  | 'shield-check-line'
+  | 'movie-line'
   | 'arrow-right-line'
   | 'arrow-left-line'
   | 'arrow-down-line'
@@ -227,6 +235,94 @@ export const RemixIcon: React.FC<RemixIconProps> = ({
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
+        />
+      </Svg>
+    );
+  }
+
+  // Ghost Mode Icons
+  if (name === 'ghost-line' || name === 'ghost-fill') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+        <Path
+          d="M12 2a9 9 0 0 0-9 9v7.5a1.5 1.5 0 0 0 2.56 1.06L7 18.12l1.44 1.44a1.5 1.5 0 0 0 2.12 0L12 18.12l1.44 1.44a1.5 1.5 0 0 0 2.12 0L17 18.12l1.44 1.44A1.5 1.5 0 0 0 21 18.5V11a9 9 0 0 0-9-9z"
+          stroke={color}
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          fill={name === 'ghost-fill' ? color : 'none'}
+        />
+        <Circle cx="9" cy="9.5" r="1.3" fill={name === 'ghost-fill' ? '#FFFFFF' : color} />
+        <Circle cx="15" cy="9.5" r="1.3" fill={name === 'ghost-fill' ? '#FFFFFF' : color} />
+      </Svg>
+    );
+  }
+
+  if (name === 'spy-line' || name === 'spy-fill') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+        <Path
+          d="M17 2h-2V1h-6v1H7a3 3 0 0 0-3 3v1h16V5a3 3 0 0 0-3-3z"
+          fill={color}
+        />
+        <Path
+          d="M3 8v1a7 7 0 0 0 5 6.708V17a3 3 0 0 0 3 3h2a3 3 0 0 0 3-3v-1.292A7 7 0 0 0 21 9V8H3zm16 2a5 5 0 0 1-4.584 4.98A3 3 0 0 0 13 13h-2a3 3 0 0 0-1.416 1.98A5 5 0 0 1 5 10H19z"
+          fill={color}
+        />
+      </Svg>
+    );
+  }
+
+  if (name === 'eye-off-line') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+        <Path
+          d="M4.93 4.93l4.29 4.29A4.98 4.98 0 0 0 8 12a4 4 0 0 0 4 4c1.03 0 1.97-.39 2.68-1.03l4.39 4.39 1.41-1.41L6.34 3.51 4.93 4.93zM12 14a2 2 0 0 1-2-2c0-.35.09-.68.25-.97l2.72 2.72c-.29.16-.62.25-.97.25zm-7.66-2C5.9 7.91 8.7 5.5 12 5.5c1.47 0 2.84.48 4 1.31l1.47-1.47A11.96 11.96 0 0 0 12 3.5C6.48 3.5 1.83 7.84.5 12c1.03 3.23 3.65 5.75 6.94 6.84L8.85 17.4A9.97 9.97 0 0 1 4.34 12zM12 8.5c.35 0 .68.09.97.25l1.78-1.78A4.98 4.98 0 0 0 12 6.5a4 4 0 0 0-4 4c0 .97.35 1.86.94 2.55l1.78-1.78c-.16-.29-.25-.62-.25-.97a2 2 0 0 1 2-2zm7.66 3.5c-.75 2.09-2.17 3.86-4 4.97l1.44 1.44C19.34 16.89 21.1 14.65 22 12c-1.33-4.16-5.98-8.5-11.5-8.5-1.07 0-2.1.18-3.08.51l1.58 1.58c.49-.06 1-.09 1.5-.09 3.3 0 6.1 2.41 7.66 6.5z"
+          fill={color}
+        />
+      </Svg>
+    );
+  }
+
+  if (name === 'wifi-off-line') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+        <Path
+          d="M2.81 2.81L1.39 4.22l2.36 2.36A15.93 15.93 0 0 0 .5 9.47l1.41 1.41a13.93 13.93 0 0 1 3.82-2.73l2.25 2.25A9.94 9.94 0 0 0 5 12.94l1.41 1.41a7.95 7.95 0 0 1 2.37-1.76l2.19 2.19A4.96 4.96 0 0 0 10 16.47l1.41 1.41a2.97 2.97 0 0 1 .59-.59l7.78 7.78 1.41-1.41L2.81 2.81zM12 3c3.78 0 7.23 1.34 9.94 3.58l-1.41 1.41A13.93 13.93 0 0 0 12 5c-2.47 0-4.78.69-6.75 1.88L3.8 5.44A15.93 15.93 0 0 1 12 3zm0 4c2.81 0 5.37 1.05 7.35 2.78l-1.41 1.41A7.95 7.95 0 0 0 12 9c-1.46 0-2.83.42-4 1.15L6.55 8.7A9.94 9.94 0 0 1 12 7zm0 4c1.78 0 3.39.73 4.56 1.91l-1.41 1.41A4.96 4.96 0 0 0 12 13c-.45 0-.88.08-1.28.22L9.27 11.79A6.95 6.95 0 0 1 12 11z"
+          fill={color}
+        />
+      </Svg>
+    );
+  }
+
+  if (name === 'edit-line') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+        <Path
+          d="M15.728 9.686l-1.414-1.414L5 17.586V19h1.414l9.314-9.314zm1.414-1.414l1.414-1.414a1 1 0 0 0 0-1.414l-1.414-1.414a1 1 0 0 0-1.414 0l-1.414 1.414 2.828 2.828zM7.071 21H3v-4.071L16.435 3.494a3 3 0 0 1 4.243 0l1.414 1.414a3 3 0 0 1 0 4.243L7.071 21z"
+          fill={color}
+        />
+      </Svg>
+    );
+  }
+
+  if (name === 'shield-check-line') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+        <Path
+          d="M12 2l8 3.5v6.5c0 5.25-3.4 10.15-8 11.5-4.6-1.35-8-6.25-8-11.5V5.5L12 2zm0 2.18L6 6.8v5.2c0 4.14 2.62 8.04 6 9.17 3.38-1.13 6-5.03 6-9.17V6.8l-6-2.62zm3.3 5.11l1.4 1.42L11 16.4l-3.7-3.7 1.4-1.42 2.3 2.3 4.3-4.29z"
+          fill={color}
+        />
+      </Svg>
+    );
+  }
+
+  if (name === 'movie-line') {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+        <Path
+          d="M2 3.993A1 1 0 0 1 2.992 3h18.016c.548 0 .992.445.992.993v16.014a1 1 0 0 1-.992.993H2.992A.993.993 0 0 1 2 20.007V3.993zM4 5v14h16V5H4zm2 2h2v2H6V7zm0 4h2v2H6v-2zm0 4h2v2H6v-2zm10-8h2v2h-2V7zm0 4h2v2h-2v-2zm0 4h2v2h-2v-2zM9 7h6v10H9V7z"
+          fill={color}
         />
       </Svg>
     );
