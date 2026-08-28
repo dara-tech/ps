@@ -364,24 +364,9 @@ export const CalendarModule: React.FC = () => {
   // Month-level Executive Metrics for Insight Cockpit Strip
   const currentMonthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
 
-  const monthFinances = useMemo(() => {
-    return finances.filter((f) => {
-      const iso = normalizeFinanceDateToISO(f.date);
-      return iso ? iso.startsWith(currentMonthStr) : false;
-    });
-  }, [finances, currentMonthStr]);
-
-  const monthExpenses = useMemo(() => {
-    return monthFinances
-      .filter((f: any) => f.type === 'expense')
-      .reduce((sum: number, f: any) => sum + (f.amount || 0), 0);
-  }, [monthFinances]);
-
-  const monthIncomes = useMemo(() => {
-    return monthFinances
-      .filter((f: any) => f.type === 'income')
-      .reduce((sum: number, f: any) => sum + (f.amount || 0), 0);
-  }, [monthFinances]);
+  const selectedDayFinance = useMemo(() => {
+    return financesByDate.get(selectedDateStr) || { income: 0, expense: 0, count: 0 };
+  }, [financesByDate, selectedDateStr]);
 
   const monthGitCommitsCount = useMemo(() => {
     return calendarEvents.filter(
@@ -574,9 +559,9 @@ export const CalendarModule: React.FC = () => {
                   <RemixIcon name="bank-card-line" size={11} color="#DC2626" />
                 </View>
                 <Text style={styles.insightStripLabel}>{isKh ? 'លំហូរសាច់ប្រាក់:' : 'Cashflow:'}</Text>
-                <Text style={[styles.insightStripVal, { color: '#DC2626' }]}>-${monthExpenses.toLocaleString()}</Text>
+                <Text style={[styles.insightStripVal, { color: '#DC2626' }]}>-${selectedDayFinance.expense.toLocaleString()}</Text>
                 <Text style={styles.insightStripDivider}>/</Text>
-                <Text style={[styles.insightStripVal, { color: '#16A34A' }]}>+${monthIncomes.toLocaleString()}</Text>
+                <Text style={[styles.insightStripVal, { color: '#16A34A' }]}>+${selectedDayFinance.income.toLocaleString()}</Text>
               </View>
 
               <View style={styles.insightStripItem}>
