@@ -23,6 +23,17 @@ export const RichMarkdownView: React.FC<RichMarkdownViewProps> = ({ content, isU
           return <CodeBlock key={idx} language={block.language || 'text'} code={block.text} />;
         }
 
+        if (block.type === 'table') {
+          return (
+            <TableView
+              key={idx}
+              headers={block.tableHeaders || []}
+              rows={block.tableRows || []}
+              alignments={block.tableAlignments || []}
+            />
+          );
+        }
+
         if (block.type === 'h1') {
           return (
             <Text key={idx} style={styles.h1}>
@@ -113,10 +124,13 @@ export const RichMarkdownView: React.FC<RichMarkdownViewProps> = ({ content, isU
 };
 
 interface Block {
-  type: 'paragraph' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'bullet' | 'numbered' | 'quote' | 'code' | 'divider';
+  type: 'paragraph' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'bullet' | 'numbered' | 'quote' | 'code' | 'divider' | 'table';
   text: string;
   language?: string;
   index?: number;
+  tableHeaders?: string[];
+  tableRows?: string[][];
+  tableAlignments?: ('left' | 'center' | 'right')[];
 }
 
 function parseMarkdownBlocks(raw: string): Block[] {
@@ -153,6 +167,49 @@ function parseMarkdownBlocks(raw: string): Block[] {
 
     const trimmed = line.trim();
     if (!trimmed) {
+      continue;
+    }
+
+    // Table detection: current line contains `|` and next line is table divider `| :--- | :--- |`
+    if (
+      trimmed.includes('|') &&
+      i + 1 < lines.length &&
+      /^\|?(\s*:?-+:?\s*\|)+\s*:?-+:?\s*\|?$/.test(lines[i + 1].trim())
+    ) {
+      const headerLine = trimmed;
+      const sepLine = lines[i + 1].trim();
+
+      const parseCells = (rowStr: string) => {
+        const rawCells = rowStr.replace(/^\|/, '').replace(/\|$/, '').split('|');
+        return rawCells.map((c) => c.trim());
+      };
+
+      const tableHeaders = parseCells(headerLine);
+      const sepCells = parseCells(sepLine);
+      const tableAlignments = sepCells.map((cell) => {
+        if (cell.startsWith(':') && cell.endsWith(':')) return 'center';
+        if (cell.endsWith(':')) return 'right';
+        return 'left';
+      }) as ('left' | 'center' | 'right')[];
+
+      const tableRows: string[][] = [];
+      i += 2; // skip header and separator
+
+      while (i < lines.length && lines[i].trim().includes('|')) {
+        const rowLine = lines[i].trim();
+        if (!rowLine) break;
+        tableRows.push(parseCells(rowLine));
+        i++;
+      }
+      i--; // step back since loop will increment
+
+      blocks.push({
+        type: 'table',
+        text: '',
+        tableHeaders,
+        tableRows,
+        tableAlignments,
+      });
       continue;
     }
 
@@ -245,6 +302,76 @@ function renderFormattedInline(text: string): React.ReactNode[] {
 
   return parts;
 }
+
+const TableView: React.FC<{
+  headers: string[];
+  rows: string[][];
+  alignments: ('left' | 'center' | 'right')[];
+}> = ({ headers, rows, alignments }) => {
+  return (
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tableScroll}>
+      <View style={styles.tableContainer}>
+        {/* Table Header */}
+        <View style={styles.tableHeaderRow}>
+          {headers.map((h, idx) => (
+            <View
+              key={idx}
+              style={[
+                styles.tableHeaderCell,
+                idx === 0 && { minWidth: 110 },
+                idx === headers.length - 1 && { borderRightWidth: 0 },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.tableHeaderText,
+                  { textAlign: alignments[idx] || 'left' },
+                ]}
+              >
+                {renderFormattedInline(h)}
+              </Text>
+            </View>
+          ))}
+        </View>
+
+        {/* Table Body Rows */}
+        {rows.map((row, rIdx) => (
+          <View
+            key={rIdx}
+            style={[
+              styles.tableBodyRow,
+              rIdx % 2 === 1 && styles.tableBodyRowAlt,
+              rIdx === rows.length - 1 && { borderBottomWidth: 0 },
+            ]}
+          >
+            {headers.map((_, cIdx) => {
+              const cellVal = row[cIdx] || '';
+              return (
+                <View
+                  key={cIdx}
+                  style={[
+                    styles.tableBodyCell,
+                    cIdx === 0 && { minWidth: 110 },
+                    cIdx === headers.length - 1 && { borderRightWidth: 0 },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.tableCellText,
+                      { textAlign: alignments[cIdx] || 'left' },
+                    ]}
+                  >
+                    {renderFormattedInline(cellVal)}
+                  </Text>
+                </View>
+              );
+            })}
+          </View>
+        ))}
+      </View>
+    </ScrollView>
+  );
+};
 
 const CodeBlock: React.FC<{ language: string; code: string }> = ({ language, code }) => {
   const handleCopy = () => {
@@ -402,6 +529,59 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     color: '#475569',
     fontFamily: 'Krasar-Regular',
+  },
+  tableScroll: {
+    marginVertical: 6,
+  },
+  tableContainer: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  tableHeaderRow: {
+    flexDirection: 'row',
+    backgroundColor: '#F8FAFC',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
+  },
+  tableHeaderCell: {
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRightWidth: 1,
+    borderRightColor: '#E2E8F0',
+    justifyContent: 'center',
+    minWidth: 100,
+  },
+  tableHeaderText: {
+    fontSize: 12,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
+    color: '#0F172A',
+  },
+  tableBodyRow: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
+    backgroundColor: '#FFFFFF',
+  },
+  tableBodyRowAlt: {
+    backgroundColor: '#FAFAFA',
+  },
+  tableBodyCell: {
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRightWidth: 1,
+    borderRightColor: '#F1F5F9',
+    justifyContent: 'center',
+    minWidth: 100,
+  },
+  tableCellText: {
+    fontSize: 12,
+    fontFamily: 'Krasar-Regular',
+    color: '#334155',
+    lineHeight: 18,
   },
   codeContainer: {
     backgroundColor: '#0F172A',
