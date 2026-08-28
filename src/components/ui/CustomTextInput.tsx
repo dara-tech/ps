@@ -9,6 +9,7 @@ import {
   TextInputProps,
   Platform,
 } from 'react-native';
+import { useThemeStore } from '../../store/useThemeStore';
 import { RemixIcon, RemixIconName } from './RemixIcon';
 
 export interface CustomTextInputProps extends Omit<TextInputProps, 'style'> {
@@ -30,9 +31,9 @@ export const CustomTextInput: React.FC<CustomTextInputProps> = ({
   value,
   onChangeText,
   placeholder,
-  placeholderTextColor = '#94A3B8',
+  placeholderTextColor,
   icon,
-  iconColor = '#64748B',
+  iconColor,
   rightElement,
   containerStyle,
   inputStyle,
@@ -45,6 +46,7 @@ export const CustomTextInput: React.FC<CustomTextInputProps> = ({
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const tokens = useThemeStore((state) => state.tokens);
 
   const sizeStyles = {
     sm: { height: 30, fontSize: 11.5, paddingH: 8, iconSize: 13 },
@@ -55,23 +57,24 @@ export const CustomTextInput: React.FC<CustomTextInputProps> = ({
   const getVariantContainerStyle = () => {
     switch (variant) {
       case 'filled':
-        return [
-          styles.filledContainer,
-          isHovered && styles.filledHovered,
-          isFocused && styles.focused,
-        ];
+        return {
+          backgroundColor: isHovered ? tokens.surfaceHover : tokens.surfaceMuted,
+          borderWidth: 1,
+          borderColor: isFocused ? tokens.accentColor : tokens.borderSubtle,
+        };
       case 'minimal':
-        return [
-          styles.minimalContainer,
-          isFocused && styles.minimalFocused,
-        ];
+        return {
+          backgroundColor: isFocused ? tokens.surfaceBg : 'transparent',
+          borderWidth: 1,
+          borderColor: isFocused ? tokens.accentColor : 'transparent',
+        };
       case 'outline':
       default:
-        return [
-          styles.outlineContainer,
-          isHovered && styles.outlineHovered,
-          isFocused && styles.focused,
-        ];
+        return {
+          backgroundColor: tokens.surfaceBg,
+          borderWidth: 1,
+          borderColor: isFocused ? tokens.accentColor : isHovered ? tokens.borderStrong : tokens.borderSubtle,
+        };
     }
   };
 
@@ -91,26 +94,26 @@ export const CustomTextInput: React.FC<CustomTextInputProps> = ({
           paddingRight: rightElement ? 4 : sizeStyles.paddingH,
         },
         getVariantContainerStyle(),
-        isInvalid && styles.invalid,
+        isInvalid && { borderColor: '#EF4444' },
         containerStyle,
       ]}
     >
       {icon && (
         <View style={styles.leftIcon}>
-          <RemixIcon name={icon} size={sizeStyles.iconSize} color={isFocused ? '#2563EB' : iconColor} />
+          <RemixIcon name={icon} size={sizeStyles.iconSize} color={isFocused ? tokens.accentColor : iconColor || tokens.textSecondary} />
         </View>
       )}
 
       <TextInput
         style={[
           styles.input,
-          { fontSize: sizeStyles.fontSize },
+          { fontSize: sizeStyles.fontSize, color: tokens.textPrimary },
           inputStyle,
         ]}
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor={placeholderTextColor}
+        placeholderTextColor={placeholderTextColor || tokens.textMuted}
         onFocus={(e) => {
           setIsFocused(true);
           onFocus?.(e);
@@ -132,40 +135,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 7,
-    backgroundColor: '#FFFFFF',
-    transitionProperty: 'border-color, background-color',
-    transitionDuration: '150ms',
-  } as any,
-  outlineContainer: {
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-  },
-  outlineHovered: {
-    borderColor: '#CBD5E1',
-  },
-  filledContainer: {
-    backgroundColor: '#F8FAFC',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-  },
-  filledHovered: {
-    backgroundColor: '#F1F5F9',
-    borderColor: '#CBD5E1',
-  },
-  minimalContainer: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: 'transparent',
-  },
-  minimalFocused: {
-    borderColor: '#2563EB',
-    backgroundColor: '#FFFFFF',
-  },
-  focused: {
-    borderColor: '#2563EB',
-  },
-  invalid: {
-    borderColor: '#EF4444',
   },
   leftIcon: {
     marginRight: 7,
@@ -175,14 +144,11 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontFamily: 'Krasar-Regular',
-    color: '#0F172A',
     paddingVertical: 4,
     paddingHorizontal: 0,
     backgroundColor: 'transparent',
-    // Universal web outline disable to eliminate default orange/blue browser focus rings
     outlineStyle: 'none',
     outlineWidth: 0,
-    boxShadow: 'none',
   } as any,
   rightElement: {
     marginLeft: 8,

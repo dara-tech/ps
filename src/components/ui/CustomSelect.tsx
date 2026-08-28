@@ -12,6 +12,7 @@ import {
   TextStyle,
   Platform,
 } from 'react-native';
+import { useThemeStore } from '../../store/useThemeStore';
 import { RemixIcon, RemixIconName } from './RemixIcon';
 
 export interface SelectOption {
@@ -53,6 +54,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [triggerLayout, setTriggerLayout] = useState<{ x: number; y: number; width: number; height: number } | null>(null);
+  const tokens = useThemeStore((state) => state.tokens);
 
   const selectedOption = options.find((o) => o.value === value);
 
@@ -65,12 +67,24 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
   const getVariantStyle = () => {
     switch (variant) {
       case 'filled':
-        return styles.filledTrigger;
+        return {
+          backgroundColor: tokens.surfaceMuted,
+          borderWidth: 1,
+          borderColor: isOpen ? tokens.accentColor : tokens.borderSubtle,
+        };
       case 'minimal':
-        return styles.minimalTrigger;
+        return {
+          backgroundColor: 'transparent',
+          borderWidth: 1,
+          borderColor: 'transparent',
+        };
       case 'outline':
       default:
-        return styles.outlineTrigger;
+        return {
+          backgroundColor: tokens.surfaceBg,
+          borderWidth: 1,
+          borderColor: isOpen ? tokens.accentColor : tokens.borderSubtle,
+        };
     }
   };
 
@@ -78,23 +92,20 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 
   const handleOpen = (e: any) => {
     if (disabled) return;
-    if (triggerRef.current?.measureInWindow) {
-      triggerRef.current.measureInWindow((x: number, y: number, width: number, height: number) => {
-        setTriggerLayout({ x, y: y + height + 4, width, height });
-        setIsOpen(true);
-      });
-    } else if (e?.currentTarget?.getBoundingClientRect) {
-      const rect = e.currentTarget.getBoundingClientRect();
-      setTriggerLayout({
-        x: rect.left,
-        y: rect.bottom + 4,
-        width: rect.width,
-        height: rect.height,
-      });
-      setIsOpen(true);
-    } else {
-      setIsOpen(true);
+    if (Platform.OS === 'web' && triggerRef.current) {
+      try {
+        const rect = (triggerRef.current as any).getBoundingClientRect();
+        setTriggerLayout({
+          x: rect.left,
+          y: rect.bottom + 4,
+          width: rect.width,
+          height: rect.height,
+        });
+      } catch (err) {
+        // Fallback
+      }
     }
+    setIsOpen(true);
   };
 
   const handleSelect = (val: string) => {
@@ -111,8 +122,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
           styles.baseTrigger,
           { minHeight: sizeStyles.height, paddingHorizontal: sizeStyles.paddingH },
           getVariantStyle(),
-          isOpen && styles.triggerActive,
-          disabled && styles.triggerDisabled,
+          disabled && { opacity: 0.5 },
         ]}
         onPress={handleOpen}
         activeOpacity={0.75}
@@ -124,15 +134,14 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
           <RemixIcon
             name={(selectedOption?.icon || icon)!}
             size={sizeStyles.iconSize}
-            color="#64748B"
+            color={tokens.textSecondary}
           />
         ) : null}
 
         <Text
           style={[
             styles.triggerText,
-            { fontSize: sizeStyles.fontSize },
-            !selectedOption && styles.placeholderText,
+            { fontSize: sizeStyles.fontSize, color: selectedOption ? tokens.textPrimary : tokens.textMuted },
           ]}
           numberOfLines={1}
         >
@@ -142,7 +151,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
         <RemixIcon
           name={isOpen ? 'chevron-up-line' as any : 'chevron-down-line'}
           size={11}
-          color="#94A3B8"
+          color={tokens.textSecondary}
         />
       </TouchableOpacity>
 
@@ -153,7 +162,11 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
             <View
               style={[
                 styles.dropdownMenu,
-                { width: Math.max(menuWidth, triggerLayout?.width || 180) },
+                {
+                  backgroundColor: tokens.surfaceBg,
+                  borderColor: tokens.borderSubtle,
+                  width: Math.max(menuWidth, triggerLayout?.width || 180),
+                },
                 triggerLayout
                   ? {
                       top: triggerLayout.y,
@@ -169,7 +182,10 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                   return (
                     <TouchableOpacity
                       key={opt.value}
-                      style={[styles.optionItem, isSelected && styles.optionItemActive]}
+                      style={[
+                        styles.optionItem,
+                        isSelected && { backgroundColor: tokens.accentSoft },
+                      ]}
                       onPress={() => handleSelect(opt.value)}
                       activeOpacity={0.7}
                     >
@@ -180,7 +196,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                           <RemixIcon
                             name={opt.icon}
                             size={13}
-                            color={isSelected ? '#2563EB' : '#64748B'}
+                            color={isSelected ? tokens.accentColor : tokens.textSecondary}
                           />
                         ) : null}
 
@@ -188,20 +204,20 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                           <Text
                             style={[
                               styles.optionLabel,
-                              { fontSize: sizeStyles.fontSize },
-                              isSelected && styles.optionLabelActive,
+                              { fontSize: sizeStyles.fontSize, color: isSelected ? tokens.accentColor : tokens.textPrimary },
+                              isSelected && { fontWeight: '700', fontFamily: 'Krasar-Bold' },
                             ]}
                           >
                             {opt.label}
                           </Text>
                           {opt.description && (
-                            <Text style={styles.optionDesc}>{opt.description}</Text>
+                            <Text style={[styles.optionDesc, { color: tokens.textMuted }]}>{opt.description}</Text>
                           )}
                         </View>
                       </View>
 
                       {isSelected && (
-                        <RemixIcon name="check-line" size={12} color="#2563EB" />
+                        <RemixIcon name="check-line" size={13} color={tokens.accentColor} />
                       )}
                     </TouchableOpacity>
                   );
@@ -224,39 +240,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 6,
     gap: 6,
-    backgroundColor: '#FFFFFF',
-  },
-  outlineTrigger: {
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-  },
-  filledTrigger: {
-    backgroundColor: '#F1F5F9',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-  },
-  minimalTrigger: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: 'transparent',
-  },
-  triggerActive: {
-    borderColor: '#2563EB',
-    backgroundColor: '#FFFFFF',
-  },
-  triggerDisabled: {
-    opacity: 0.5,
   },
   triggerText: {
     flex: 1,
     fontFamily: 'Krasar-Bold',
     fontWeight: '600',
-    color: '#0F172A',
-  },
-  placeholderText: {
-    color: '#94A3B8',
-    fontFamily: 'Krasar-Regular',
-    fontWeight: '400',
   },
   badgeDot: {
     width: 6,
@@ -269,9 +257,7 @@ const styles = StyleSheet.create({
   },
   dropdownMenu: {
     position: 'absolute',
-    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#CBD5E1',
     borderRadius: 8,
     padding: 4,
     maxHeight: 240,
@@ -293,9 +279,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     gap: 8,
   },
-  optionItemActive: {
-    backgroundColor: '#EFF6FF',
-  },
   optionLeft: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -307,17 +290,10 @@ const styles = StyleSheet.create({
   },
   optionLabel: {
     fontFamily: 'Krasar-Regular',
-    color: '#334155',
-  },
-  optionLabelActive: {
-    fontFamily: 'Krasar-Bold',
-    fontWeight: '700',
-    color: '#2563EB',
   },
   optionDesc: {
     fontSize: 9.5,
     fontFamily: 'Krasar-Regular',
-    color: '#94A3B8',
     marginTop: 1,
   },
 });

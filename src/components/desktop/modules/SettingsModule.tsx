@@ -11,6 +11,7 @@ import {
 import { useDesktopStore } from '../../../store/useDesktopStore';
 import { useLanguageStore } from '../../../store/useLanguageStore';
 import { useAuthStore } from '../../../store/useAuthStore';
+import { useThemeStore } from '../../../store/useThemeStore';
 import { RemixIcon, RemixIconName } from '../../ui/RemixIcon';
 import { CustomTextInput } from '../../ui/CustomTextInput';
 import { CustomSelect } from '../../ui/CustomSelect';
@@ -38,6 +39,7 @@ interface SettingCategory {
 export const SettingsModule: React.FC = () => {
   const language = useLanguageStore((state) => state.language);
   const user = useAuthStore((state) => state.user);
+  const tokens = useThemeStore((state) => state.tokens);
   const updateProfile = useAuthStore((state) => state.updateProfile);
 
   const selectedModel = useDesktopStore((state) => state.selectedModel);
@@ -266,12 +268,12 @@ export const SettingsModule: React.FC = () => {
   ];
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: tokens.windowBg }]}>
       {/* Top Header Rail */}
-      <View style={styles.topRail}>
+      <View style={[styles.topRail, { backgroundColor: tokens.surfaceBg, borderBottomColor: tokens.borderSubtle }]}>
         <View style={styles.headerLeft}>
           <TouchableOpacity
-            style={styles.collapseBtn}
+            style={[styles.collapseBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
             onPress={() => setIsLeftCollapsed(!isLeftCollapsed)}
             activeOpacity={0.7}
             hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
@@ -279,18 +281,18 @@ export const SettingsModule: React.FC = () => {
             <RemixIcon
               name={isLeftCollapsed ? 'sidebar-expand-line' : 'sidebar-collapse-line'}
               size={15}
-              color="#64748B"
+              color={tokens.textSecondary}
             />
           </TouchableOpacity>
-          <Text style={styles.moduleTitle}>
+          <Text style={[styles.moduleTitle, { color: tokens.textPrimary }]}>
             {language === 'kh' ? 'ការកំណត់ប្រព័ន្ធ' : 'Settings'}
           </Text>
         </View>
 
         <View style={styles.headerRight}>
-          <View style={styles.modeBadge}>
+          <View style={[styles.modeBadge, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
             <View style={styles.liveDot} />
-            <Text style={styles.modeBadgeText}>
+            <Text style={[styles.modeBadgeText, { color: tokens.textSecondary }]}>
               {language === 'kh' ? 'Personal OS Mode' : 'Personal OS Mode'}
             </Text>
           </View>
@@ -301,9 +303,9 @@ export const SettingsModule: React.FC = () => {
       <View style={styles.masterDetailBody}>
         {/* Left Master Categories Sidebar */}
         {!isLeftCollapsed && (
-          <View style={styles.leftPanel}>
+          <View style={[styles.leftPanel, { backgroundColor: tokens.surfaceBg, borderRightColor: tokens.borderSubtle }]}>
             {/* Search Categories */}
-            <View style={styles.searchBoxWrap}>
+            <View style={[styles.searchBoxWrap, { borderBottomColor: tokens.borderSubtle }]}>
               <CustomTextInput
                 value={searchQuery}
                 onChangeText={setSearchQuery}
@@ -320,7 +322,10 @@ export const SettingsModule: React.FC = () => {
                 return (
                   <TouchableOpacity
                     key={item.id}
-                    style={[styles.categoryItem, isActive && styles.categoryItemActive]}
+                    style={[
+                      styles.categoryItem,
+                      isActive && { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder },
+                    ]}
                     onPress={() => setActiveCategory(item.id)}
                     activeOpacity={0.75}
                   >
@@ -342,7 +347,8 @@ export const SettingsModule: React.FC = () => {
                         <Text
                           style={[
                             styles.categoryTitle,
-                            isActive && styles.categoryTitleActive,
+                            { color: isActive ? tokens.accentColor : tokens.textPrimary },
+                            isActive && { fontWeight: '700', fontFamily: 'Krasar-Bold' },
                           ]}
                           numberOfLines={1}
                         >

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, TextInput, Pressable } from 'react-native';
 import { useDesktopStore } from '../../../store/useDesktopStore';
 import { useLanguageStore } from '../../../store/useLanguageStore';
+import { useThemeStore } from '../../../store/useThemeStore';
 import { RemixIcon } from '../../ui/RemixIcon';
 import { BankLogo } from '../../ui/BankLogo';
 import { CustomModal } from '../../ui/CustomModal';
@@ -12,6 +13,7 @@ import { detectBankBrand, parseTransactionNote } from './PersonalFinanceModule';
 export const LifeDashboardModule: React.FC = () => {
   const t = useLanguageStore((state) => state.t);
   const isKh = useLanguageStore((state) => state.language === 'kh');
+  const tokens = useThemeStore((state) => state.tokens);
   const selectedModel = useDesktopStore((state) => state.selectedModel);
   const tasks = useDesktopStore((state) => state.tasks);
   const finances = useDesktopStore((state) => state.finances);
@@ -114,54 +116,58 @@ export const LifeDashboardModule: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: tokens.windowBg }]}>
       {/* 1. Top Executive Rail */}
-      <View style={styles.topRail}>
+      <View style={[styles.topRail, { backgroundColor: tokens.surfaceBg, borderBottomColor: tokens.borderSubtle }]}>
         <View style={styles.headerLeft}>
-          <Text style={styles.moduleTitle}>{t.dashTitle}</Text>
+          <Text style={[styles.moduleTitle, { color: tokens.textPrimary }]}>{t.dashTitle}</Text>
         </View>
 
         <View style={styles.headerRight}>
           {/* Quick Action Shortcuts */}
           <TouchableOpacity
-            style={styles.headerActionBtn}
+            style={[styles.headerActionBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
             onPress={() => setActiveModule('planner')}
             activeOpacity={0.7}
           >
-            <RemixIcon name="add-line" size={13} color="#0F172A" />
-            <Text style={styles.headerActionBtnText}>{isKh ? 'ថែម Task' : '+ Task'}</Text>
+            <RemixIcon name="add-line" size={13} color={tokens.textPrimary} />
+            <Text style={[styles.headerActionBtnText, { color: tokens.textPrimary }]}>{isKh ? 'ថែម Task' : '+ Task'}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.headerActionBtn}
+            style={[styles.headerActionBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
             onPress={() => setActiveModule('finances')}
             activeOpacity={0.7}
           >
-            <RemixIcon name="bank-card-line" size={13} color="#0F172A" />
-            <Text style={styles.headerActionBtnText}>{isKh ? 'ថែម ចំណាយ' : '+ Expense'}</Text>
+            <RemixIcon name="bank-card-line" size={13} color={tokens.textPrimary} />
+            <Text style={[styles.headerActionBtnText, { color: tokens.textPrimary }]}>{isKh ? 'ថែម ចំណាយ' : '+ Expense'}</Text>
           </TouchableOpacity>
 
           {/* AI Daily Briefing Button */}
           <TouchableOpacity
-            style={[styles.briefingHeaderBtn, loadingBriefing && styles.briefingHeaderBtnLoading]}
+            style={[
+              styles.briefingHeaderBtn,
+              { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder },
+              loadingBriefing && styles.briefingHeaderBtnLoading,
+            ]}
             onPress={() => setShowBriefingModal(true)}
             activeOpacity={0.7}
           >
             {loadingBriefing ? (
-              <ActivityIndicator size="small" color="#4F46E5" style={{ transform: [{ scale: 0.75 }] }} />
+              <ActivityIndicator size="small" color={tokens.accentColor} style={{ transform: [{ scale: 0.75 }] }} />
             ) : (
-              <RemixIcon name="sparkles-fill" size={13} color="#4F46E5" />
+              <RemixIcon name="sparkles-fill" size={13} color={tokens.accentColor} />
             )}
-            <Text style={styles.briefingHeaderBtnText}>
+            <Text style={[styles.briefingHeaderBtnText, { color: tokens.accentColor }]}>
               {isKh ? 'សេចក្តីសង្ខេប AI' : 'Daily AI Briefing'}
             </Text>
-            {!loadingBriefing && briefing && <View style={styles.briefingHeaderDot} />}
+            {!loadingBriefing && briefing && <View style={[styles.briefingHeaderDot, { backgroundColor: tokens.accentColor }]} />}
           </TouchableOpacity>
 
           {/* Model Badge */}
-          <View style={styles.modelBadge}>
-            <RemixIcon name="sparkles-fill" size={11} color="#64748B" />
-            <Text style={styles.modelBadgeText}>{selectedModel}</Text>
+          <View style={[styles.modelBadge, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+            <RemixIcon name="sparkles-fill" size={11} color={tokens.textSecondary} />
+            <Text style={[styles.modelBadgeText, { color: tokens.textSecondary }]}>{selectedModel}</Text>
           </View>
         </View>
       </View>
@@ -176,78 +182,78 @@ export const LifeDashboardModule: React.FC = () => {
         <View style={styles.kpiGrid}>
           {/* Productivity Velocity */}
           <TouchableOpacity
-            style={styles.kpiCard}
+            style={[styles.kpiCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}
             onPress={() => setActiveModule('planner')}
             activeOpacity={0.7}
           >
             <View style={styles.kpiTop}>
-              <Text style={styles.kpiTitle}>{t.dashProductivityScore}</Text>
+              <Text style={[styles.kpiTitle, { color: tokens.textSecondary }]}>{t.dashProductivityScore}</Text>
               <View style={[styles.kpiIconBox, { backgroundColor: '#F0FDF4' }]}>
                 <RemixIcon name="task-line" size={13} color="#16A34A" />
               </View>
             </View>
-            <Text style={styles.kpiValue}>{completionRate}%</Text>
-            <View style={styles.kpiProgressBg}>
+            <Text style={[styles.kpiValue, { color: tokens.textPrimary }]}>{completionRate}%</Text>
+            <View style={[styles.kpiProgressBg, { backgroundColor: tokens.surfaceMuted }]}>
               <View style={[styles.kpiProgressFill, { width: `${completionRate}%`, backgroundColor: '#10B981' }]} />
             </View>
-            <Text style={styles.kpiSub}>{completedTasks} of {tasks.length} tasks completed • {pendingTasks.length} pending</Text>
+            <Text style={[styles.kpiSub, { color: tokens.textSecondary }]}>{completedTasks} of {tasks.length} tasks completed • {pendingTasks.length} pending</Text>
           </TouchableOpacity>
 
           {/* Total Expenses */}
           <TouchableOpacity
-            style={styles.kpiCard}
+            style={[styles.kpiCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}
             onPress={() => setActiveModule('finances')}
             activeOpacity={0.7}
           >
             <View style={styles.kpiTop}>
-              <Text style={styles.kpiTitle}>{t.dashTotalExpenses}</Text>
+              <Text style={[styles.kpiTitle, { color: tokens.textSecondary }]}>{t.dashTotalExpenses}</Text>
               <View style={[styles.kpiIconBox, { backgroundColor: '#FEF2F2' }]}>
                 <RemixIcon name="bank-card-line" size={13} color="#DC2626" />
               </View>
             </View>
-            <Text style={styles.kpiValue}>${totalExpense.toLocaleString()}</Text>
-            <View style={styles.kpiProgressBg}>
+            <Text style={[styles.kpiValue, { color: tokens.textPrimary }]}>${totalExpense.toLocaleString()}</Text>
+            <View style={[styles.kpiProgressBg, { backgroundColor: tokens.surfaceMuted }]}>
               <View style={[styles.kpiProgressFill, { width: '65%', backgroundColor: '#EF4444' }]} />
             </View>
-            <Text style={styles.kpiSub}>{finances.length} transactions • Income ${totalIncome.toLocaleString()}</Text>
+            <Text style={[styles.kpiSub, { color: tokens.textSecondary }]}>{finances.length} transactions • Income ${totalIncome.toLocaleString()}</Text>
           </TouchableOpacity>
 
           {/* Active Goals / Projects */}
           <TouchableOpacity
-            style={styles.kpiCard}
+            style={[styles.kpiCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}
             onPress={() => setActiveModule('goals')}
             activeOpacity={0.7}
           >
             <View style={styles.kpiTop}>
-              <Text style={styles.kpiTitle}>{t.dashActiveGoals}</Text>
+              <Text style={[styles.kpiTitle, { color: tokens.textSecondary }]}>{t.dashActiveGoals}</Text>
               <View style={[styles.kpiIconBox, { backgroundColor: '#EEF2FF' }]}>
                 <RemixIcon name="folder-line" size={13} color="#4F46E5" />
               </View>
             </View>
-            <Text style={styles.kpiValue}>{projects.length} Projects</Text>
-            <View style={styles.kpiProgressBg}>
+            <Text style={[styles.kpiValue, { color: tokens.textPrimary }]}>{projects.length} Projects</Text>
+            <View style={[styles.kpiProgressBg, { backgroundColor: tokens.surfaceMuted }]}>
               <View style={[styles.kpiProgressFill, { width: '70%', backgroundColor: '#6366F1' }]} />
             </View>
-            <Text style={styles.kpiSub}>EPR, GarageApp, Labo, Personal</Text>
+            <Text style={[styles.kpiSub, { color: tokens.textSecondary }]}>EPR, GarageApp, Labo, Personal</Text>
           </TouchableOpacity>
 
           {/* Git Commits & Events */}
           <TouchableOpacity
-            style={styles.kpiCard}
+            style={[styles.kpiCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}
             onPress={() => setActiveModule('calendar')}
             activeOpacity={0.7}
           >
             <View style={styles.kpiTop}>
-              <Text style={styles.kpiTitle}>Git Velocity</Text>
-              <View style={[styles.kpiIconBox, { backgroundColor: '#F1F5F9' }]}>
-                <RemixIcon name="time-line" size={13} color="#0F172A" />
+              <Text style={[styles.kpiTitle, { color: tokens.textSecondary }]}>Git Velocity</Text>
+              <View style={[styles.kpiIconBox, { backgroundColor: tokens.surfaceMuted }]}>
+                <RemixIcon name="time-line" size={13} color={tokens.textPrimary} />
               </View>
             </View>
-            <Text style={styles.kpiValue}>{ghEvents.length || 913} Events</Text>
-            <View style={styles.kpiProgressBg}>
-              <View style={[styles.kpiProgressFill, { width: '85%', backgroundColor: '#0F172A' }]} />
+            <Text style={[styles.kpiValue, { color: tokens.textPrimary }]}>{ghEvents.length || 913} Events</Text>
+            <View style={[styles.kpiProgressBg, { backgroundColor: tokens.surfaceMuted }]}>
+              <View style={[styles.kpiProgressFill, { width: '85%', backgroundColor: tokens.accentColor }]} />
             </View>
-            <Text style={styles.kpiSub}>dara-tech/ps • Live Webhook Sync</Text>
+            <Text style={[styles.kpiSub, { color: tokens.textSecondary }]}>dara-tech/ps • Live Webhook Sync</Text>
           </TouchableOpacity>
         </View>
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useThemeStore } from '../../store/useThemeStore';
 import { RemixIcon } from './RemixIcon';
 
 interface DesktopPaginationProps {
@@ -15,6 +16,7 @@ export const DesktopPagination: React.FC<DesktopPaginationProps> = ({
   currentPage,
   onPageChange,
 }) => {
+  const tokens = useThemeStore((state) => state.tokens);
   const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
   const startItem = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
@@ -36,12 +38,12 @@ export const DesktopPagination: React.FC<DesktopPaginationProps> = ({
   const visiblePages = getVisiblePages();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: tokens.surfaceBg, borderTopColor: tokens.borderSubtle }]}>
       {/* 1. Left: Summary Counter */}
       <View style={styles.leftSummary}>
-        <Text style={styles.summaryText}>
-          Showing <Text style={styles.summaryHighlight}>{startItem}-{endItem}</Text> of{' '}
-          <Text style={styles.summaryHighlight}>{totalItems}</Text> items
+        <Text style={[styles.summaryText, { color: tokens.textSecondary }]}>
+          Showing <Text style={[styles.summaryHighlight, { color: tokens.textPrimary }]}>{startItem}-{endItem}</Text> of{' '}
+          <Text style={[styles.summaryHighlight, { color: tokens.textPrimary }]}>{totalItems}</Text> items
         </Text>
       </View>
 
@@ -49,7 +51,11 @@ export const DesktopPagination: React.FC<DesktopPaginationProps> = ({
       <View style={styles.pageGroup}>
         {/* Previous Button */}
         <TouchableOpacity
-          style={[styles.arrowBtn, currentPage === 1 && styles.arrowBtnDisabled]}
+          style={[
+            styles.arrowBtn,
+            { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+            currentPage === 1 && { opacity: 0.4 },
+          ]}
           onPress={() => currentPage > 1 && onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
           activeOpacity={0.7}
@@ -57,7 +63,7 @@ export const DesktopPagination: React.FC<DesktopPaginationProps> = ({
           <RemixIcon
             name="chevron-left-line"
             size={13}
-            color={currentPage === 1 ? '#CBD5E1' : '#475569'}
+            color={tokens.textSecondary}
           />
         </TouchableOpacity>
 
@@ -66,7 +72,7 @@ export const DesktopPagination: React.FC<DesktopPaginationProps> = ({
           if (p === '...') {
             return (
               <View key={`ellipsis-${idx}`} style={styles.ellipsisBox}>
-                <Text style={styles.ellipsisText}>...</Text>
+                <Text style={[styles.ellipsisText, { color: tokens.textMuted }]}>...</Text>
               </View>
             );
           }
@@ -75,18 +81,33 @@ export const DesktopPagination: React.FC<DesktopPaginationProps> = ({
           return (
             <TouchableOpacity
               key={pageNum}
-              style={[styles.pageBtn, isActive && styles.pageBtnActive]}
+              style={[
+                styles.pageBtn,
+                isActive && { backgroundColor: tokens.accentColor },
+              ]}
               onPress={() => onPageChange(pageNum)}
               activeOpacity={0.75}
             >
-              <Text style={[styles.pageText, isActive && styles.pageTextActive]}>{pageNum}</Text>
+              <Text
+                style={[
+                  styles.pageText,
+                  { color: isActive ? tokens.accentFg : tokens.textSecondary },
+                  isActive && { fontFamily: 'Krasar-Bold', fontWeight: '700' },
+                ]}
+              >
+                {pageNum}
+              </Text>
             </TouchableOpacity>
           );
         })}
 
         {/* Next Button */}
         <TouchableOpacity
-          style={[styles.arrowBtn, currentPage === totalPages && styles.arrowBtnDisabled]}
+          style={[
+            styles.arrowBtn,
+            { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+            currentPage === totalPages && { opacity: 0.4 },
+          ]}
           onPress={() => currentPage < totalPages && onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
           activeOpacity={0.7}
@@ -94,7 +115,7 @@ export const DesktopPagination: React.FC<DesktopPaginationProps> = ({
           <RemixIcon
             name="chevron-right-line"
             size={13}
-            color={currentPage === totalPages ? '#CBD5E1' : '#475569'}
+            color={tokens.textSecondary}
           />
         </TouchableOpacity>
       </View>
@@ -105,9 +126,7 @@ export const DesktopPagination: React.FC<DesktopPaginationProps> = ({
 const styles = StyleSheet.create({
   container: {
     height: 36,
-    backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
-    borderTopColor: '#EAECF0',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -121,11 +140,10 @@ const styles = StyleSheet.create({
   summaryText: {
     fontSize: 10.5,
     fontFamily: 'Krasar-Regular',
-    color: '#64748B',
   },
   summaryHighlight: {
-    fontFamily: 'KantumruyPro-Bold',
-    color: '#0F172A',
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
   },
   pageGroup: {
     flexDirection: 'row',
@@ -136,15 +154,9 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 4,
-    backgroundColor: '#F8FAFC',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  arrowBtnDisabled: {
-    opacity: 0.5,
-    backgroundColor: '#FFFFFF',
   },
   pageBtn: {
     minWidth: 22,
@@ -154,16 +166,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  pageBtnActive: {
-    backgroundColor: '#0F172A',
-  },
   pageText: {
     fontSize: 10.5,
-    fontFamily: 'Krasar-Bold',
-    color: '#64748B',
-  },
-  pageTextActive: {
-    color: '#FFFFFF',
+    fontFamily: 'Krasar-Regular',
   },
   ellipsisBox: {
     minWidth: 18,
@@ -175,7 +180,6 @@ const styles = StyleSheet.create({
   ellipsisText: {
     fontSize: 10,
     fontFamily: 'Krasar-Bold',
-    color: '#94A3B8',
     letterSpacing: 1,
   },
 });

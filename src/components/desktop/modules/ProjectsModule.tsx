@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Pressable, ActivityIndicator } from 'react-native';
 import { useDesktopStore } from '../../../store/useDesktopStore';
 import { useLanguageStore } from '../../../store/useLanguageStore';
+import { useThemeStore } from '../../../store/useThemeStore';
 import { Project, Milestone, Task, TaskPriority } from '../../../../shared';
 import { RemixIcon } from '../../ui/RemixIcon';
 import { DesktopPagination } from '../../ui/DesktopPagination';
@@ -13,6 +14,7 @@ import { toast } from '../../../store/useToastStore';
 export const ProjectsModule: React.FC = () => {
   const t = useLanguageStore((state) => state.t);
   const isKh = useLanguageStore((state) => state.language === 'kh');
+  const tokens = useThemeStore((state) => state.tokens);
   const projects = useDesktopStore((state) => state.projects);
   const tasks = useDesktopStore((state) => state.tasks);
   const createProject = useDesktopStore((state) => state.createProject);
@@ -202,11 +204,11 @@ export const ProjectsModule: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: tokens.windowBg }]}>
       {/* Top Header Rail (44px) - Clean Title Only on Left */}
-      <View style={styles.topRail}>
+      <View style={[styles.topRail, { backgroundColor: tokens.surfaceBg, borderBottomColor: tokens.borderSubtle }]}>
         <View style={styles.headerLeft}>
-          <Text style={styles.moduleTitle}>{t.goalsTitle}</Text>
+          <Text style={[styles.moduleTitle, { color: tokens.textPrimary }]}>{t.goalsTitle}</Text>
         </View>
 
         <View style={styles.headerRight}>
@@ -217,7 +219,11 @@ export const ProjectsModule: React.FC = () => {
               return (
                 <TouchableOpacity
                   key={h}
-                  style={[styles.chip, isActive && styles.chipActive]}
+                  style={[
+                    styles.chip,
+                    { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+                    isActive && { backgroundColor: tokens.surfaceBg, borderColor: tokens.accentColor },
+                  ]}
                   onPress={() => {
                     setSelectedHealth(h);
                     setPage(1);
@@ -241,7 +247,13 @@ export const ProjectsModule: React.FC = () => {
                       ]}
                     />
                   )}
-                  <Text style={[styles.chipText, isActive && styles.chipTextActive]}>
+                  <Text
+                    style={[
+                      styles.chipText,
+                      { color: isActive ? tokens.textPrimary : tokens.textSecondary },
+                      isActive && { fontWeight: '700' },
+                    ]}
+                  >
                     {h === 'All'
                       ? t.goalsAll
                       : h === 'on_track'
@@ -271,42 +283,42 @@ export const ProjectsModule: React.FC = () => {
           />
 
           {/* View Toggle */}
-          <View style={styles.viewToggleGroup}>
+          <View style={[styles.viewToggleGroup, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
             <TouchableOpacity
-              style={[styles.viewToggleBtn, viewMode === 'grid' && styles.viewToggleBtnActive]}
+              style={[styles.viewToggleBtn, viewMode === 'grid' && { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}
               onPress={() => setViewMode('grid')}
               activeOpacity={0.7}
             >
-              <RemixIcon name="grid-line" size={13} color={viewMode === 'grid' ? '#0F172A' : '#94A3B8'} />
+              <RemixIcon name="grid-line" size={13} color={viewMode === 'grid' ? tokens.textPrimary : tokens.textSecondary} />
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.viewToggleBtn, viewMode === 'table' && styles.viewToggleBtnActive]}
+              style={[styles.viewToggleBtn, viewMode === 'table' && { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}
               onPress={() => setViewMode('table')}
               activeOpacity={0.7}
             >
-              <RemixIcon name="list-check-line" size={13} color={viewMode === 'table' ? '#0F172A' : '#94A3B8'} />
+              <RemixIcon name="list-check-line" size={13} color={viewMode === 'table' ? tokens.textPrimary : tokens.textSecondary} />
             </TouchableOpacity>
           </View>
 
           {/* AI Plan Button */}
           <TouchableOpacity
-            style={styles.aiBtn}
+            style={[styles.aiBtn, { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}
             onPress={() => setShowAiModal(true)}
             activeOpacity={0.7}
           >
-            <RemixIcon name="sparkles-fill" size={13} color="#6366F1" />
-            <Text style={styles.aiBtnText}>{isKh ? 'AI ផែនការ' : 'AI Plan'}</Text>
+            <RemixIcon name="sparkles-fill" size={13} color={tokens.accentColor} />
+            <Text style={[styles.aiBtnText, { color: tokens.accentColor }]}>{isKh ? 'AI ផែនការ' : 'AI Plan'}</Text>
           </TouchableOpacity>
 
           {/* Create Project Button */}
           <TouchableOpacity
-            style={styles.createBtn}
+            style={[styles.createBtn, { backgroundColor: tokens.accentColor }]}
             onPress={openCreateModal}
             activeOpacity={0.7}
           >
-            <RemixIcon name="add-line" size={14} color="#FFFFFF" />
-            <Text style={styles.createBtnText}>{isKh ? 'បង្កើតគម្រោង' : 'New Project'}</Text>
+            <RemixIcon name="add-line" size={14} color={tokens.accentFg} />
+            <Text style={[styles.createBtnText, { color: tokens.accentFg }]}>{isKh ? 'បង្កើតគម្រោង' : 'New Project'}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -319,14 +331,14 @@ export const ProjectsModule: React.FC = () => {
       >
         {filteredProjects.length === 0 ? (
           <View style={styles.emptyState}>
-            <View style={styles.emptyIconCircle}>
-              <RemixIcon name="folder-line" size={24} color="#94A3B8" />
+            <View style={[styles.emptyIconCircle, { backgroundColor: tokens.surfaceMuted }]}>
+              <RemixIcon name="folder-line" size={24} color={tokens.textSecondary} />
             </View>
-            <Text style={styles.emptyTitle}>{t.goalsNoProjects}</Text>
-            <Text style={styles.emptySub}>{t.goalsNoProjectsSub}</Text>
-            <TouchableOpacity style={styles.emptyActionBtn} onPress={openCreateModal} activeOpacity={0.7}>
-              <RemixIcon name="add-line" size={13} color="#0F172A" />
-              <Text style={styles.emptyActionBtnText}>{isKh ? 'បង្កើតគម្រោងដំបូង' : 'Create First Project'}</Text>
+            <Text style={[styles.emptyTitle, { color: tokens.textPrimary }]}>{t.goalsNoProjects}</Text>
+            <Text style={[styles.emptySub, { color: tokens.textSecondary }]}>{t.goalsNoProjectsSub}</Text>
+            <TouchableOpacity style={[styles.emptyActionBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]} onPress={openCreateModal} activeOpacity={0.7}>
+              <RemixIcon name="add-line" size={13} color={tokens.textPrimary} />
+              <Text style={[styles.emptyActionBtnText, { color: tokens.textPrimary }]}>{isKh ? 'បង្កើតគម្រោងដំបូង' : 'Create First Project'}</Text>
             </TouchableOpacity>
           </View>
         ) : viewMode === 'grid' ? (
@@ -336,13 +348,13 @@ export const ProjectsModule: React.FC = () => {
               const { projectTasks, completedTasks, totalTasks, taskProgress } = getProjectStats(proj);
 
               return (
-                <View key={proj.id} style={styles.card}>
+                <View key={proj.id} style={[styles.card, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
                   {/* Card Header */}
                   <View style={styles.cardHeader}>
                     <View style={styles.titleBox}>
-                      <Text style={styles.projTitle} numberOfLines={1}>{proj.name}</Text>
-                      <View style={styles.deptBadge}>
-                        <Text style={styles.deptText}>{proj.department || 'General'}</Text>
+                      <Text style={[styles.projTitle, { color: tokens.textPrimary }]} numberOfLines={1}>{proj.name}</Text>
+                      <View style={[styles.deptBadge, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                        <Text style={[styles.deptText, { color: tokens.textSecondary }]}>{proj.department || 'General'}</Text>
                       </View>
                     </View>
                     <View style={[styles.statusBadge, { backgroundColor: badge.bg }]}>
@@ -353,20 +365,20 @@ export const ProjectsModule: React.FC = () => {
                     </View>
                   </View>
 
-                  <Text style={styles.projDesc} numberOfLines={2}>
+                  <Text style={[styles.projDesc, { color: tokens.textSecondary }]} numberOfLines={2}>
                     {proj.description || 'No description provided.'}
                   </Text>
 
                   {/* Progress Bar & Task Count */}
                   <View style={styles.progressBlock}>
                     <View style={styles.progressRow}>
-                      <Text style={styles.progressLabel}>
+                      <Text style={[styles.progressLabel, { color: tokens.textSecondary }]}>
                         {totalTasks > 0 ? `${completedTasks}/${totalTasks} Tasks Done` : 'Milestones Progress'}
                       </Text>
-                      <Text style={styles.progressVal}>{taskProgress}%</Text>
+                      <Text style={[styles.progressVal, { color: tokens.textPrimary }]}>{taskProgress}%</Text>
                     </View>
-                    <View style={styles.progressBarBg}>
-                      <View style={[styles.progressBarFill, { width: `${taskProgress}%` }]} />
+                    <View style={[styles.progressBarBg, { backgroundColor: tokens.surfaceMuted }]}>
+                      <View style={[styles.progressBarFill, { width: `${taskProgress}%`, backgroundColor: tokens.accentColor }]} />
                     </View>
                   </View>
 

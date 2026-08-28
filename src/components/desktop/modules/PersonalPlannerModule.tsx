@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView, ActivityIndicator, TouchableOpacity, TextInput } from 'react-native';
 import { useDesktopStore } from '../../../store/useDesktopStore';
 import { useLanguageStore } from '../../../store/useLanguageStore';
+import { useThemeStore } from '../../../store/useThemeStore';
 import { RemixIcon } from '../../ui/RemixIcon';
 import { DesktopPagination } from '../../ui/DesktopPagination';
 import { CustomTextInput } from '../../ui/CustomTextInput';
@@ -11,6 +12,7 @@ import { TaskPriority, TaskStatus } from '../../../../shared';
 
 export const PersonalPlannerModule: React.FC = () => {
   const t = useLanguageStore((state) => state.t);
+  const tokens = useThemeStore((state) => state.tokens);
   const tasks = useDesktopStore((state) => state.tasks);
   const calendarEvents = useDesktopStore((state) => state.calendarEvents);
   const createTask = useDesktopStore((state) => state.createTask);
@@ -171,25 +173,34 @@ export const PersonalPlannerModule: React.FC = () => {
   const paginatedTasks = filteredTasks.slice((activePage - 1) * pageSize, activePage * pageSize);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: tokens.windowBg }]}>
       {/* Top Standard Header Rail (44px) - Clean Title Only on Left */}
-      <View style={styles.topRail}>
+      <View style={[styles.topRail, { backgroundColor: tokens.surfaceBg, borderBottomColor: tokens.borderSubtle }]}>
         <View style={styles.headerLeft}>
-          <Text style={styles.moduleTitle}>{t.planTitle}</Text>
+          <Text style={[styles.moduleTitle, { color: tokens.textPrimary }]}>{t.planTitle}</Text>
         </View>
 
         <View style={styles.headerRight}>
-          <View style={styles.tabGroup}>
+          <View style={[styles.tabGroup, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
             {(['all', 'todo', 'in_progress', 'done'] as const).map((tab) => (
               <Pressable
                 key={tab}
-                style={[styles.tab, filter === tab && styles.tabActive]}
+                style={[
+                  styles.tab,
+                  filter === tab && { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle, borderWidth: 1 },
+                ]}
                 onPress={() => {
                   setFilter(tab);
                   setPage(1);
                 }}
               >
-                <Text style={[styles.tabText, filter === tab && styles.tabTextActive]}>
+                <Text
+                  style={[
+                    styles.tabText,
+                    { color: filter === tab ? tokens.textPrimary : tokens.textSecondary },
+                    filter === tab && { fontWeight: '700' },
+                  ]}
+                >
                   {tab === 'all' ? t.planAll : tab === 'todo' ? t.planTodo : tab === 'in_progress' ? t.planInProgress : t.planCompleted}
                 </Text>
               </Pressable>
@@ -197,26 +208,26 @@ export const PersonalPlannerModule: React.FC = () => {
           </View>
 
           <TouchableOpacity
-            style={styles.aiBreakdownBtn}
+            style={[styles.aiBreakdownBtn, { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}
             onPress={() => setShowAiModal(true)}
             activeOpacity={0.8}
           >
-            <RemixIcon name="sparkles-fill" size={12} color="#2563EB" />
-            <Text style={styles.aiBreakdownText}>{t.planBreakdown}</Text>
+            <RemixIcon name="sparkles-fill" size={12} color={tokens.accentColor} />
+            <Text style={[styles.aiBreakdownText, { color: tokens.accentColor }]}>{t.planBreakdown}</Text>
           </TouchableOpacity>
         </View>
       </View>
 
       {/* Quick Task Input Bar */}
-      <View style={styles.quickAddBar}>
-        <View style={styles.quickInputWrapper}>
-          <RemixIcon name="add-line" size={15} color="#64748B" />
+      <View style={[styles.quickAddBar, { backgroundColor: tokens.surfaceBg, borderBottomColor: tokens.borderSubtle }]}>
+        <View style={[styles.quickInputWrapper, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+          <RemixIcon name="add-line" size={15} color={tokens.textSecondary} />
           <TextInput
-            style={styles.quickTextInput}
+            style={[styles.quickTextInput, { color: tokens.textPrimary }]}
             value={taskInput}
             onChangeText={setTaskInput}
             placeholder={t.planQuickAddPlaceholder}
-            placeholderTextColor="#94A3B8"
+            placeholderTextColor={tokens.textMuted}
             onSubmitEditing={handleQuickAdd}
             returnKeyType="done"
           />
@@ -230,12 +241,16 @@ export const PersonalPlannerModule: React.FC = () => {
               menuWidth={130}
             />
             <TouchableOpacity
-              style={[styles.addBtn, !taskInput.trim() && styles.addBtnDisabled]}
+              style={[
+                styles.addBtn,
+                { backgroundColor: tokens.accentColor },
+                !taskInput.trim() && styles.addBtnDisabled,
+              ]}
               onPress={handleQuickAdd}
               disabled={!taskInput.trim()}
               activeOpacity={0.75}
             >
-              <Text style={styles.addBtnText}>Add Task</Text>
+              <Text style={[styles.addBtnText, { color: tokens.accentFg }]}>Add Task</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -398,7 +413,7 @@ export const PersonalPlannerModule: React.FC = () => {
             <Text style={styles.emptySub}>{t.planCreateTaskSub}</Text>
           </View>
         ) : (
-          <View style={styles.tasksContainerCard}>
+          <View style={[styles.tasksContainerCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
             {paginatedTasks.map((t, idx) => {
               const isDone = t.isCompleted;
               const isLast = idx === paginatedTasks.length - 1;
@@ -407,12 +422,17 @@ export const PersonalPlannerModule: React.FC = () => {
                   key={t.id}
                   style={[
                     styles.taskRow,
+                    { borderBottomColor: tokens.borderSubtle },
                     isLast && styles.taskRowLast,
-                    isDone && styles.taskRowDone,
+                    isDone && { opacity: 0.6 },
                   ]}
                 >
                   <TouchableOpacity
-                    style={[styles.checkbox, isDone && styles.checkboxDone]}
+                    style={[
+                      styles.checkbox,
+                      { borderColor: tokens.borderStrong, backgroundColor: tokens.surfaceBg },
+                      isDone && { backgroundColor: tokens.accentColor, borderColor: tokens.accentColor },
+                    ]}
                     onPress={(e) => {
                       e?.stopPropagation?.();
                       if (t.source === 'task') {
@@ -431,11 +451,11 @@ export const PersonalPlannerModule: React.FC = () => {
                     style={styles.taskInfo}
                     onPress={() => openEditModal(t)}
                   >
-                    <Text style={[styles.taskTitle, isDone && styles.taskTitleDone]}>
+                    <Text style={[styles.taskTitle, { color: tokens.textPrimary }, isDone && styles.taskTitleDone]}>
                       {t.title}
                     </Text>
                     {t.description ? (
-                      <Text style={styles.taskDesc} numberOfLines={1}>
+                      <Text style={[styles.taskDesc, { color: tokens.textSecondary }]} numberOfLines={1}>
                         {t.description}
                       </Text>
                     ) : null}

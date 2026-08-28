@@ -10,6 +10,7 @@ import {
   StyleProp,
   ViewStyle,
 } from 'react-native';
+import { useThemeStore } from '../../store/useThemeStore';
 import { RemixIcon, RemixIconName } from './RemixIcon';
 
 export interface CustomModalProps {
@@ -29,12 +30,14 @@ export const CustomModal: React.FC<CustomModalProps> = ({
   onClose,
   title,
   icon,
-  iconColor = '#2563EB',
+  iconColor,
   children,
   maxWidth = 440,
   showCloseButton = true,
   containerStyle,
 }) => {
+  const tokens = useThemeStore((state) => state.tokens);
+
   if (!visible) return null;
 
   return (
@@ -46,25 +49,29 @@ export const CustomModal: React.FC<CustomModalProps> = ({
     >
       <Pressable style={styles.backdrop} onPress={onClose}>
         <Pressable
-          style={[styles.card, { maxWidth }, containerStyle]}
+          style={[
+            styles.card,
+            { maxWidth, backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
+            containerStyle,
+          ]}
           onPress={(e) => e.stopPropagation()}
         >
           {/* Header Row (Clean Title Only) */}
           {(title || showCloseButton) && (
-            <View style={styles.header}>
+            <View style={[styles.header, { backgroundColor: tokens.surfaceBg, borderBottomColor: tokens.borderSubtle }]}>
               <View style={styles.titleRow}>
-                {icon && <RemixIcon name={icon} size={15} color={iconColor} />}
-                {title && <Text style={styles.title}>{title}</Text>}
+                {icon && <RemixIcon name={icon} size={15} color={iconColor || tokens.accentColor} />}
+                {title && <Text style={[styles.title, { color: tokens.textPrimary }]}>{title}</Text>}
               </View>
 
               {showCloseButton && (
                 <TouchableOpacity
-                  style={styles.closeBtn}
+                  style={[styles.closeBtn, { backgroundColor: tokens.surfaceMuted }]}
                   onPress={onClose}
                   activeOpacity={0.7}
                   hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 >
-                  <RemixIcon name="close-line" size={14} color="#64748B" />
+                  <RemixIcon name="close-line" size={14} color={tokens.textSecondary} />
                 </TouchableOpacity>
               )}
             </View>
@@ -86,14 +93,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     zIndex: 9999,
-    backdropFilter: 'blur(4px)',
-  } as any,
+  },
   card: {
     width: '100%',
-    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#CBD5E1',
     overflow: 'hidden',
   },
   header: {
@@ -103,8 +107,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
-    backgroundColor: '#FFFFFF',
   },
   titleRow: {
     flexDirection: 'row',
@@ -115,7 +117,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: 'Krasar-Bold',
     fontWeight: '700',
-    color: '#0F172A',
   },
   closeBtn: {
     width: 24,
@@ -123,7 +124,6 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#F8FAFC',
   },
   body: {
     padding: 16,

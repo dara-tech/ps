@@ -14,6 +14,7 @@ import {
 import { useDesktopStore } from '../../../store/useDesktopStore';
 import { useTelegramStore } from '../../../store/useTelegramStore';
 import { useLanguageStore } from '../../../store/useLanguageStore';
+import { useThemeStore } from '../../../store/useThemeStore';
 import { RemixIcon, RemixIconName } from '../../ui/RemixIcon';
 import { ModernAvatar } from '../../ui/ModernAvatar';
 import { DesktopPagination } from '../../ui/DesktopPagination';
@@ -48,6 +49,7 @@ const SORT_OPTIONS: { label: string; value: 'newest' | 'price_asc' | 'price_desc
 
 export const MarketRadarModule: React.FC = () => {
   const t = useLanguageStore((state) => state.t);
+  const tokens = useThemeStore((state) => state.tokens);
   const marketItems = useDesktopStore((state) => state.marketItems);
   const isMarketLoading = useDesktopStore((state) => state.isMarketLoading);
   const searchMarket = useDesktopStore((state) => state.searchMarket);
@@ -272,35 +274,35 @@ export const MarketRadarModule: React.FC = () => {
   }, [selectedBrand, activeSubCategory, activeCategory]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: tokens.windowBg }]}>
       {/* 1. TOP HEADER & BREADCRUMBS */}
-      <View style={styles.topHeaderWrapper}>
+      <View style={[styles.topHeaderWrapper, { backgroundColor: tokens.surfaceBg, borderBottomColor: tokens.borderSubtle }]}>
         {/* Search Input Strip */}
         <View style={styles.searchBarRow}>
-          <View style={styles.searchBox}>
-            <RemixIcon name="search-line" size={15} color="#94A3B8" />
+          <View style={[styles.searchBox, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+            <RemixIcon name="search-line" size={15} color={tokens.textSecondary} />
             <TextInput
-              style={[styles.searchInput, Platform.OS === 'web' ? ({ outlineStyle: 'none' } as any) : {}]}
+              style={[styles.searchInput, { color: tokens.textPrimary }, Platform.OS === 'web' ? ({ outlineStyle: 'none' } as any) : {}]}
               placeholder="Search products, brands, models, or locations..."
-              placeholderTextColor="#94A3B8"
+              placeholderTextColor={tokens.textMuted}
               value={searchQuery}
               onChangeText={setSearchQuery}
               onSubmitEditing={() => searchMarket(searchQuery, activeSubCategory?.slug || activeCategory?.slug || '')}
             />
             {searchQuery.length > 0 && (
               <TouchableOpacity onPress={() => setSearchQuery('')} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-                <RemixIcon name="close-circle-fill" size={14} color="#94A3B8" />
+                <RemixIcon name="close-circle-fill" size={14} color={tokens.textSecondary} />
               </TouchableOpacity>
             )}
           </View>
 
           <TouchableOpacity
-            style={styles.searchBtn}
+            style={[styles.searchBtn, { backgroundColor: tokens.accentColor }]}
             onPress={() => searchMarket(searchQuery, activeSubCategory?.slug || activeCategory?.slug || '')}
             activeOpacity={0.8}
           >
-            <RemixIcon name="search-line" size={14} color="#FFFFFF" />
-            <Text style={styles.searchBtnText}>Search</Text>
+            <RemixIcon name="search-line" size={14} color={tokens.accentFg} />
+            <Text style={[styles.searchBtnText, { color: tokens.accentFg }]}>Search</Text>
           </TouchableOpacity>
         </View>
 
