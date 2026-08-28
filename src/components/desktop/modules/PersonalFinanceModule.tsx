@@ -548,7 +548,7 @@ export const PersonalFinanceModule: React.FC = () => {
         {/* AI Smart Expense Capture Bar */}
         <View style={styles.aiCaptureBar}>
           <CustomTextInput
-            containerStyle={styles.aiInputContainer}
+            containerStyle={[styles.aiInputContainer, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}
             value={aiInput}
             onChangeText={setAiInput}
             placeholder={t.finQuickLogPlaceholder}
@@ -559,25 +559,27 @@ export const PersonalFinanceModule: React.FC = () => {
               <TouchableOpacity
                 style={[
                   styles.aiButton,
-                  (!aiInput.trim() || isProcessing) && styles.aiButtonDisabled,
+                  { backgroundColor: tokens.accentColor },
+                  (!aiInput.trim() || isProcessing) && { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
                 ]}
                 onPress={handleAiLog}
                 disabled={!aiInput.trim() || isProcessing}
                 activeOpacity={0.8}
               >
                 {isProcessing ? (
-                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <ActivityIndicator size="small" color={tokens.accentFg} />
                 ) : (
                   <>
                     <RemixIcon
                       name="send-plane-fill"
                       size={11}
-                      color={aiInput.trim() ? '#FFFFFF' : '#94A3B8'}
+                      color={aiInput.trim() ? tokens.accentFg : tokens.textMuted}
                     />
                     <Text
                       style={[
                         styles.aiButtonText,
-                        !aiInput.trim() && styles.aiButtonTextDisabled,
+                        { color: tokens.accentFg },
+                        !aiInput.trim() && { color: tokens.textMuted },
                       ]}
                     >
                       {t.finLogEntry}
@@ -593,16 +595,16 @@ export const PersonalFinanceModule: React.FC = () => {
         <View style={styles.controlsRowTop}>
           <View style={styles.controlsRowTopLeft}>
             {/* Search Box */}
-            <View style={styles.searchBox}>
-              <RemixIcon name="search-line" size={13} color="#64748B" />
+            <View style={[styles.searchBox, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+              <RemixIcon name="search-line" size={13} color={tokens.textMuted} />
               <TextInput
-                style={styles.searchInput}
+                style={[styles.searchInput, { color: tokens.textPrimary }]}
                 placeholder={
                   language === 'kh'
                     ? 'ស្វែងរកប្រតិបត្តិការ, ហាង, Ref Code...'
                     : 'Search transactions, merchant, ref code...'
                 }
-                placeholderTextColor="#94A3B8"
+                placeholderTextColor={tokens.textMuted}
                 value={searchQuery}
                 onChangeText={(txt) => {
                   setSearchQuery(txt);
@@ -611,7 +613,7 @@ export const PersonalFinanceModule: React.FC = () => {
               />
               {searchQuery ? (
                 <TouchableOpacity onPress={() => { setSearchQuery(''); setPage(1); }}>
-                  <RemixIcon name="close-line" size={13} color="#94A3B8" />
+                  <RemixIcon name="close-line" size={13} color={tokens.textMuted} />
                 </TouchableOpacity>
               ) : null}
             </View>
@@ -619,23 +621,43 @@ export const PersonalFinanceModule: React.FC = () => {
             {/* Bank Source Filter Tabs (All, ACLEDA, ABA Bank, KHQR) */}
             <View style={styles.bankFilterGroup}>
               <TouchableOpacity
-                style={[styles.bankFilterPill, selectedBank === 'all' && styles.bankFilterPillActive]}
+                style={[
+                  styles.bankFilterPill,
+                  { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
+                  selectedBank === 'all' && { backgroundColor: tokens.accentColor, borderColor: tokens.accentColor },
+                ]}
                 onPress={() => { setSelectedBank('all'); setPage(1); }}
                 activeOpacity={0.75}
               >
-                <Text style={[styles.bankFilterPillText, selectedBank === 'all' && styles.bankFilterPillTextActive]}>
+                <Text
+                  style={[
+                    styles.bankFilterPillText,
+                    { color: tokens.textSecondary },
+                    selectedBank === 'all' && { color: tokens.accentFg, fontWeight: '700' },
+                  ]}
+                >
                   {language === 'kh' ? 'ធនាគារទាំងអស់' : 'All Banks'} ({bankCounts.all})
                 </Text>
               </TouchableOpacity>
 
               {bankCounts.acleda > 0 && (
                 <TouchableOpacity
-                  style={[styles.bankFilterPill, selectedBank === 'acleda' && styles.bankFilterPillActive]}
+                  style={[
+                    styles.bankFilterPill,
+                    { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
+                    selectedBank === 'acleda' && { backgroundColor: tokens.accentColor, borderColor: tokens.accentColor },
+                  ]}
                   onPress={() => { setSelectedBank('acleda'); setPage(1); }}
                   activeOpacity={0.75}
                 >
                   <View style={[styles.miniBankDot, { backgroundColor: '#FBBF24' }]} />
-                  <Text style={[styles.bankFilterPillText, selectedBank === 'acleda' && styles.bankFilterPillTextActive]}>
+                  <Text
+                    style={[
+                      styles.bankFilterPillText,
+                      { color: tokens.textSecondary },
+                      selectedBank === 'acleda' && { color: tokens.accentFg, fontWeight: '700' },
+                    ]}
+                  >
                     ACLEDA ({bankCounts.acleda})
                   </Text>
                 </TouchableOpacity>
@@ -643,12 +665,22 @@ export const PersonalFinanceModule: React.FC = () => {
 
               {bankCounts.aba > 0 && (
                 <TouchableOpacity
-                  style={[styles.bankFilterPill, selectedBank === 'aba' && styles.bankFilterPillActive]}
+                  style={[
+                    styles.bankFilterPill,
+                    { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
+                    selectedBank === 'aba' && { backgroundColor: tokens.accentColor, borderColor: tokens.accentColor },
+                  ]}
                   onPress={() => { setSelectedBank('aba'); setPage(1); }}
                   activeOpacity={0.75}
                 >
                   <View style={[styles.miniBankDot, { backgroundColor: '#38BDF8' }]} />
-                  <Text style={[styles.bankFilterPillText, selectedBank === 'aba' && styles.bankFilterPillTextActive]}>
+                  <Text
+                    style={[
+                      styles.bankFilterPillText,
+                      { color: tokens.textSecondary },
+                      selectedBank === 'aba' && { color: tokens.accentFg, fontWeight: '700' },
+                    ]}
+                  >
                     ABA Bank ({bankCounts.aba})
                   </Text>
                 </TouchableOpacity>
@@ -656,12 +688,22 @@ export const PersonalFinanceModule: React.FC = () => {
 
               {bankCounts.khqr > 0 && (
                 <TouchableOpacity
-                  style={[styles.bankFilterPill, selectedBank === 'khqr' && styles.bankFilterPillActive]}
+                  style={[
+                    styles.bankFilterPill,
+                    { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
+                    selectedBank === 'khqr' && { backgroundColor: tokens.accentColor, borderColor: tokens.accentColor },
+                  ]}
                   onPress={() => { setSelectedBank('khqr'); setPage(1); }}
                   activeOpacity={0.75}
                 >
                   <View style={[styles.miniBankDot, { backgroundColor: '#E11D48' }]} />
-                  <Text style={[styles.bankFilterPillText, selectedBank === 'khqr' && styles.bankFilterPillTextActive]}>
+                  <Text
+                    style={[
+                      styles.bankFilterPillText,
+                      { color: tokens.textSecondary },
+                      selectedBank === 'khqr' && { color: tokens.accentFg, fontWeight: '700' },
+                    ]}
+                  >
                     KHQR ({bankCounts.khqr})
                   </Text>
                 </TouchableOpacity>
@@ -671,16 +713,16 @@ export const PersonalFinanceModule: React.FC = () => {
 
           {/* Page Size Toggle */}
           <View style={styles.pageSizeSelector}>
-            <Text style={styles.pageSizeLabel}>
+            <Text style={[styles.pageSizeLabel, { color: tokens.textSecondary }]}>
               {language === 'kh' ? 'បង្ហាញ:' : 'Rows:'}
             </Text>
-            <View style={styles.pageSizeGroup}>
+            <View style={[styles.pageSizeGroup, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
               {[15, 25, 50].map((sz) => (
                 <TouchableOpacity
                   key={sz}
                   style={[
                     styles.pageSizeBtn,
-                    pageSize === sz && styles.pageSizeBtnActive,
+                    pageSize === sz && { backgroundColor: tokens.surfaceBg },
                   ]}
                   onPress={() => {
                     setPageSize(sz);
@@ -691,7 +733,8 @@ export const PersonalFinanceModule: React.FC = () => {
                   <Text
                     style={[
                       styles.pageSizeText,
-                      pageSize === sz && styles.pageSizeTextActive,
+                      { color: tokens.textSecondary },
+                      pageSize === sz && { color: tokens.textPrimary, fontWeight: '700' },
                     ]}
                   >
                     {sz}
@@ -712,7 +755,8 @@ export const PersonalFinanceModule: React.FC = () => {
             <TouchableOpacity
               style={[
                 styles.categoryFilterChip,
-                selectedCategory === 'all' && styles.categoryFilterChipActive,
+                { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
+                selectedCategory === 'all' && { backgroundColor: tokens.accentColor, borderColor: tokens.accentColor },
               ]}
               onPress={() => {
                 setSelectedCategory('all');
@@ -723,14 +767,16 @@ export const PersonalFinanceModule: React.FC = () => {
               <Text
                 style={[
                   styles.categoryFilterText,
-                  selectedCategory === 'all' && styles.categoryFilterTextActive,
+                  { color: tokens.textSecondary },
+                  selectedCategory === 'all' && { color: tokens.accentFg, fontWeight: '700' },
                 ]}
               >
                 {language === 'kh' ? 'ទាំងអស់' : 'All Categories'}
                 <Text
                   style={[
                     styles.categoryCountText,
-                    selectedCategory === 'all' && styles.categoryCountTextActive,
+                    { color: tokens.textMuted },
+                    selectedCategory === 'all' && { color: tokens.accentFg, opacity: 0.8 },
                   ]}
                 >
                   {' '}({finances.length})
@@ -747,7 +793,8 @@ export const PersonalFinanceModule: React.FC = () => {
                   key={cat}
                   style={[
                     styles.categoryFilterChip,
-                    isActive && styles.categoryFilterChipActive,
+                    { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
+                    isActive && { backgroundColor: tokens.accentColor, borderColor: tokens.accentColor },
                   ]}
                   onPress={() => {
                     setSelectedCategory(cat);
@@ -758,14 +805,16 @@ export const PersonalFinanceModule: React.FC = () => {
                   <Text
                     style={[
                       styles.categoryFilterText,
-                      isActive && styles.categoryFilterTextActive,
+                      { color: tokens.textSecondary },
+                      isActive && { color: tokens.accentFg, fontWeight: '700' },
                     ]}
                   >
                     {label}
                     <Text
                       style={[
                         styles.categoryCountText,
-                        isActive && styles.categoryCountTextActive,
+                        { color: tokens.textMuted },
+                        isActive && { color: tokens.accentFg, opacity: 0.8 },
                       ]}
                     >
                       {' '}({count})
