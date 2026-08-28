@@ -1054,58 +1054,58 @@ export const CalendarModule: React.FC = () => {
 
       {/* VIEW MODE 2: DAILY HOURLY TIMELINE ROW BREAKDOWN */}
       {viewMode === 'day' && (
-        <View style={styles.dayTimelineContainer}>
+        <View style={[styles.dayTimelineContainer, { backgroundColor: tokens.windowBg }]}>
           {/* Sub Header for Day View */}
-          <View style={styles.daySubNav}>
+          <View style={[styles.daySubNav, { backgroundColor: tokens.surfaceBg, borderBottomColor: tokens.borderSubtle }]}>
             <TouchableOpacity
-              style={styles.backToMonthBtn}
+              style={[styles.backToMonthBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
               onPress={() => setViewMode('month')}
               activeOpacity={0.7}
             >
-              <RemixIcon name="arrow-left-line" size={13} color="#2563EB" />
-              <Text style={styles.backToMonthText}>Month Grid</Text>
+              <RemixIcon name="arrow-left-line" size={13} color={tokens.accentColor} />
+              <Text style={[styles.backToMonthText, { color: tokens.accentColor }]}>Month Grid</Text>
             </TouchableOpacity>
 
             <View style={styles.daySubCenter}>
-              <Text style={styles.daySubTitle}>{formatSelectedDateHeading(selectedDateStr)}</Text>
-              <View style={styles.dayCountBadge}>
-                <Text style={styles.dayCountText}>
+              <Text style={[styles.daySubTitle, { color: tokens.textPrimary }]}>{formatSelectedDateHeading(selectedDateStr)}</Text>
+              <View style={[styles.dayCountBadge, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                <Text style={[styles.dayCountText, { color: tokens.textSecondary }]}>
                   {selectedDateEvents.length} Events • {selectedDateTasks.length} Tasks
                 </Text>
               </View>
             </View>
 
             <TouchableOpacity
-              style={styles.daySubAddBtn}
+              style={[styles.daySubAddBtn, { backgroundColor: tokens.accentColor }]}
               onPress={() => {
                 setEventDate(selectedDateStr);
                 setShowAddModal(true);
               }}
               activeOpacity={0.75}
             >
-              <RemixIcon name="add-line" size={13} color="#0F172A" />
-              <Text style={styles.daySubAddText}>Add Event</Text>
+              <RemixIcon name="add-line" size={13} color={tokens.accentFg} />
+              <Text style={[styles.daySubAddText, { color: tokens.accentFg }]}>Add Event</Text>
             </TouchableOpacity>
           </View>
 
           {/* Top Pinned Tasks / All-day Section */}
           {(selectedDateTasks.length > 0 || selectedDateEvents.filter(e => !e.time || e.time === 'All Day').length > 0) && (
-            <View style={styles.allDaySection}>
+            <View style={[styles.allDaySection, { backgroundColor: tokens.surfaceBg, borderBottomColor: tokens.borderSubtle }]}>
               <View style={styles.allDayLabelCol}>
-                <Text style={styles.allDayLabel}>ALL-DAY & TASKS</Text>
+                <Text style={[styles.allDayLabel, { color: tokens.textSecondary }]}>ALL-DAY & TASKS</Text>
               </View>
               <View style={styles.allDayContent}>
                 {selectedDateTasks.map((t) => (
-                  <View key={t.id} style={styles.allDayTaskPill}>
+                  <View key={t.id} style={[styles.allDayTaskPill, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
                     <View style={[styles.pillDot, { backgroundColor: '#6366F1' }]} />
-                    <Text style={styles.allDayTaskTitle} numberOfLines={1}>{t.title}</Text>
-                    <Text style={styles.allDayTaskStatus}>{t.status}</Text>
+                    <Text style={[styles.allDayTaskTitle, { color: tokens.textPrimary }]} numberOfLines={1}>{t.title}</Text>
+                    <Text style={[styles.allDayTaskStatus, { color: tokens.textSecondary }]}>{t.status}</Text>
                   </View>
                 ))}
                 {selectedDateEvents.filter(e => !e.time || e.time === 'All Day').map((ev) => (
-                  <View key={ev.id} style={styles.allDayEventPill}>
+                  <View key={ev.id} style={[styles.allDayEventPill, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
                     <View style={[styles.pillDot, { backgroundColor: '#3B82F6' }]} />
-                    <Text style={styles.allDayEventTitle} numberOfLines={1}>{ev.title}</Text>
+                    <Text style={[styles.allDayEventTitle, { color: tokens.textPrimary }]} numberOfLines={1}>{ev.title}</Text>
                   </View>
                 ))}
               </View>
@@ -1135,15 +1135,19 @@ export const CalendarModule: React.FC = () => {
                 return (
                   <View key={slot.hour} style={styles.timelineRow}>
                     {/* Left Hour Label */}
-                    <View style={styles.timeCol}>
-                      <Text style={[styles.timeColText, isCurrentHourSlot && styles.timeColTextActive]}>
+                    <View style={[styles.timeCol, { backgroundColor: tokens.surfaceBg, borderRightColor: tokens.borderSubtle, borderBottomColor: tokens.borderSubtle }]}>
+                      <Text style={[styles.timeColText, { color: tokens.textSecondary }, isCurrentHourSlot && { color: tokens.accentColor, fontWeight: '700' }]}>
                         {slot.label}
                       </Text>
                     </View>
 
                     {/* Right Timeline Lane */}
                     <TouchableOpacity
-                      style={[styles.laneCol, isCurrentHourSlot && styles.laneColCurrent]}
+                      style={[
+                        styles.laneCol,
+                        { backgroundColor: tokens.windowBg, borderBottomColor: tokens.borderSubtle },
+                        isCurrentHourSlot && { backgroundColor: tokens.surfaceMuted },
+                      ]}
                       onPress={() => handleQuickAddSlot(slot.label)}
                       activeOpacity={0.8}
                     >
@@ -1171,6 +1175,7 @@ export const CalendarModule: React.FC = () => {
                                 key={ev.id}
                                 style={[
                                   styles.timelineEventCard,
+                                  { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
                                   isUrgent
                                     ? styles.tlUrgent
                                     : isHigh
@@ -1196,47 +1201,48 @@ export const CalendarModule: React.FC = () => {
                                     <Text
                                       style={[
                                         styles.tlEventTitle,
+                                        { color: tokens.textPrimary },
                                         ev.isCompleted && styles.tlEventTitleCompleted,
                                       ]}
                                     >
                                       {ev.title}
                                     </Text>
-                                    <View style={styles.tlTimePill}>
-                                      <Text style={styles.tlTimePillText}>{ev.time}</Text>
+                                    <View style={[styles.tlTimePill, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                                      <Text style={[styles.tlTimePillText, { color: tokens.textSecondary }]}>{ev.time}</Text>
                                     </View>
                                   </View>
 
                                   <View style={styles.tlActions}>
                                     <TouchableOpacity
                                       onPress={() => toggleCalendarEvent(ev.id)}
-                                      style={styles.tlIconBtn}
+                                      style={[styles.tlIconBtn, { backgroundColor: tokens.surfaceMuted }]}
                                       hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
                                     >
                                       <RemixIcon
                                         name={ev.isCompleted ? 'check-line' : 'time-line'}
                                         size={13}
-                                        color={ev.isCompleted ? '#10B981' : '#64748B'}
+                                        color={ev.isCompleted ? '#10B981' : tokens.textSecondary}
                                       />
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                       onPress={() => openEditEventModal(ev)}
-                                      style={styles.tlIconBtn}
+                                      style={[styles.tlIconBtn, { backgroundColor: tokens.surfaceMuted }]}
                                       hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
                                     >
-                                      <RemixIcon name="pencil-line" size={13} color="#64748B" />
+                                      <RemixIcon name="pencil-line" size={13} color={tokens.textSecondary} />
                                     </TouchableOpacity>
                                     <TouchableOpacity
                                       onPress={() => deleteCalendarEvent(ev.id)}
-                                      style={styles.tlIconBtn}
+                                      style={[styles.tlIconBtn, { backgroundColor: tokens.surfaceMuted }]}
                                       hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
                                     >
-                                      <RemixIcon name="close-line" size={13} color="#94A3B8" />
+                                      <RemixIcon name="close-line" size={13} color={tokens.textSecondary} />
                                     </TouchableOpacity>
                                   </View>
                                 </View>
 
                                 {ev.description ? (
-                                  <Text style={styles.tlEventDesc}>{ev.description}</Text>
+                                  <Text style={[styles.tlEventDesc, { color: tokens.textSecondary }]}>{ev.description}</Text>
                                 ) : null}
                               </View>
                             );
@@ -1244,7 +1250,7 @@ export const CalendarModule: React.FC = () => {
                         </View>
                       ) : (
                         <View style={styles.emptySlotIndicator}>
-                          <Text style={styles.emptySlotText}>+ Add event at {slot.label}</Text>
+                          <Text style={[styles.emptySlotText, { color: tokens.textMuted }]}>+ Add event at {slot.label}</Text>
                         </View>
                       )}
                     </TouchableOpacity>
@@ -1258,11 +1264,11 @@ export const CalendarModule: React.FC = () => {
 
       {/* VIEW MODE 3: AGENDA LIST VIEW */}
       {viewMode === 'agenda' && (
-        <View style={{ flex: 1 }}>
-          <ScrollView style={styles.agendaViewContainer} showsVerticalScrollIndicator={false}>
+        <View style={{ flex: 1, backgroundColor: tokens.windowBg }}>
+          <ScrollView style={[styles.agendaViewContainer, { backgroundColor: tokens.windowBg }]} showsVerticalScrollIndicator={false}>
             <View style={styles.agendaViewContent}>
               {/* Full Agenda Search Toolbar */}
-              <View style={styles.fullAgendaToolbar}>
+              <View style={[styles.fullAgendaToolbar, { backgroundColor: tokens.surfaceBg, borderBottomColor: tokens.borderSubtle }]}>
                 <View style={{ width: 280 }}>
                   <CustomTextInput
                     value={fullAgendaSearch}
@@ -1272,22 +1278,22 @@ export const CalendarModule: React.FC = () => {
                     size="sm"
                   />
                 </View>
-                <Text style={styles.fullAgendaCountText}>
+                <Text style={[styles.fullAgendaCountText, { color: tokens.textSecondary }]}>
                   {filteredFullEvents.length} ព្រឹត្តិការណ៍សរុប
                 </Text>
               </View>
 
               {filteredFullEvents.length === 0 ? (
                 <View style={styles.agendaEmptyFull}>
-                  <RemixIcon name="calendar-line" size={28} color="#94A3B8" />
-                  <Text style={styles.agendaEmptyTitle}>រកមិនឃើញព្រឹត្តិការណ៍ទេ</Text>
-                  <Text style={styles.agendaEmptySub}>
+                  <RemixIcon name="calendar-line" size={28} color={tokens.textMuted} />
+                  <Text style={[styles.agendaEmptyTitle, { color: tokens.textPrimary }]}>រកមិនឃើញព្រឹត្តិការណ៍ទេ</Text>
+                  <Text style={[styles.agendaEmptySub, { color: tokens.textSecondary }]}>
                     {fullAgendaSearch ? 'មិនមានទិន្នន័យត្រូវនឹងពាក្យស្វែងរកឡើយ' : 'មិនទាន់មានព្រឹត្តិការណ៍ត្រូវបានកំណត់ពេលនៅឡើយ'}
                   </Text>
                 </View>
               ) : (
                 paginatedFullEvents.map((ev) => (
-                  <View key={ev.id} style={styles.agendaFullCard}>
+                  <View key={ev.id} style={[styles.agendaFullCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
                     <View style={styles.agendaFullLeft}>
                       {ev.id.startsWith('gh-') || ev.title.includes('[Git') ? (
                         <View style={styles.githubRoundBadge}>
@@ -1309,12 +1315,12 @@ export const CalendarModule: React.FC = () => {
                         />
                       )}
                       <View style={{ flex: 1 }}>
-                        <Text style={styles.agendaFullTitle}>{ev.title}</Text>
-                        <Text style={styles.agendaFullSub}>
+                        <Text style={[styles.agendaFullTitle, { color: tokens.textPrimary }]}>{ev.title}</Text>
+                        <Text style={[styles.agendaFullSub, { color: tokens.textSecondary }]}>
                           {ev.date} • {ev.time || 'All Day'} • {ev.type.toUpperCase()}
                         </Text>
                         {ev.description ? (
-                          <Text style={styles.agendaFullDesc}>{ev.description}</Text>
+                          <Text style={[styles.agendaFullDesc, { color: tokens.textSecondary }]}>{ev.description}</Text>
                         ) : null}
                       </View>
                     </View>
@@ -1322,25 +1328,25 @@ export const CalendarModule: React.FC = () => {
                     <View style={styles.tlActions}>
                       <TouchableOpacity
                         onPress={() => toggleCalendarEvent(ev.id)}
-                        style={styles.tlIconBtn}
+                        style={[styles.tlIconBtn, { backgroundColor: tokens.surfaceMuted }]}
                       >
                         <RemixIcon
                           name={ev.isCompleted ? 'check-line' : 'time-line'}
                           size={14}
-                          color={ev.isCompleted ? '#10B981' : '#64748B'}
+                          color={ev.isCompleted ? '#10B981' : tokens.textSecondary}
                         />
                       </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() => openEditEventModal(ev)}
-                        style={styles.tlIconBtn}
+                        style={[styles.tlIconBtn, { backgroundColor: tokens.surfaceMuted }]}
                       >
-                        <RemixIcon name="pencil-line" size={14} color="#64748B" />
+                        <RemixIcon name="pencil-line" size={14} color={tokens.textSecondary} />
                       </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() => deleteCalendarEvent(ev.id)}
-                        style={styles.tlIconBtn}
+                        style={[styles.tlIconBtn, { backgroundColor: tokens.surfaceMuted }]}
                       >
-                        <RemixIcon name="close-line" size={14} color="#94A3B8" />
+                        <RemixIcon name="close-line" size={14} color={tokens.textSecondary} />
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -1361,7 +1367,7 @@ export const CalendarModule: React.FC = () => {
 
       {/* VIEW MODE 4: YEAR 12-MONTH OVERVIEW */}
       {viewMode === 'year' && (
-        <ScrollView style={styles.yearViewContainer} showsVerticalScrollIndicator={false}>
+        <ScrollView style={[styles.yearViewContainer, { backgroundColor: tokens.windowBg }]} showsVerticalScrollIndicator={false}>
           <View style={styles.yearGrid}>
             {Array.from({ length: 12 }, (_, mIdx) => {
               const monthName = monthNames[mIdx];
@@ -1372,22 +1378,22 @@ export const CalendarModule: React.FC = () => {
               const isCurrentCalendarMonth = new Date().getFullYear() === year && new Date().getMonth() === mIdx;
 
               return (
-                <View key={mIdx} style={[styles.yearMonthCard, isCurrentCalendarMonth && styles.yearMonthCardActive]}>
+                <View key={mIdx} style={[styles.yearMonthCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }, isCurrentCalendarMonth && { borderColor: tokens.accentColor }]}>
                   {/* Month Header */}
                   <TouchableOpacity
-                    style={styles.yearMonthHeader}
+                    style={[styles.yearMonthHeader, { borderBottomColor: tokens.borderSubtle }]}
                     onPress={() => {
                       setCurrentDate(new Date(year, mIdx, 1));
                       setViewMode('month');
                     }}
                     activeOpacity={0.7}
                   >
-                    <Text style={[styles.yearMonthTitle, isCurrentCalendarMonth && styles.yearMonthTitleActive]}>
+                    <Text style={[styles.yearMonthTitle, { color: tokens.textPrimary }, isCurrentCalendarMonth && { color: tokens.accentColor }]}>
                       {monthName}
                     </Text>
                     {monthEvents.length > 0 && (
-                      <View style={styles.yearEventBadge}>
-                        <Text style={styles.yearEventBadgeText}>{monthEvents.length}</Text>
+                      <View style={[styles.yearEventBadge, { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}>
+                        <Text style={[styles.yearEventBadgeText, { color: tokens.accentColor }]}>{monthEvents.length}</Text>
                       </View>
                     )}
                   </TouchableOpacity>
@@ -1395,7 +1401,7 @@ export const CalendarModule: React.FC = () => {
                   {/* Day Names Row */}
                   <View style={styles.yearWeekRow}>
                     {(language === 'kh' ? ['ច', 'អ', 'ព', 'ព្រ', 'សុ', 'ស', 'អា'] : ['M', 'T', 'W', 'T', 'F', 'S', 'S']).map((d, i) => (
-                      <Text key={i} style={styles.yearWeekDayText}>{d}</Text>
+                      <Text key={i} style={[styles.yearWeekDayText, { color: tokens.textSecondary }]}>{d}</Text>
                     ))}
                   </View>
 
@@ -1445,6 +1451,7 @@ export const CalendarModule: React.FC = () => {
                             <Text
                               style={[
                                 styles.yearDayText,
+                                { color: tokens.textPrimary },
                                 isToday && styles.yearDayTextToday,
                                 isSelected && !isToday && styles.yearDayTextSelected,
                                 hasDayEvents && !isToday && !isSelected && (
