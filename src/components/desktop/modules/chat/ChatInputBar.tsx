@@ -602,9 +602,8 @@ export const ChatInputBar: React.FC<ChatInputBarProps> = React.memo(({
                 <TouchableOpacity
                   style={[
                     styles.toolIconBtn,
-                    styles.toolIconBtnAi,
                     { backgroundColor: tokens.surfaceMuted },
-                    showAiMarkupMenu && { backgroundColor: tokens.accentColor },
+                    showAiMarkupMenu && { backgroundColor: tokens.accentSoft },
                   ]}
                   onPress={() => setShowAiMarkupMenu(!showAiMarkupMenu)}
                   activeOpacity={0.7}
@@ -612,8 +611,8 @@ export const ChatInputBar: React.FC<ChatInputBarProps> = React.memo(({
                 >
                   <RemixIcon
                     name="sparkles-fill"
-                    size={13}
-                    color={showAiMarkupMenu ? tokens.accentFg : tokens.accentColor}
+                    size={14}
+                    color={tokens.accentColor}
                   />
                 </TouchableOpacity>
               </View>

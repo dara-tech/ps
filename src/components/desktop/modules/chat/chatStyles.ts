@@ -1046,9 +1046,7 @@ export const chatStyles = StyleSheet.create({
     backgroundColor: '#E2E8F0',
   },
   toolIconBtnAi: {
-    backgroundColor: '#EEF2FF',
-    borderWidth: 1,
-    borderColor: '#E0E7FF',
+    borderRadius: 5,
   },
   toolIconBtnAiActive: {
     backgroundColor: '#4F46E5',
