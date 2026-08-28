@@ -1855,9 +1855,10 @@ const styles = StyleSheet.create({
   },
   gridContainer: {
     flex: 1,
-    borderWidth: 1,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
     borderColor: '#E2E8F0',
-    borderRadius: 0,
     backgroundColor: '#FFFFFF',
   },
   gridContainerFull: {
@@ -1866,7 +1867,7 @@ const styles = StyleSheet.create({
   weekHeader: {
     flexDirection: 'row',
     borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
+    borderBottomColor: '#F1F5F9',
     backgroundColor: '#F8FAFC',
     paddingVertical: 7,
   },
@@ -2078,7 +2079,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
+    borderBottomColor: '#F1F5F9',
   },
   insightStripItem: {
     flex: 1,
@@ -2088,7 +2089,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRightWidth: 1,
-    borderRightColor: '#E2E8F0',
+    borderRightColor: '#F1F5F9',
     backgroundColor: '#FFFFFF',
   },
   insightStripIconWrap: {
