@@ -85,6 +85,7 @@ export const CalendarModule: React.FC = () => {
 
   const monthNames = language === 'kh' ? MONTH_NAMES_KH : MONTH_NAMES_EN;
   const daysOfWeek = language === 'kh' ? DAYS_OF_WEEK_KH : DAYS_OF_WEEK_EN;
+  const isKh = language === 'kh';
 
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDateStr, setSelectedDateStr] = useState(
@@ -359,15 +360,15 @@ export const CalendarModule: React.FC = () => {
     e.title.toLowerCase().includes(agendaSearch.toLowerCase()) ||
     (e.description && e.description.toLowerCase().includes(agendaSearch.toLowerCase()))
   );
-  const filteredAgendaTasks = agendaScope === 'selected'
-    ? selectedDateTasks.filter((t) => t.title.toLowerCase().includes(agendaSearch.toLowerCase()))
-    : [];
-
+  
   // Month-level Executive Metrics for Insight Cockpit Strip
   const currentMonthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
 
   const monthFinances = useMemo(() => {
-    return finances.filter((f) => f.date?.startsWith(currentMonthStr));
+    return finances.filter((f) => {
+      const iso = normalizeFinanceDateToISO(f.date);
+      return iso ? iso.startsWith(currentMonthStr) : false;
+    });
   }, [finances, currentMonthStr]);
 
   const monthExpenses = useMemo(() => {
@@ -414,6 +415,10 @@ export const CalendarModule: React.FC = () => {
   const SIDE_PAGE_SIZE = 10;
   const FULL_PAGE_SIZE = 15;
 
+  const filteredAgendaTasks = agendaScope === 'selected'
+    ? selectedDateTasks.filter((t) => t.title.toLowerCase().includes(agendaSearch.toLowerCase()))
+    : [];
+
   const totalSidePages = Math.max(1, Math.ceil(filteredAgendaEvents.length / SIDE_PAGE_SIZE));
   const paginatedSideEvents = filteredAgendaEvents.slice(
     (sideAgendaPage - 1) * SIDE_PAGE_SIZE,
@@ -458,7 +463,7 @@ export const CalendarModule: React.FC = () => {
       const parts = dateStr.split('-');
       if (parts.length === 3) {
         const d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-        return d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
+        return d.toLocaleDateString(isKh ? 'km-KH' : 'en-US', { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
       }
     } catch {}
     return dateStr;
@@ -476,31 +481,33 @@ export const CalendarModule: React.FC = () => {
 
           {/* Month / Year / Day Navigator */}
           <View style={styles.navControls}>
-            <TouchableOpacity
-              style={styles.arrowBtn}
-              onPress={handlePrev}
-              activeOpacity={0.7}
-              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-            >
-              <RemixIcon name="chevron-left-line" size={13} color="#64748B" />
-            </TouchableOpacity>
+            <View style={styles.monthNavPill}>
+              <TouchableOpacity
+                style={styles.arrowBtn}
+                onPress={handlePrev}
+                activeOpacity={0.7}
+                hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+              >
+                <RemixIcon name="chevron-left-line" size={13} color="#64748B" />
+              </TouchableOpacity>
 
-            <Text style={styles.monthTitle}>
-              {viewMode === 'year'
-                ? `${year}`
-                : viewMode === 'day'
-                ? formatSelectedDateHeading(selectedDateStr)
-                : `${monthNames[month]} ${year}`}
-            </Text>
+              <Text style={styles.monthTitle}>
+                {viewMode === 'year'
+                  ? `${year}`
+                  : viewMode === 'day'
+                  ? formatSelectedDateHeading(selectedDateStr)
+                  : `${monthNames[month]} ${year}`}
+              </Text>
 
-            <TouchableOpacity
-              style={styles.arrowBtn}
-              onPress={handleNext}
-              activeOpacity={0.7}
-              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-            >
-              <RemixIcon name="chevron-right-line" size={13} color="#64748B" />
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.arrowBtn}
+                onPress={handleNext}
+                activeOpacity={0.7}
+                hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+              >
+                <RemixIcon name="chevron-right-line" size={13} color="#64748B" />
+              </TouchableOpacity>
+            </View>
 
             <TouchableOpacity style={styles.todayBtn} onPress={handleToday} activeOpacity={0.7}>
               <Text style={styles.todayBtnText}>{t.calToday}</Text>
@@ -566,7 +573,7 @@ export const CalendarModule: React.FC = () => {
                 <View style={[styles.insightStripIconWrap, { backgroundColor: '#FEF2F2' }]}>
                   <RemixIcon name="bank-card-line" size={11} color="#DC2626" />
                 </View>
-                <Text style={styles.insightStripLabel}>Cashflow:</Text>
+                <Text style={styles.insightStripLabel}>{isKh ? 'លំហូរសាច់ប្រាក់:' : 'Cashflow:'}</Text>
                 <Text style={[styles.insightStripVal, { color: '#DC2626' }]}>-${monthExpenses.toLocaleString()}</Text>
                 <Text style={styles.insightStripDivider}>/</Text>
                 <Text style={[styles.insightStripVal, { color: '#16A34A' }]}>+${monthIncomes.toLocaleString()}</Text>
@@ -576,24 +583,24 @@ export const CalendarModule: React.FC = () => {
                 <View style={[styles.insightStripIconWrap, { backgroundColor: '#F1F5F9' }]}>
                   <RemixIcon name="github-fill" size={11} color="#0F172A" />
                 </View>
-                <Text style={styles.insightStripLabel}>Git Activity:</Text>
-                <Text style={styles.insightStripValDark}>{monthGitCommitsCount} commits</Text>
+                <Text style={styles.insightStripLabel}>{isKh ? 'សកម្មភាព Git:' : 'Git Activity:'}</Text>
+                <Text style={styles.insightStripValDark}>{monthGitCommitsCount} {isKh ? 'commits' : 'commits'}</Text>
               </View>
 
               <View style={styles.insightStripItem}>
                 <View style={[styles.insightStripIconWrap, { backgroundColor: '#EEF2FF' }]}>
                   <RemixIcon name="checkbox-circle-fill" size={11} color="#6366F1" />
                 </View>
-                <Text style={styles.insightStripLabel}>Sprint Tasks:</Text>
-                <Text style={styles.insightStripValDark}>{monthCompletedTasksCount} done / {monthPendingTasksCount} pending</Text>
+                <Text style={styles.insightStripLabel}>{isKh ? 'កិច្ចការ Sprint:' : 'Sprint Tasks:'}</Text>
+                <Text style={styles.insightStripValDark}>{monthCompletedTasksCount} {isKh ? 'រួចរាល់' : 'done'} / {monthPendingTasksCount} {isKh ? 'រង់ចាំ' : 'pending'}</Text>
               </View>
 
               <View style={styles.insightStripItem}>
                 <View style={[styles.insightStripIconWrap, { backgroundColor: '#EFF6FF' }]}>
                   <RemixIcon name="calendar-line" size={11} color="#2563EB" />
                 </View>
-                <Text style={styles.insightStripLabel}>Schedule:</Text>
-                <Text style={styles.insightStripValDark}>{monthScheduledEventsCount} events</Text>
+                <Text style={styles.insightStripLabel}>{isKh ? 'កាលវិភាគ:' : 'Schedule:'}</Text>
+                <Text style={styles.insightStripValDark}>{monthScheduledEventsCount} {isKh ? 'ព្រឹត្តិការណ៍' : 'events'}</Text>
               </View>
             </View>
 
@@ -1698,13 +1705,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
   },
-  arrowBtn: {
-    width: 26,
-    height: 26,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
+  monthNavPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+    borderRadius: 6,
+    paddingHorizontal: 3,
+    paddingVertical: 2,
+    gap: 2,
+  },
+  arrowBtn: {
+    width: 22,
+    height: 22,
+    borderRadius: 4,
+    backgroundColor: '#F8FAFC',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -1713,23 +1729,23 @@ const styles = StyleSheet.create({
     fontFamily: 'Krasar-Bold',
     fontWeight: '700',
     color: '#0F172A',
-    minWidth: 130,
+    minWidth: 120,
     textAlign: 'center',
+    paddingHorizontal: 6,
   },
   todayBtn: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 4.5,
+    borderRadius: 6,
     backgroundColor: '#F1F5F9',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    marginLeft: 4,
+    borderColor: '#CBD5E1',
   },
   todayBtnText: {
-    fontSize: 10.5,
+    fontSize: 11,
     fontFamily: 'Krasar-Bold',
-    fontWeight: '600',
-    color: '#334155',
+    fontWeight: '700',
+    color: '#0F172A',
   },
   headerRight: {
     flexDirection: 'row',
