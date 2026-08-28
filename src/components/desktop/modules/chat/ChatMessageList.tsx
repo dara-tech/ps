@@ -68,7 +68,8 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
   const [seenModalMsg, setSeenModalMsg] = useState<any | null>(null);
   const [readParticipants, setReadParticipants] = useState<Array<{ id: string; name: string; avatarUrl?: string; date?: string }>>([]);
   const [loadingReadParticipants, setLoadingReadParticipants] = useState(false);
-  const { tokens, mode } = useThemeStore((state) => ({ tokens: state.tokens, mode: state.mode }));
+  const tokens = useThemeStore((state) => state.tokens);
+  const mode = useThemeStore((state) => state.mode);
   const isDark = mode !== 'light';
 
   useEffect(() => {
