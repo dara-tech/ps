@@ -594,7 +594,7 @@ export const AICopilotModule: React.FC = () => {
                 }
               }}
             >
-              <Text style={[styles.suggestionText, { color: tokens.textPrimary }]}>{s.label}</Text>
+              <Text style={[styles.suggestionText, { color: tokens.textSecondary }]}>{s.label}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -629,25 +629,25 @@ export const AICopilotModule: React.FC = () => {
       )}
 
       {/* Modern Clean Input Box */}
-      <View style={[styles.inputContainer, { backgroundColor: tokens.surfaceBg, borderTopColor: tokens.borderSubtle }]}>
+      <View style={[styles.inputContainer, { backgroundColor: tokens.surfaceBg, borderTopColor: 'transparent' }]}>
         {/* Attached Items Badges */}
         {attachments.length > 0 && (
           <View style={styles.attachmentsRow}>
             {attachments.map((att) => (
-              <View key={att.id} style={styles.attachmentBadge}>
+              <View key={att.id} style={[styles.attachmentBadge, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
                 <RemixIcon
                   name={att.type === 'code' ? 'code-line' : 'file-text-line'}
                   size={12}
-                  color="#2563EB"
+                  color={tokens.accentColor}
                 />
-                <Text style={styles.attachmentName} numberOfLines={1}>
+                <Text style={[styles.attachmentName, { color: tokens.textPrimary }]} numberOfLines={1}>
                   {att.name}
                 </Text>
                 <TouchableOpacity
                   onPress={() => removeAttachment(att.id)}
                   hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
                 >
-                  <RemixIcon name="close-line" size={11} color="#64748B" />
+                  <RemixIcon name="close-line" size={11} color={tokens.textSecondary} />
                 </TouchableOpacity>
               </View>
             ))}
@@ -684,11 +684,11 @@ export const AICopilotModule: React.FC = () => {
           />
 
           {/* Action Toolbar Bottom Bar */}
-          <View style={[styles.inputToolbar, { borderTopColor: tokens.borderSubtle }]}>
+          <View style={styles.inputToolbar}>
             <View style={styles.toolbarLeft}>
               {/* Attachment Button */}
               <TouchableOpacity
-                style={[styles.toolIconBtn, { backgroundColor: tokens.surfaceMuted }]}
+                style={[styles.toolIconBtn, { backgroundColor: 'transparent' }]}
                 onPress={handleAddAttachment}
                 activeOpacity={0.7}
                 hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
@@ -698,7 +698,7 @@ export const AICopilotModule: React.FC = () => {
 
               {/* Slash Commands Button */}
               <TouchableOpacity
-                style={[styles.toolIconBtn, { backgroundColor: tokens.surfaceMuted }, showSlashMenu && { backgroundColor: tokens.accentSoft }]}
+                style={[styles.toolIconBtn, { backgroundColor: showSlashMenu ? tokens.accentSoft : 'transparent' }]}
                 onPress={() => setShowSlashMenu(!showSlashMenu)}
                 activeOpacity={0.7}
                 hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
@@ -712,7 +712,7 @@ export const AICopilotModule: React.FC = () => {
 
               {/* Voice / Mic Button */}
               <TouchableOpacity
-                style={[styles.toolIconBtn, { backgroundColor: tokens.surfaceMuted }, isRecording && styles.toolIconBtnRecording]}
+                style={[styles.toolIconBtn, { backgroundColor: isRecording ? '#FEE2E2' : 'transparent' }]}
                 onPress={toggleRecording}
                 activeOpacity={0.7}
                 hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
@@ -728,19 +728,21 @@ export const AICopilotModule: React.FC = () => {
 
             <View style={styles.toolbarRight}>
               <Text style={[styles.shortcutHint, { color: tokens.textMuted }]}>↵ Send</Text>
-
-              {/* Send Button */}
               <TouchableOpacity
                 style={[
                   styles.sendButton,
                   { backgroundColor: tokens.accentColor },
-                  (!input.trim() && attachments.length === 0) && styles.sendButtonDisabled,
+                  (!input.trim() && attachments.length === 0) && { backgroundColor: tokens.surfaceMuted, opacity: 0.6 },
                 ]}
                 onPress={handleSend}
                 disabled={(!input.trim() && attachments.length === 0) || isAiThinking}
                 activeOpacity={0.8}
               >
-                <RemixIcon name="send-plane-fill" size={12} color="#FFFFFF" />
+                <RemixIcon
+                  name="send-plane-fill"
+                  size={12}
+                  color={(!input.trim() && attachments.length === 0) ? tokens.textMuted : tokens.accentFg}
+                />
               </TouchableOpacity>
             </View>
           </View>
@@ -1193,24 +1195,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginTop: 4,
-    paddingTop: 4,
-    borderTopWidth: 1,
-    borderTopColor: '#F8FAFC',
+    paddingTop: 2,
   },
   toolbarLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 3,
+    gap: 4,
   },
   toolIconBtn: {
-    width: 24,
-    height: 24,
-    borderRadius: 5,
+    width: 26,
+    height: 26,
+    borderRadius: 6,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#F8FAFC',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
     position: 'relative',
   },
   toolIconBtnActive: {
