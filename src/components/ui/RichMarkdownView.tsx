@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import { RemixIcon } from './RemixIcon';
 import { toast } from '../../store/useToastStore';
@@ -308,6 +308,21 @@ const TableView: React.FC<{
   rows: string[][];
   alignments: ('left' | 'center' | 'right')[];
 }> = ({ headers, rows, alignments }) => {
+  const colCount = Math.max(headers.length, ...rows.map((r) => r.length), 1);
+
+  // Compute fixed column width for each column index so that all rows and header have the exact same column width
+  const colWidths = useMemo(() => {
+    return Array.from({ length: colCount }).map((_, cIdx) => {
+      const headerLen = (headers[cIdx] || '').length;
+      const maxRowLen = rows.reduce((max, r) => Math.max(max, (r[cIdx] || '').length), 0);
+      const longestCharCount = Math.max(headerLen, maxRowLen);
+
+      // Proportional width: 8.5px per character + 32px padding, clamped between 120px and 280px
+      const calculatedWidth = Math.max(120, Math.min(280, longestCharCount * 8.5 + 32));
+      return cIdx === 0 ? Math.max(130, calculatedWidth) : calculatedWidth;
+    });
+  }, [headers, rows, colCount]);
+
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tableScroll}>
       <View style={styles.tableContainer}>
@@ -318,7 +333,7 @@ const TableView: React.FC<{
               key={idx}
               style={[
                 styles.tableHeaderCell,
-                idx === 0 && { minWidth: 110 },
+                { width: colWidths[idx] },
                 idx === headers.length - 1 && { borderRightWidth: 0 },
               ]}
             >
@@ -351,7 +366,7 @@ const TableView: React.FC<{
                   key={cIdx}
                   style={[
                     styles.tableBodyCell,
-                    cIdx === 0 && { minWidth: 110 },
+                    { width: colWidths[cIdx] },
                     cIdx === headers.length - 1 && { borderRightWidth: 0 },
                   ]}
                 >
@@ -552,7 +567,7 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderRightColor: '#E2E8F0',
     justifyContent: 'center',
-    minWidth: 100,
+    boxSizing: 'border-box' as any,
   },
   tableHeaderText: {
     fontSize: 12,
@@ -575,7 +590,7 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderRightColor: '#F1F5F9',
     justifyContent: 'center',
-    minWidth: 100,
+    boxSizing: 'border-box' as any,
   },
   tableCellText: {
     fontSize: 12,
