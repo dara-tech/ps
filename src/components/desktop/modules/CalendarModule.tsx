@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -363,6 +363,50 @@ export const CalendarModule: React.FC = () => {
     ? selectedDateTasks.filter((t) => t.title.toLowerCase().includes(agendaSearch.toLowerCase()))
     : [];
 
+  // Month-level Executive Metrics for Insight Cockpit Strip
+  const currentMonthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
+
+  const monthFinances = useMemo(() => {
+    return finances.filter((f) => f.date?.startsWith(currentMonthStr));
+  }, [finances, currentMonthStr]);
+
+  const monthExpenses = useMemo(() => {
+    return monthFinances
+      .filter((f: any) => f.type === 'expense')
+      .reduce((sum: number, f: any) => sum + (f.amount || 0), 0);
+  }, [monthFinances]);
+
+  const monthIncomes = useMemo(() => {
+    return monthFinances
+      .filter((f: any) => f.type === 'income')
+      .reduce((sum: number, f: any) => sum + (f.amount || 0), 0);
+  }, [monthFinances]);
+
+  const monthGitCommitsCount = useMemo(() => {
+    return calendarEvents.filter(
+      (e) =>
+        e.date?.startsWith(currentMonthStr) &&
+        (e.id.startsWith('gh-') || e.title.startsWith('[Git'))
+    ).length;
+  }, [calendarEvents, currentMonthStr]);
+
+  const monthScheduledEventsCount = useMemo(() => {
+    return calendarEvents.filter(
+      (e) =>
+        e.date?.startsWith(currentMonthStr) &&
+        !e.id.startsWith('gh-') &&
+        !e.title.startsWith('[Git')
+    ).length;
+  }, [calendarEvents, currentMonthStr]);
+
+  const monthPendingTasksCount = useMemo(() => {
+    return tasks.filter((t) => t.dueDate?.startsWith(currentMonthStr) && t.status !== 'done').length;
+  }, [tasks, currentMonthStr]);
+
+  const monthCompletedTasksCount = useMemo(() => {
+    return tasks.filter((t) => t.dueDate?.startsWith(currentMonthStr) && t.status === 'done').length;
+  }, [tasks, currentMonthStr]);
+
   const [sideAgendaPage, setSideAgendaPage] = useState(1);
   const [fullAgendaPage, setFullAgendaPage] = useState(1);
   const [fullAgendaSearch, setFullAgendaSearch] = useState('');
@@ -516,6 +560,43 @@ export const CalendarModule: React.FC = () => {
         <View style={styles.bodyLayout}>
           {/* Monthly Calendar Grid */}
           <View style={[styles.gridContainer, !isRightPanelVisible && styles.gridContainerFull]}>
+            {/* Monthly Executive Insight Strip */}
+            <View style={styles.monthInsightStrip}>
+              <View style={styles.insightStripItem}>
+                <View style={[styles.insightStripIconWrap, { backgroundColor: '#FEF2F2' }]}>
+                  <RemixIcon name="bank-card-line" size={11} color="#DC2626" />
+                </View>
+                <Text style={styles.insightStripLabel}>Cashflow:</Text>
+                <Text style={[styles.insightStripVal, { color: '#DC2626' }]}>-${monthExpenses.toLocaleString()}</Text>
+                <Text style={styles.insightStripDivider}>/</Text>
+                <Text style={[styles.insightStripVal, { color: '#16A34A' }]}>+${monthIncomes.toLocaleString()}</Text>
+              </View>
+
+              <View style={styles.insightStripItem}>
+                <View style={[styles.insightStripIconWrap, { backgroundColor: '#F1F5F9' }]}>
+                  <RemixIcon name="github-fill" size={11} color="#0F172A" />
+                </View>
+                <Text style={styles.insightStripLabel}>Git Activity:</Text>
+                <Text style={styles.insightStripValDark}>{monthGitCommitsCount} commits</Text>
+              </View>
+
+              <View style={styles.insightStripItem}>
+                <View style={[styles.insightStripIconWrap, { backgroundColor: '#EEF2FF' }]}>
+                  <RemixIcon name="checkbox-circle-fill" size={11} color="#6366F1" />
+                </View>
+                <Text style={styles.insightStripLabel}>Sprint Tasks:</Text>
+                <Text style={styles.insightStripValDark}>{monthCompletedTasksCount} done / {monthPendingTasksCount} pending</Text>
+              </View>
+
+              <View style={styles.insightStripItem}>
+                <View style={[styles.insightStripIconWrap, { backgroundColor: '#EFF6FF' }]}>
+                  <RemixIcon name="calendar-line" size={11} color="#2563EB" />
+                </View>
+                <Text style={styles.insightStripLabel}>Schedule:</Text>
+                <Text style={styles.insightStripValDark}>{monthScheduledEventsCount} events</Text>
+              </View>
+            </View>
+
             {/* Days of Week Header */}
             <View style={styles.weekHeader}>
               {daysOfWeek.map((d) => (
@@ -531,6 +612,9 @@ export const CalendarModule: React.FC = () => {
                 const isSelected = item.dateStr === selectedDateStr;
                 const dayEvents = calendarEvents.filter((e) => e.date === item.dateStr);
                 const dayTasks = tasks.filter((t) => t.dueDate?.startsWith(item.dateStr));
+
+                const gitEvents = dayEvents.filter((e) => e.id.startsWith('gh-') || e.title.startsWith('[Git'));
+                const realEvents = dayEvents.filter((e) => !e.id.startsWith('gh-') && !e.title.startsWith('[Git'));
                 const totalItems = dayEvents.length + dayTasks.length;
                 const isHeavyBusy = totalItems >= 10;
                 const isMediumBusy = totalItems >= 4 && totalItems < 10;
@@ -602,68 +686,72 @@ export const CalendarModule: React.FC = () => {
 
                     {/* Clean Mini Event Badges */}
                     <View style={styles.eventChipsContainer}>
-                      {dayEvents.slice(0, 2).map((ev) => {
+                      {/* 1. Real Meetings / Events First */}
+                      {realEvents.slice(0, 2).map((ev) => {
                         const isUrgent = ev.priority === 'urgent';
                         const isHigh = ev.priority === 'high';
-                        const isGithub = ev.id.startsWith('gh-') || ev.title.startsWith('[Git');
-                        const cleanTitle = isGithub
-                          ? ev.title.replace(/^\[Git (Commit|Push|Create|Event)\]\s*/i, '')
-                          : ev.title;
-
                         return (
                           <View
                             key={ev.id}
                             style={[
                               styles.eventPill,
-                              isGithub
-                                ? styles.pillGithub
-                                : isUrgent
-                                ? styles.pillUrgent
-                                : isHigh
-                                ? styles.pillHigh
-                                : styles.pillNormal,
+                              isUrgent ? styles.pillUrgent : isHigh ? styles.pillHigh : styles.pillMeeting,
                             ]}
                           >
-                            {isGithub ? (
-                              <RemixIcon name="github-fill" size={9.5} color="#475569" />
-                            ) : (
-                              <View
-                                style={[
-                                  styles.pillDot,
-                                  { backgroundColor: isUrgent ? '#EF4444' : isHigh ? '#F59E0B' : '#3B82F6' },
-                                ]}
-                              />
-                            )}
+                            <View
+                              style={[
+                                styles.pillDot,
+                                { backgroundColor: isUrgent ? '#EF4444' : isHigh ? '#F59E0B' : '#2563EB' },
+                              ]}
+                            />
                             <Text
                               style={[
                                 styles.eventPillText,
-                                isGithub
-                                  ? styles.pillTextGithub
-                                  : isUrgent
-                                  ? styles.pillTextUrgent
-                                  : isHigh
-                                  ? styles.pillTextHigh
-                                  : styles.pillTextNormal,
+                                isUrgent ? styles.pillTextUrgent : isHigh ? styles.pillTextHigh : styles.pillTextMeeting,
                               ]}
                               numberOfLines={1}
                             >
-                              {cleanTitle}
+                              {ev.title}
                             </Text>
                           </View>
                         );
                       })}
-                      {dayTasks.slice(0, 1).map((t) => (
+
+                      {/* 2. Top Task (If any) */}
+                      {dayTasks.slice(0, realEvents.length >= 2 ? 0 : 1).map((t) => (
                         <View key={t.id} style={[styles.eventPill, styles.pillTask]}>
-                          <View style={[styles.pillDot, { backgroundColor: '#6366F1' }]} />
+                          <View
+                            style={[
+                              styles.pillDot,
+                              {
+                                backgroundColor:
+                                  t.priority === 'urgent' ? '#EF4444' : t.priority === 'high' ? '#F59E0B' : '#6366F1',
+                              },
+                            ]}
+                          />
                           <Text style={[styles.eventPillText, styles.pillTextTask]} numberOfLines={1}>
                             {t.title}
                           </Text>
                         </View>
                       ))}
-                      {totalItems > 3 && (
+
+                      {/* 3. Consolidated GitHub Activity Pulse Pill */}
+                      {gitEvents.length > 0 && (
+                        <View style={[styles.eventPill, styles.pillGithub]}>
+                          <RemixIcon name="github-fill" size={10} color="#0F172A" />
+                          <Text style={[styles.eventPillText, styles.pillTextGithub]} numberOfLines={1}>
+                            {gitEvents.length === 1
+                              ? gitEvents[0].title.replace(/^\[Git (Commit|Push|Create|Event)\]\s*/i, '')
+                              : `${gitEvents.length} Commits (${githubConfig.repo || 'ps'})`}
+                          </Text>
+                        </View>
+                      )}
+
+                      {/* 4. More counter if total items exceed visible space */}
+                      {totalItems > (realEvents.length > 0 ? 2 : 1) + (gitEvents.length > 0 ? 1 : 0) && (
                         <View style={styles.moreEventsPill}>
                           <Text style={styles.moreEventsText}>
-                            +{totalItems - 3} more
+                            +{totalItems - (realEvents.length > 0 ? 2 : 1)} more
                           </Text>
                         </View>
                       )}
@@ -1951,11 +2039,69 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     flex: 1,
   },
+  pillMeeting: {
+    backgroundColor: '#EFF6FF',
+    borderWidth: 1,
+    borderColor: '#DBEAFE',
+  },
+  pillTextMeeting: {
+    color: '#1D4ED8',
+    fontFamily: 'Krasar-Bold',
+    fontSize: 9.5,
+    fontWeight: '700',
+  },
   eventPillText: {
     fontSize: 9.5,
     fontFamily: 'Krasar-Bold',
     fontWeight: '600',
     flex: 1,
+  },
+  monthInsightStrip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    marginBottom: 8,
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  insightStripItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  insightStripIconWrap: {
+    width: 20,
+    height: 20,
+    borderRadius: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  insightStripLabel: {
+    fontSize: 10.5,
+    fontFamily: 'Krasar-Regular',
+    color: '#64748B',
+  },
+  insightStripVal: {
+    fontSize: 11,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
+  },
+  insightStripValDark: {
+    fontSize: 11,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
+    color: '#0F172A',
+  },
+  insightStripDivider: {
+    fontSize: 11,
+    color: '#CBD5E1',
+    marginHorizontal: 1,
   },
   moreEventsPill: {
     alignSelf: 'flex-start',
