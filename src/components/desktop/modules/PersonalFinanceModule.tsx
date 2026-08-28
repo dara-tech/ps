@@ -134,46 +134,53 @@ export const detectBankBrand = (note: string, category: string, type: string): B
   };
 };
 
-// Helper to clean and parse bank statement notes into Title & Sub-metadata
+// Helper to clean and parse bank statement notes into Clean Recipient Title & Sub-metadata
 const parseTransactionNote = (rawNote: string) => {
   if (!rawNote) return { title: 'Transaction', sub: '', ref: '', time: '' };
 
   if (rawNote.includes('|')) {
     const parts = rawNote.split('|').map((p) => p.trim());
     let title = parts[0];
+
+    // Clean redundant prefixes like "Paid To", "Transfer To", "Payment To", "Received From"
+    title = title.replace(/^(?:Paid|Payment|Transfer(?:red)?|Funds Transfer|Received|Deposit)\s+(?:To|From)\s+/i, '').trim();
     title = title.replace(/\(TID[^\)]*\)/g, '').trim();
 
-    const metaParts: string[] = [];
     let ref = '';
     let time = '';
+    const otherMeta: string[] = [];
 
     parts.slice(1).forEach((p) => {
-      if (p.startsWith('Ref.')) {
-        ref = p.replace('Ref.', 'Ref: ');
+      if (p.startsWith('Ref.') || p.startsWith('Ref:')) {
+        ref = p.replace(/^Ref\.?\s*/i, 'Ref: ');
       } else if (p.includes('AM') || p.includes('PM')) {
         const timeMatch = p.match(/\d{1,2}:\d{2}\s*(?:AM|PM)/i);
         if (timeMatch) {
           time = timeMatch[0];
-          metaParts.push(timeMatch[0]);
+          // Do NOT add duplicate time to subtitle
         }
       } else if (!p.startsWith('USD') && !p.startsWith('KHR')) {
-        metaParts.push(p);
+        // Skip repetitive bank acronyms to keep subtitle clean
+        const cleanP = p.replace(/^(?:ACLEDA QR|ABA Bank|KHQR)\s*$/i, '').trim();
+        if (cleanP) otherMeta.push(cleanP);
       }
     });
 
-    if (ref) metaParts.push(ref);
+    // Clean subtitle: show reference number or clean short note
+    const sub = ref || (otherMeta.length > 0 ? otherMeta[0] : '');
 
     return {
-      title,
-      sub: metaParts.join(' • '),
+      title: title || parts[0],
+      sub,
       ref,
       time,
     };
   }
 
+  const cleanTitle = rawNote.replace(/^(?:Paid|Payment|Transfer(?:red)?|Funds Transfer|Received|Deposit)\s+(?:To|From)\s+/i, '').trim();
   return {
-    title: rawNote,
-    sub: 'Manual Entry',
+    title: cleanTitle || rawNote,
+    sub: '',
     ref: '',
     time: '',
   };
@@ -182,19 +189,19 @@ const parseTransactionNote = (rawNote: string) => {
 const getCategoryStyle = (cat: string) => {
   switch (cat) {
     case 'Food & Groceries':
-      return { bg: '#FEF3C7', text: '#B45309', dot: '#F59E0B' };
+      return { bg: '#FEF3C7', text: '#B45309', dot: '#F59E0B', isSimple: false };
     case 'Transfer & Payments':
-      return { bg: '#EFF6FF', text: '#1D4ED8', dot: '#3B82F6' };
+      return { bg: 'transparent', text: '#64748B', dot: '#94A3B8', isSimple: true };
     case 'Transportation':
-      return { bg: '#F3E8FF', text: '#6D28D9', dot: '#8B5CF6' };
+      return { bg: '#F3E8FF', text: '#6D28D9', dot: '#8B5CF6', isSimple: false };
     case 'Income':
-      return { bg: '#ECFDF5', text: '#047857', dot: '#10B981' };
+      return { bg: '#DCFCE7', text: '#15803D', dot: '#16A34A', isSimple: false };
     case 'Utilities & Bills':
-      return { bg: '#FFE4E6', text: '#BE123C', dot: '#F43F5E' };
+      return { bg: '#FFE4E6', text: '#BE123C', dot: '#F43F5E', isSimple: false };
     case 'Healthcare':
-      return { bg: '#E0F2FE', text: '#0369A1', dot: '#0EA5E9' };
+      return { bg: '#E0F2FE', text: '#0369A1', dot: '#0EA5E9', isSimple: false };
     default:
-      return { bg: '#F1F5F9', text: '#475569', dot: '#94A3B8' };
+      return { bg: 'transparent', text: '#64748B', dot: '#94A3B8', isSimple: true };
   }
 };
 
@@ -883,14 +890,20 @@ export const PersonalFinanceModule: React.FC = () => {
                         </View>
                       </View>
 
-                      {/* Column 2: Category Soft Pill with Dot */}
+                      {/* Column 2: Clean Category */}
                       <View style={[styles.td, { flex: 1.3 }]}>
-                        <View style={[styles.categoryPill, { backgroundColor: catStyle.bg }]}>
-                          <View style={[styles.categoryDot, { backgroundColor: catStyle.dot }]} />
-                          <Text style={[styles.categoryText, { color: catStyle.text }]} numberOfLines={1}>
-                            {item.category}
+                        {catStyle.isSimple ? (
+                          <Text style={styles.categorySimpleText} numberOfLines={1}>
+                            {item.category === 'Transfer & Payments' ? 'Transfer' : item.category}
                           </Text>
-                        </View>
+                        ) : (
+                          <View style={[styles.categoryPill, { backgroundColor: catStyle.bg }]}>
+                            <View style={[styles.categoryDot, { backgroundColor: catStyle.dot }]} />
+                            <Text style={[styles.categoryText, { color: catStyle.text }]} numberOfLines={1}>
+                              {item.category}
+                            </Text>
+                          </View>
+                        )}
                       </View>
 
                       {/* Column 3: Date & Time */}
@@ -1544,6 +1557,11 @@ const styles = StyleSheet.create({
   rowSub: {
     fontSize: 10.5,
     fontFamily: 'Krasar-Regular',
+    color: '#64748B',
+  },
+  categorySimpleText: {
+    fontSize: 11,
+    fontFamily: 'Krasar-Medium',
     color: '#64748B',
   },
   categoryPill: {
