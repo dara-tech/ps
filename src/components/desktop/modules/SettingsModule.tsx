@@ -377,27 +377,27 @@ export const SettingsModule: React.FC = () => {
         )}
 
         {/* Right Detail Content View */}
-        <View style={styles.rightContentArea}>
+        <View style={[styles.rightContentArea, { backgroundColor: tokens.windowBg }]}>
           <ScrollView style={styles.contentScroll} showsVerticalScrollIndicator={false}>
             {/* 1. GITHUB & CALENDAR AUTO-SYNC */}
             {activeCategory === 'github' && (
               <View style={styles.settingCardWrapper}>
                 {/* Banner Card */}
-                <View style={styles.bannerCard}>
-                  <View style={styles.bannerIconBox}>
+                <View style={[styles.bannerCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+                  <View style={[styles.bannerIconBox, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
                     <MultiColorSidebarIcon name="github" size={26} />
                   </View>
                   <View style={styles.bannerInfo}>
-                    <Text style={styles.bannerHeading}>
+                    <Text style={[styles.bannerHeading, { color: tokens.textPrimary }]}>
                       {language === 'kh'
                         ? 'GitHub Calendar Auto-Sync'
                         : 'GitHub Calendar Auto-Sync Integration'}
                     </Text>
                     {githubConfig.lastSyncedAt && (
                       <View style={styles.syncMetaRow}>
-                        <View style={styles.syncMetaPill}>
+                        <View style={[styles.syncMetaPill, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
                           <View style={styles.liveDot} />
-                          <Text style={styles.syncMetaText}>
+                          <Text style={[styles.syncMetaText, { color: tokens.textSecondary }]}>
                             {language === 'kh' ? `បាន Sync ជោគជ័យ៖ ${githubConfig.lastSyncedAt}` : `Last active sync: ${githubConfig.lastSyncedAt}`}
                             {githubConfig.syncedCount !== undefined ? ` • ${githubConfig.syncedCount} items` : ''}
                           </Text>
@@ -408,12 +408,12 @@ export const SettingsModule: React.FC = () => {
                 </View>
 
                 {/* Auto-Sync Toggle Row */}
-                <View style={styles.cardSection}>
-                  <View style={styles.prefRow}>
+                <View style={[styles.cardSection, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+                  <View style={[styles.prefRow, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
                     <View style={styles.prefLeft}>
                       <View style={styles.labelWithIcon}>
-                        <RemixIcon name="git-branch-line" size={14} color="#0F172A" />
-                        <Text style={styles.prefTitle}>
+                        <RemixIcon name="git-branch-line" size={14} color={tokens.accentColor} />
+                        <Text style={[styles.prefTitle, { color: tokens.textPrimary }]}>
                           {language === 'kh' ? 'បើកដំណើរការ Auto-Sync' : 'Enable Background Auto-Sync'}
                         </Text>
                       </View>
@@ -422,7 +422,7 @@ export const SettingsModule: React.FC = () => {
                     <TouchableOpacity
                       style={[
                         styles.toggleSwitch,
-                        ghAutoSync && styles.toggleSwitchActive,
+                        { backgroundColor: ghAutoSync ? tokens.accentColor : tokens.borderSubtle },
                       ]}
                       onPress={() => setGhAutoSync(!ghAutoSync)}
                       activeOpacity={0.8}
@@ -430,6 +430,7 @@ export const SettingsModule: React.FC = () => {
                       <View
                         style={[
                           styles.toggleDot,
+                          { backgroundColor: tokens.surfaceBg },
                           ghAutoSync && styles.toggleDotActive,
                         ]}
                       />
@@ -439,7 +440,7 @@ export const SettingsModule: React.FC = () => {
                   {/* Input Fields */}
                   <View style={styles.formGrid}>
                     <View style={styles.formField}>
-                      <Text style={styles.inputLabel}>
+                      <Text style={[styles.inputLabel, { color: tokens.textSecondary }]}>
                         {language === 'kh' ? 'GitHub Username / Organization' : 'GitHub Username / Org'}
                       </Text>
                       <CustomTextInput
@@ -452,7 +453,7 @@ export const SettingsModule: React.FC = () => {
                     </View>
 
                     <View style={styles.formField}>
-                      <Text style={styles.inputLabel}>
+                      <Text style={[styles.inputLabel, { color: tokens.textSecondary }]}>
                         {language === 'kh' ? 'Repository Name (ទុកទទេដើម្បី Sync គ្រប់ Repositories ទាំងអស់)' : 'Repository Name (Leave blank to sync All Repos)'}
                       </Text>
                       <CustomTextInput
@@ -465,7 +466,7 @@ export const SettingsModule: React.FC = () => {
                     </View>
 
                     <View style={styles.formField}>
-                      <Text style={styles.inputLabel}>
+                      <Text style={[styles.inputLabel, { color: tokens.textSecondary }]}>
                         {language === 'kh' ? 'Personal Access Token (សម្រាប់ Private Repos / No Rate Limit)' : 'Personal Access Token (For Private Repos)'}
                       </Text>
                       <CustomTextInput
@@ -480,49 +481,61 @@ export const SettingsModule: React.FC = () => {
                   </View>
 
                   {/* Sync Filters */}
-                  <View style={styles.syncOptionsWrap}>
-                    <Text style={styles.syncOptionsTitle}>
+                  <View style={[styles.syncOptionsWrap, { borderTopColor: tokens.borderSubtle }]}>
+                    <Text style={[styles.syncOptionsTitle, { color: tokens.textPrimary }]}>
                       {language === 'kh' ? 'ទិន្នន័យដែលត្រូវ Sync៖' : 'Synchronized Data Types:'}
                     </Text>
                     <View style={styles.checkboxOptionsRow}>
                       <TouchableOpacity
-                        style={[styles.chipCheckbox, syncCommits && styles.chipCheckboxActive]}
+                        style={[
+                          styles.chipCheckbox,
+                          { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+                          syncCommits && { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder },
+                        ]}
                         onPress={() => setSyncCommits(!syncCommits)}
                         activeOpacity={0.8}
                       >
-                        <View style={[styles.miniCheck, syncCommits && styles.miniCheckActive]}>
-                          {syncCommits && <RemixIcon name="check-line" size={10} color="#FFFFFF" />}
+                        <View style={[styles.miniCheck, { borderColor: tokens.borderSubtle, backgroundColor: tokens.surfaceBg }, syncCommits && { backgroundColor: tokens.accentColor, borderColor: tokens.accentColor }]}>
+                          {syncCommits && <RemixIcon name="check-line" size={10} color={tokens.accentFg} />}
                         </View>
                         <RemixIcon name="git-commit-line" size={13} color="#2563EB" />
-                        <Text style={styles.chipLabel}>
+                        <Text style={[styles.chipLabel, { color: tokens.textPrimary }]}>
                           {language === 'kh' ? 'Commits ប្រចាំថ្ងៃ' : 'Commits'}
                         </Text>
                       </TouchableOpacity>
 
                       <TouchableOpacity
-                        style={[styles.chipCheckbox, syncMilestones && styles.chipCheckboxActive]}
+                        style={[
+                          styles.chipCheckbox,
+                          { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+                          syncMilestones && { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder },
+                        ]}
                         onPress={() => setSyncMilestones(!syncMilestones)}
                         activeOpacity={0.8}
                       >
-                        <View style={[styles.miniCheck, syncMilestones && styles.miniCheckActive]}>
-                          {syncMilestones && <RemixIcon name="check-line" size={10} color="#FFFFFF" />}
+                        <View style={[styles.miniCheck, { borderColor: tokens.borderSubtle, backgroundColor: tokens.surfaceBg }, syncMilestones && { backgroundColor: tokens.accentColor, borderColor: tokens.accentColor }]}>
+                          {syncMilestones && <RemixIcon name="check-line" size={10} color={tokens.accentFg} />}
                         </View>
                         <RemixIcon name="flag-line" size={13} color="#059669" />
-                        <Text style={styles.chipLabel}>
+                        <Text style={[styles.chipLabel, { color: tokens.textPrimary }]}>
                           {language === 'kh' ? 'គោលដៅ Milestones' : 'Milestones'}
                         </Text>
                       </TouchableOpacity>
 
                       <TouchableOpacity
-                        style={[styles.chipCheckbox, syncReleases && styles.chipCheckboxActive]}
+                        style={[
+                          styles.chipCheckbox,
+                          { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+                          syncReleases && { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder },
+                        ]}
                         onPress={() => setSyncReleases(!syncReleases)}
                         activeOpacity={0.8}
                       >
-                        <View style={[styles.miniCheck, syncReleases && styles.miniCheckActive]}>
-                          {syncReleases && <RemixIcon name="check-line" size={10} color="#FFFFFF" />}
+                        <View style={[styles.miniCheck, { borderColor: tokens.borderSubtle, backgroundColor: tokens.surfaceBg }, syncReleases && { backgroundColor: tokens.accentColor, borderColor: tokens.accentColor }]}>
+                          {syncReleases && <RemixIcon name="check-line" size={10} color={tokens.accentFg} />}
                         </View>
                         <RemixIcon name="rocket-line" size={13} color="#8B5CF6" />
-                        <Text style={styles.chipLabel}>
+                        <Text style={[styles.chipLabel, { color: tokens.textPrimary }]}>
                           {language === 'kh' ? 'កំណែចេញផ្សាយ Releases' : 'Releases'}
                         </Text>
                       </TouchableOpacity>
@@ -530,19 +543,19 @@ export const SettingsModule: React.FC = () => {
                   </View>
 
                   {/* Action Buttons */}
-                  <View style={styles.cardActions}>
+                  <View style={[styles.cardActions, { borderTopColor: tokens.borderSubtle }]}>
                     <TouchableOpacity
-                      style={styles.syncNowBtn}
+                      style={[styles.syncNowBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                       onPress={handleManualGhSync}
                       disabled={isSyncingGh}
                       activeOpacity={0.8}
                     >
                       {isSyncingGh ? (
-                        <ActivityIndicator size="small" color="#2563EB" />
+                        <ActivityIndicator size="small" color={tokens.accentColor} />
                       ) : (
-                        <RemixIcon name="refresh-line" size={13} color="#2563EB" />
+                        <RemixIcon name="refresh-line" size={13} color={tokens.accentColor} />
                       )}
-                      <Text style={styles.syncNowBtnText}>
+                      <Text style={[styles.syncNowBtnText, { color: tokens.accentColor }]}>
                         {isSyncingGh
                           ? language === 'kh' ? 'កំពុង Sync...' : 'Syncing GitHub...'
                           : language === 'kh' ? 'Sync ឥឡូវ (Manual Sync)' : 'Test Sync Now'}
@@ -550,12 +563,12 @@ export const SettingsModule: React.FC = () => {
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                      style={styles.savePrimaryBtn}
+                      style={[styles.savePrimaryBtn, { backgroundColor: tokens.accentColor }]}
                       onPress={handleSaveGithub}
                       activeOpacity={0.85}
                     >
-                      <RemixIcon name="check-line" size={14} color="#FFFFFF" />
-                      <Text style={styles.savePrimaryBtnText}>
+                      <RemixIcon name="check-line" size={14} color={tokens.accentFg} />
+                      <Text style={[styles.savePrimaryBtnText, { color: tokens.accentFg }]}>
                         {language === 'kh' ? 'រក្សាទុកការកំណត់' : 'Save GitHub Settings'}
                       </Text>
                     </TouchableOpacity>
@@ -569,66 +582,66 @@ export const SettingsModule: React.FC = () => {
               <View style={styles.settingCardWrapper}>
                 {/* Real-time Signals Matrix (4 Cards) */}
                 <View style={styles.contextSignalsGrid}>
-                  <View style={styles.contextSignalCard}>
+                  <View style={[styles.contextSignalCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
                     <View style={styles.contextSignalTop}>
-                      <Text style={styles.contextSignalLabel}>Git Activity</Text>
-                      <View style={[styles.microBadge, { backgroundColor: '#F1F5F9' }]}>
-                        <RemixIcon name="github-fill" size={11} color="#0F172A" />
+                      <Text style={[styles.contextSignalLabel, { color: tokens.textSecondary }]}>Git Activity</Text>
+                      <View style={[styles.microBadge, { backgroundColor: tokens.surfaceMuted }]}>
+                        <RemixIcon name="github-fill" size={11} color={tokens.textPrimary} />
                       </View>
                     </View>
-                    <Text style={styles.contextSignalVal} numberOfLines={1}>
+                    <Text style={[styles.contextSignalVal, { color: tokens.textPrimary }]} numberOfLines={1}>
                       {githubConfig.username || 'dara-tech'}/{githubConfig.repo || 'ps'}
                     </Text>
-                    <Text style={styles.contextSignalSub}>{githubConfig.syncedCount || 921} items synced</Text>
+                    <Text style={[styles.contextSignalSub, { color: tokens.textSecondary }]}>{githubConfig.syncedCount || 921} items synced</Text>
                   </View>
 
-                  <View style={styles.contextSignalCard}>
+                  <View style={[styles.contextSignalCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
                     <View style={styles.contextSignalTop}>
-                      <Text style={styles.contextSignalLabel}>Active Sprint</Text>
+                      <Text style={[styles.contextSignalLabel, { color: tokens.textSecondary }]}>Active Sprint</Text>
                       <View style={[styles.microBadge, { backgroundColor: '#F0FDF4' }]}>
                         <RemixIcon name="task-line" size={11} color="#16A34A" />
                       </View>
                     </View>
-                    <Text style={styles.contextSignalVal}>{pendingTasksCount} Tasks Pending</Text>
-                    <Text style={styles.contextSignalSub}>{urgentTasksCount} urgent tasks</Text>
+                    <Text style={[styles.contextSignalVal, { color: tokens.textPrimary }]}>{pendingTasksCount} Tasks Pending</Text>
+                    <Text style={[styles.contextSignalSub, { color: tokens.textSecondary }]}>{urgentTasksCount} urgent tasks</Text>
                   </View>
 
-                  <View style={styles.contextSignalCard}>
+                  <View style={[styles.contextSignalCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
                     <View style={styles.contextSignalTop}>
-                      <Text style={styles.contextSignalLabel}>Cashflow</Text>
+                      <Text style={[styles.contextSignalLabel, { color: tokens.textSecondary }]}>Cashflow</Text>
                       <View style={[styles.microBadge, { backgroundColor: '#FFFBEB' }]}>
                         <RemixIcon name="bank-card-line" size={11} color="#D97706" />
                       </View>
                     </View>
-                    <Text style={styles.contextSignalVal}>${totalExpense.toFixed(2)}</Text>
-                    <Text style={styles.contextSignalSub}>{finances.length} records logged</Text>
+                    <Text style={[styles.contextSignalVal, { color: tokens.textPrimary }]}>${totalExpense.toFixed(2)}</Text>
+                    <Text style={[styles.contextSignalSub, { color: tokens.textSecondary }]}>{finances.length} records logged</Text>
                   </View>
 
-                  <View style={styles.contextSignalCard}>
+                  <View style={[styles.contextSignalCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
                     <View style={styles.contextSignalTop}>
-                      <Text style={styles.contextSignalLabel}>Design Rules</Text>
-                      <View style={[styles.microBadge, { backgroundColor: '#EFF6FF' }]}>
-                        <RemixIcon name="sparkles-fill" size={11} color="#2563EB" />
+                      <Text style={[styles.contextSignalLabel, { color: tokens.textSecondary }]}>Design Rules</Text>
+                      <View style={[styles.microBadge, { backgroundColor: tokens.accentSoft }]}>
+                        <RemixIcon name="sparkles-fill" size={11} color={tokens.accentColor} />
                       </View>
                     </View>
-                    <Text style={styles.contextSignalVal}>Zero Shadows</Text>
-                    <Text style={styles.contextSignalSub}>1px borders • Krasar</Text>
+                    <Text style={[styles.contextSignalVal, { color: tokens.textPrimary }]}>Zero Shadows</Text>
+                    <Text style={[styles.contextSignalSub, { color: tokens.textSecondary }]}>1px borders • Krasar</Text>
                   </View>
                 </View>
 
                 {/* Permanent Guidelines & Memory Action Card */}
-                <View style={styles.cardSection}>
+                <View style={[styles.cardSection, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
                   <View style={styles.memoryHeaderRow}>
-                    <Text style={styles.sectionHeaderTitle}>
+                    <Text style={[styles.sectionHeaderTitle, { color: tokens.textPrimary }]}>
                       {language === 'kh' ? 'ការណែនាំ និងអង្គចងចាំ AI' : 'AI Memory & Guidelines'}
                     </Text>
                     <TouchableOpacity
-                      style={styles.openEditorBtn}
+                      style={[styles.openEditorBtn, { backgroundColor: tokens.accentColor }]}
                       onPress={() => setShowContextEditorModal(true)}
                       activeOpacity={0.8}
                     >
-                      <RemixIcon name="file-text-line" size={13} color="#FFFFFF" />
-                      <Text style={styles.openEditorBtnText}>
+                      <RemixIcon name="file-text-line" size={13} color={tokens.accentFg} />
+                      <Text style={[styles.openEditorBtnText, { color: tokens.accentFg }]}>
                         {language === 'kh' ? 'កែសម្រួល Document' : 'Edit Memory Document'}
                       </Text>
                     </TouchableOpacity>
@@ -636,24 +649,24 @@ export const SettingsModule: React.FC = () => {
 
                   {/* Clean Markdown/Text Preview Box */}
                   <TouchableOpacity
-                    style={styles.memoryPreviewBox}
+                    style={[styles.memoryPreviewBox, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                     onPress={() => setShowContextEditorModal(true)}
                     activeOpacity={0.9}
                   >
-                    <Text style={styles.memoryPreviewText} numberOfLines={4}>
+                    <Text style={[styles.memoryPreviewText, { color: tokens.textPrimary }]} numberOfLines={4}>
                       {contextNotes.trim() ||
                         (language === 'kh'
                           ? 'មិនទាន់មាន Guidelines នៅឡើយទេ... ចុចទីនេះដើម្បីសរសេរ និងកំណត់ Memory សម្រាប់ Gemini AI ជាមួយ Rich Editor។'
                           : 'No custom memory defined yet... Click here to write instructions with Google Docs-like rich formatting.')}
                     </Text>
-                    <View style={styles.memoryPreviewFooter}>
+                    <View style={[styles.memoryPreviewFooter, { borderTopColor: tokens.borderSubtle }]}>
                       <View style={styles.memoryMeta}>
-                        <RemixIcon name="sparkles-fill" size={11} color="#6366F1" />
-                        <Text style={styles.memoryMetaText}>
+                        <RemixIcon name="sparkles-fill" size={11} color={tokens.accentColor} />
+                        <Text style={[styles.memoryMetaText, { color: tokens.textSecondary }]}>
                           {contextNotes.length} chars • Rich Markdown Editor
                         </Text>
                       </View>
-                      <Text style={styles.clickToEditLabel}>
+                      <Text style={[styles.clickToEditLabel, { color: tokens.accentColor }]}>
                         {language === 'kh' ? 'ចុចដើម្បីកែសម្រួល ↗' : 'Click to edit ↗'}
                       </Text>
                     </View>
@@ -661,12 +674,12 @@ export const SettingsModule: React.FC = () => {
 
                   <View style={styles.contextActionsRow}>
                     <TouchableOpacity
-                      style={styles.previewToggleBtn}
+                      style={[styles.previewToggleBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                       onPress={() => setShowPromptPreview(!showPromptPreview)}
                       activeOpacity={0.8}
                     >
-                      <RemixIcon name={showPromptPreview ? 'eye-off-line' : 'eye-line'} size={13} color="#475569" />
-                      <Text style={styles.previewToggleText}>
+                      <RemixIcon name={showPromptPreview ? 'eye-off-line' : 'eye-line'} size={13} color={tokens.textSecondary} />
+                      <Text style={[styles.previewToggleText, { color: tokens.textSecondary }]}>
                         {showPromptPreview
                           ? (language === 'kh' ? 'លាក់ Prompt' : 'Hide Prompt')
                           : (language === 'kh' ? 'មើល Prompt' : 'Inspect Prompt')}
@@ -676,79 +689,79 @@ export const SettingsModule: React.FC = () => {
                 </View>
 
                 {/* Live Context Streams Toggle Switch List */}
-                <View style={styles.cardSection}>
-                  <Text style={styles.sectionHeaderTitle}>
+                <View style={[styles.cardSection, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+                  <Text style={[styles.sectionHeaderTitle, { color: tokens.textPrimary }]}>
                     {language === 'kh' ? 'ប្រភពទិន្នន័យ Context' : 'Context Signals'}
                   </Text>
 
                   <View style={styles.contextTogglesList}>
                     {/* Toggle Git */}
-                    <View style={styles.prefRow}>
+                    <View style={[styles.prefRow, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
                       <View style={styles.labelWithIcon}>
-                        <RemixIcon name="github-fill" size={14} color="#0F172A" />
-                        <Text style={styles.prefTitle}>GitHub Activity & Commits</Text>
+                        <RemixIcon name="github-fill" size={14} color={tokens.textPrimary} />
+                        <Text style={[styles.prefTitle, { color: tokens.textPrimary }]}>GitHub Activity & Commits</Text>
                       </View>
                       <TouchableOpacity
-                        style={[styles.toggleSwitch, ctxIncludeGit && styles.toggleSwitchActive]}
+                        style={[styles.toggleSwitch, { backgroundColor: ctxIncludeGit ? tokens.accentColor : tokens.borderSubtle }]}
                         onPress={() => setCtxIncludeGit(!ctxIncludeGit)}
                       >
-                        <View style={[styles.toggleDot, ctxIncludeGit && styles.toggleDotActive]} />
+                        <View style={[styles.toggleDot, { backgroundColor: tokens.surfaceBg }, ctxIncludeGit && styles.toggleDotActive]} />
                       </TouchableOpacity>
                     </View>
 
                     {/* Toggle Tasks */}
-                    <View style={styles.prefRow}>
+                    <View style={[styles.prefRow, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
                       <View style={styles.labelWithIcon}>
                         <RemixIcon name="task-line" size={14} color="#16A34A" />
-                        <Text style={styles.prefTitle}>Daily Planner & Tasks</Text>
+                        <Text style={[styles.prefTitle, { color: tokens.textPrimary }]}>Daily Planner & Tasks</Text>
                       </View>
                       <TouchableOpacity
-                        style={[styles.toggleSwitch, ctxIncludeTasks && styles.toggleSwitchActive]}
+                        style={[styles.toggleSwitch, { backgroundColor: ctxIncludeTasks ? tokens.accentColor : tokens.borderSubtle }]}
                         onPress={() => setCtxIncludeTasks(!ctxIncludeTasks)}
                       >
-                        <View style={[styles.toggleDot, ctxIncludeTasks && styles.toggleDotActive]} />
+                        <View style={[styles.toggleDot, { backgroundColor: tokens.surfaceBg }, ctxIncludeTasks && styles.toggleDotActive]} />
                       </TouchableOpacity>
                     </View>
 
                     {/* Toggle Finances */}
-                    <View style={styles.prefRow}>
+                    <View style={[styles.prefRow, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
                       <View style={styles.labelWithIcon}>
                         <RemixIcon name="bank-card-line" size={14} color="#D97706" />
-                        <Text style={styles.prefTitle}>Financial Records & Cashflow</Text>
+                        <Text style={[styles.prefTitle, { color: tokens.textPrimary }]}>Financial Records & Cashflow</Text>
                       </View>
                       <TouchableOpacity
-                        style={[styles.toggleSwitch, ctxIncludeFinances && styles.toggleSwitchActive]}
+                        style={[styles.toggleSwitch, { backgroundColor: ctxIncludeFinances ? tokens.accentColor : tokens.borderSubtle }]}
                         onPress={() => setCtxIncludeFinances(!ctxIncludeFinances)}
                       >
-                        <View style={[styles.toggleDot, ctxIncludeFinances && styles.toggleDotActive]} />
+                        <View style={[styles.toggleDot, { backgroundColor: tokens.surfaceBg }, ctxIncludeFinances && styles.toggleDotActive]} />
                       </TouchableOpacity>
                     </View>
 
                     {/* Toggle Calendar */}
-                    <View style={styles.prefRow}>
+                    <View style={[styles.prefRow, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
                       <View style={styles.labelWithIcon}>
                         <RemixIcon name="calendar-line" size={14} color="#2563EB" />
-                        <Text style={styles.prefTitle}>Interactive Calendar Schedule</Text>
+                        <Text style={[styles.prefTitle, { color: tokens.textPrimary }]}>Interactive Calendar Schedule</Text>
                       </View>
                       <TouchableOpacity
-                        style={[styles.toggleSwitch, ctxIncludeCalendar && styles.toggleSwitchActive]}
+                        style={[styles.toggleSwitch, { backgroundColor: ctxIncludeCalendar ? tokens.accentColor : tokens.borderSubtle }]}
                         onPress={() => setCtxIncludeCalendar(!ctxIncludeCalendar)}
                       >
-                        <View style={[styles.toggleDot, ctxIncludeCalendar && styles.toggleDotActive]} />
+                        <View style={[styles.toggleDot, { backgroundColor: tokens.surfaceBg }, ctxIncludeCalendar && styles.toggleDotActive]} />
                       </TouchableOpacity>
                     </View>
 
                     {/* Toggle Design Rules */}
-                    <View style={styles.prefRow}>
+                    <View style={[styles.prefRow, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
                       <View style={styles.labelWithIcon}>
-                        <RemixIcon name="sparkles-fill" size={14} color="#7C3AED" />
-                        <Text style={styles.prefTitle}>Design System (Zero Shadows)</Text>
+                        <RemixIcon name="sparkles-fill" size={14} color={tokens.accentColor} />
+                        <Text style={[styles.prefTitle, { color: tokens.textPrimary }]}>Design System (Zero Shadows)</Text>
                       </View>
                       <TouchableOpacity
-                        style={[styles.toggleSwitch, ctxIncludeRules && styles.toggleSwitchActive]}
+                        style={[styles.toggleSwitch, { backgroundColor: ctxIncludeRules ? tokens.accentColor : tokens.borderSubtle }]}
                         onPress={() => setCtxIncludeRules(!ctxIncludeRules)}
                       >
-                        <View style={[styles.toggleDot, ctxIncludeRules && styles.toggleDotActive]} />
+                        <View style={[styles.toggleDot, { backgroundColor: tokens.surfaceBg }, ctxIncludeRules && styles.toggleDotActive]} />
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -756,13 +769,13 @@ export const SettingsModule: React.FC = () => {
 
                 {/* Injected Prompt Inspector Preview */}
                 {showPromptPreview && (
-                  <View style={styles.cardSection}>
+                  <View style={[styles.cardSection, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
                     <View style={styles.promptHeaderRow}>
-                      <RemixIcon name="code-line" size={14} color="#0F172A" />
-                      <Text style={styles.sectionHeaderTitle}>Injected System Prompt Preview</Text>
+                      <RemixIcon name="code-line" size={14} color={tokens.textPrimary} />
+                      <Text style={[styles.sectionHeaderTitle, { color: tokens.textPrimary }]}>Injected System Prompt Preview</Text>
                     </View>
-                    <View style={styles.codeSnippetBox}>
-                      <Text style={styles.codeSnippetText}>{buildContextPromptPreview()}</Text>
+                    <View style={[styles.codeSnippetBox, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                      <Text style={[styles.codeSnippetText, { color: tokens.textPrimary }]}>{buildContextPromptPreview()}</Text>
                     </View>
                   </View>
                 )}
@@ -772,16 +785,16 @@ export const SettingsModule: React.FC = () => {
             {/* 3. SECURITY & TOUCH ID */}
             {activeCategory === 'security' && (
               <View style={styles.settingCardWrapper}>
-                <View style={styles.cardSection}>
-                  <Text style={styles.sectionHeaderTitle}>
+                <View style={[styles.cardSection, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+                  <Text style={[styles.sectionHeaderTitle, { color: tokens.textPrimary }]}>
                     {language === 'kh' ? 'ការផ្ទៀងផ្ទាត់ស្កេនម្រាមដៃ (Biometric Touch ID)' : 'Biometric Fingerprint Unlock'}
                   </Text>
 
-                  <View style={styles.prefRow}>
+                  <View style={[styles.prefRow, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
                     <View style={styles.prefLeft}>
                       <View style={styles.labelWithIcon}>
                         <RemixIcon name="shield-check-line" size={14} color="#DC2626" />
-                        <Text style={styles.prefTitle}>
+                        <Text style={[styles.prefTitle, { color: tokens.textPrimary }]}>
                           {language === 'kh' ? 'បើក Touch ID / Passcode នៅពេល Login' : 'Enable Touch ID / Passcode Lock'}
                         </Text>
                       </View>
@@ -790,7 +803,7 @@ export const SettingsModule: React.FC = () => {
                     <TouchableOpacity
                       style={[
                         styles.toggleSwitch,
-                        biometricEnabled && styles.toggleSwitchActive,
+                        { backgroundColor: biometricEnabled ? tokens.accentColor : tokens.borderSubtle },
                       ]}
                       onPress={() => setBiometricEnabled(!biometricEnabled)}
                       activeOpacity={0.8}
@@ -798,6 +811,7 @@ export const SettingsModule: React.FC = () => {
                       <View
                         style={[
                           styles.toggleDot,
+                          { backgroundColor: tokens.surfaceBg },
                           biometricEnabled && styles.toggleDotActive,
                         ]}
                       />
@@ -806,12 +820,12 @@ export const SettingsModule: React.FC = () => {
 
                   <View style={styles.actionGroup}>
                     <TouchableOpacity
-                      style={styles.testBtn}
+                      style={[styles.testBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                       onPress={() => setShowBiometricModal(true)}
                       activeOpacity={0.8}
                     >
-                      <RemixIcon name="fingerprint-line" size={14} color="#2563EB" />
-                      <Text style={styles.testBtnText}>
+                      <RemixIcon name="fingerprint-line" size={14} color={tokens.accentColor} />
+                      <Text style={[styles.testBtnText, { color: tokens.accentColor }]}>
                         {language === 'kh' ? 'សាកល្បង Touch ID Modal' : 'Test Touch ID Modal'}
                       </Text>
                     </TouchableOpacity>
@@ -819,14 +833,14 @@ export const SettingsModule: React.FC = () => {
                 </View>
 
                 {/* Password Reset Section */}
-                <View style={styles.cardSection}>
-                  <Text style={styles.sectionHeaderTitle}>
+                <View style={[styles.cardSection, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+                  <Text style={[styles.sectionHeaderTitle, { color: tokens.textPrimary }]}>
                     {language === 'kh' ? 'ប្តូរពាក្យសម្ងាត់ (Password Security)' : 'Change Password'}
                   </Text>
 
                   <View style={styles.formGrid}>
                     <View style={styles.formField}>
-                      <Text style={styles.inputLabel}>
+                      <Text style={[styles.inputLabel, { color: tokens.textSecondary }]}>
                         {language === 'kh' ? 'ពាក្យសម្ងាត់បច្ចុប្បន្ន' : 'Current Password'}
                       </Text>
                       <CustomTextInput
@@ -840,7 +854,7 @@ export const SettingsModule: React.FC = () => {
                     </View>
 
                     <View style={styles.formField}>
-                      <Text style={styles.inputLabel}>
+                      <Text style={[styles.inputLabel, { color: tokens.textSecondary }]}>
                         {language === 'kh' ? 'ពាក្យសម្ងាត់ថ្មី' : 'New Password'}
                       </Text>
                       <CustomTextInput
@@ -854,10 +868,10 @@ export const SettingsModule: React.FC = () => {
                     </View>
                   </View>
 
-                  <View style={styles.cardActions}>
+                  <View style={[styles.cardActions, { borderTopColor: tokens.borderSubtle }]}>
                     <View />
                     <TouchableOpacity
-                      style={styles.savePrimaryBtn}
+                      style={[styles.savePrimaryBtn, { backgroundColor: tokens.accentColor }]}
                       onPress={() => {
                         toast.success(
                           language === 'kh' ? 'ជោគជ័យ' : 'Password Updated',
@@ -866,8 +880,8 @@ export const SettingsModule: React.FC = () => {
                       }}
                       activeOpacity={0.85}
                     >
-                      <RemixIcon name="check-line" size={14} color="#FFFFFF" />
-                      <Text style={styles.savePrimaryBtnText}>
+                      <RemixIcon name="check-line" size={14} color={tokens.accentFg} />
+                      <Text style={[styles.savePrimaryBtnText, { color: tokens.accentFg }]}>
                         {language === 'kh' ? 'រក្សាទុកពាក្យសម្ងាត់' : 'Update Password'}
                       </Text>
                     </TouchableOpacity>
@@ -879,14 +893,14 @@ export const SettingsModule: React.FC = () => {
             {/* 4. GEMINI AI ENGINE */}
             {activeCategory === 'ai' && (
               <View style={styles.settingCardWrapper}>
-                <View style={styles.cardSection}>
-                  <Text style={styles.sectionHeaderTitle}>
+                <View style={[styles.cardSection, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+                  <Text style={[styles.sectionHeaderTitle, { color: tokens.textPrimary }]}>
                     {language === 'kh' ? 'ម៉ូដែលបញ្ញាសិប្បនិម្មិត Gemini AI' : 'Gemini AI Model Engine'}
                   </Text>
 
                   <View style={styles.formGrid}>
                     <View style={styles.formField}>
-                      <Text style={styles.inputLabel}>
+                      <Text style={[styles.inputLabel, { color: tokens.textSecondary }]}>
                         {language === 'kh' ? 'ម៉ូដែលបច្ចុប្បន្ន (Active AI Model)' : 'Selected Model'}
                       </Text>
                       <CustomSelect
@@ -901,9 +915,9 @@ export const SettingsModule: React.FC = () => {
                     </View>
                   </View>
 
-                  <View style={styles.infoCallout}>
-                    <RemixIcon name="information-fill" size={16} color="#2563EB" />
-                    <Text style={styles.infoCalloutText}>
+                  <View style={[styles.infoCallout, { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}>
+                    <RemixIcon name="information-fill" size={16} color={tokens.accentColor} />
+                    <Text style={[styles.infoCalloutText, { color: tokens.accentColor }]}>
                       {language === 'kh'
                         ? 'ម៉ូដែល gemini-3.7-flash ផ្តល់នូវល្បឿនឆ្លើយតបរហ័សបំផុត និងភាពត្រឹមត្រូវខ្ពស់ក្នុងការរៀបចំផែនការ។'
                         : 'Gemini 3.7 Flash provides sub-second streaming latency with optimal Khmer & English language comprehension.'}
@@ -916,14 +930,14 @@ export const SettingsModule: React.FC = () => {
             {/* 5. GENERAL & WORKSPACE */}
             {activeCategory === 'general' && (
               <View style={styles.settingCardWrapper}>
-                <View style={styles.cardSection}>
-                  <Text style={styles.sectionHeaderTitle}>
+                <View style={[styles.cardSection, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+                  <Text style={[styles.sectionHeaderTitle, { color: tokens.textPrimary }]}>
                     {language === 'kh' ? 'ព័ត៌មានទូទៅនៃ Workspace' : 'Workspace Identity'}
                   </Text>
 
                   <View style={styles.formGrid}>
                     <View style={styles.formField}>
-                      <Text style={styles.inputLabel}>
+                      <Text style={[styles.inputLabel, { color: tokens.textSecondary }]}>
                         {language === 'kh' ? 'ឈ្មោះ Workspace' : 'Workspace Name'}
                       </Text>
                       <CustomTextInput
@@ -936,7 +950,7 @@ export const SettingsModule: React.FC = () => {
                     </View>
 
                     <View style={styles.formField}>
-                      <Text style={styles.inputLabel}>
+                      <Text style={[styles.inputLabel, { color: tokens.textSecondary }]}>
                         {language === 'kh' ? 'ទិដ្ឋភាពបើកដំបូង (Default Startup View)' : 'Default Launch Module'}
                       </Text>
                       <CustomSelect
@@ -948,17 +962,17 @@ export const SettingsModule: React.FC = () => {
                     </View>
                   </View>
 
-                  <View style={styles.cardActions}>
+                  <View style={[styles.cardActions, { borderTopColor: tokens.borderSubtle }]}>
                     <View />
                     <TouchableOpacity
-                      style={styles.savePrimaryBtn}
+                      style={[styles.savePrimaryBtn, { backgroundColor: tokens.accentColor }]}
                       onPress={() => {
                         toast.success('Workspace Saved', 'General workspace settings applied.');
                       }}
                       activeOpacity={0.85}
                     >
-                      <RemixIcon name="check-line" size={14} color="#FFFFFF" />
-                      <Text style={styles.savePrimaryBtnText}>
+                      <RemixIcon name="check-line" size={14} color={tokens.accentFg} />
+                      <Text style={[styles.savePrimaryBtnText, { color: tokens.accentFg }]}>
                         {language === 'kh' ? 'រក្សាទុក' : 'Save Workspace'}
                       </Text>
                     </TouchableOpacity>
@@ -970,14 +984,14 @@ export const SettingsModule: React.FC = () => {
             {/* 6. LANGUAGE & REGION */}
             {activeCategory === 'language' && (
               <View style={styles.settingCardWrapper}>
-                <View style={styles.cardSection}>
-                  <Text style={styles.sectionHeaderTitle}>
+                <View style={[styles.cardSection, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+                  <Text style={[styles.sectionHeaderTitle, { color: tokens.textPrimary }]}>
                     {language === 'kh' ? 'ភាសា និងតំបន់ (Language & Region)' : 'Language & Region'}
                   </Text>
 
-                  <View style={styles.prefRow}>
+                  <View style={[styles.prefRow, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
                     <View style={styles.prefLeft}>
-                      <Text style={styles.prefTitle}>
+                      <Text style={[styles.prefTitle, { color: tokens.textPrimary }]}>
                         {language === 'kh' ? 'ភាសាកម្មវិធី (Active Language)' : 'Active Language'}
                       </Text>
                     </View>
@@ -991,14 +1005,14 @@ export const SettingsModule: React.FC = () => {
             {/* 7. NOTIFICATIONS & ALERTS */}
             {activeCategory === 'notifications' && (
               <View style={styles.settingCardWrapper}>
-                <View style={styles.cardSection}>
-                  <Text style={styles.sectionHeaderTitle}>
+                <View style={[styles.cardSection, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+                  <Text style={[styles.sectionHeaderTitle, { color: tokens.textPrimary }]}>
                     {language === 'kh' ? 'ការកំណត់ការជូនដំណឹង (Notifications & Alerts)' : 'Notification Preferences'}
                   </Text>
 
-                  <View style={styles.prefRow}>
+                  <View style={[styles.prefRow, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
                     <View style={styles.prefLeft}>
-                      <Text style={styles.prefTitle}>
+                      <Text style={[styles.prefTitle, { color: tokens.textPrimary }]}>
                         {language === 'kh' ? 'សំឡេងរោទិ៍ប្រព័ន្ធ (Sound Alerts)' : 'Sound Alerts'}
                       </Text>
                     </View>
@@ -1006,7 +1020,7 @@ export const SettingsModule: React.FC = () => {
                     <TouchableOpacity
                       style={[
                         styles.toggleSwitch,
-                        notifSound && styles.toggleSwitchActive,
+                        { backgroundColor: notifSound ? tokens.accentColor : tokens.borderSubtle },
                       ]}
                       onPress={() => setNotifSound(!notifSound)}
                       activeOpacity={0.8}
@@ -1014,15 +1028,16 @@ export const SettingsModule: React.FC = () => {
                       <View
                         style={[
                           styles.toggleDot,
+                          { backgroundColor: tokens.surfaceBg },
                           notifSound && styles.toggleDotActive,
                         ]}
                       />
                     </TouchableOpacity>
                   </View>
 
-                  <View style={styles.prefRow}>
+                  <View style={[styles.prefRow, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
                     <View style={styles.prefLeft}>
-                      <Text style={styles.prefTitle}>
+                      <Text style={[styles.prefTitle, { color: tokens.textPrimary }]}>
                         {language === 'kh' ? 'ការជូនដំណឹងលើ Desktop (Banner Notifications)' : 'Desktop Banner Alerts'}
                       </Text>
                     </View>
@@ -1030,7 +1045,7 @@ export const SettingsModule: React.FC = () => {
                     <TouchableOpacity
                       style={[
                         styles.toggleSwitch,
-                        notifDesktop && styles.toggleSwitchActive,
+                        { backgroundColor: notifDesktop ? tokens.accentColor : tokens.borderSubtle },
                       ]}
                       onPress={() => setNotifDesktop(!notifDesktop)}
                       activeOpacity={0.8}
@@ -1038,6 +1053,7 @@ export const SettingsModule: React.FC = () => {
                       <View
                         style={[
                           styles.toggleDot,
+                          { backgroundColor: tokens.surfaceBg },
                           notifDesktop && styles.toggleDotActive,
                         ]}
                       />
@@ -1045,7 +1061,7 @@ export const SettingsModule: React.FC = () => {
                   </View>
 
                   <View style={styles.formField}>
-                    <Text style={styles.inputLabel}>
+                    <Text style={[styles.inputLabel, { color: tokens.textSecondary }]}>
                       {language === 'kh' ? 'រំលឹកកាលវិភាគមុន (Calendar Meeting Reminder)' : 'Calendar Meeting Reminder'}
                     </Text>
                     <CustomSelect
