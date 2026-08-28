@@ -24,7 +24,7 @@ export const chatStyles = StyleSheet.create({
     height: 48,
     paddingHorizontal: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
+    borderBottomColor: '#E2E8F0',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -79,7 +79,7 @@ export const chatStyles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
+    borderBottomColor: '#E2E8F0',
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
@@ -116,7 +116,7 @@ export const chatStyles = StyleSheet.create({
   folderScroll: {
     maxHeight: 38,
     borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
+    borderBottomColor: '#E2E8F0',
   },
   folderScrollContent: {
     paddingHorizontal: 10,
@@ -293,7 +293,7 @@ export const chatStyles = StyleSheet.create({
   sidebarBottomBar: {
     height: 44,
     borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
+    borderTopColor: '#E2E8F0',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
@@ -307,7 +307,7 @@ export const chatStyles = StyleSheet.create({
   },
   sidebarBottomBarCollapsed: {
     borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
+    borderTopColor: '#E2E8F0',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 10,
@@ -1028,7 +1028,7 @@ export const chatStyles = StyleSheet.create({
     marginTop: 6,
     paddingTop: 4,
     borderTopWidth: 1,
-    borderTopColor: '#F1F5F9',
+    borderTopColor: '#E2E8F0',
   },
   toolbarLeft: {
     flexDirection: 'row',
@@ -1204,7 +1204,7 @@ export const chatStyles = StyleSheet.create({
     gap: 8,
     paddingVertical: 6,
     borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
+    borderBottomColor: '#E2E8F0',
   },
   seenParticipantInfo: {
     flex: 1,
@@ -1339,7 +1339,7 @@ export const chatStyles = StyleSheet.create({
     marginBottom: 6,
     paddingBottom: 4,
     borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9',
+    borderBottomColor: '#E2E8F0',
   },
   emojiPickerTitle: {
     fontSize: 11,

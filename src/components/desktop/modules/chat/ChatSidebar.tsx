@@ -108,7 +108,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                 style={[
                   styles.sourceSwitchBtn,
                   { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
-                  !isTelegram && { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder },
+                  !isTelegram && { backgroundColor: tokens.accentSoft, borderColor: tokens.borderSubtle },
                 ]}
                 onPress={() => onSetChatSource('team')}
                 activeOpacity={0.7}
@@ -121,7 +121,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                 style={[
                   styles.sourceSwitchBtn,
                   { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
-                  isTelegram && { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder },
+                  isTelegram && { backgroundColor: tokens.accentSoft, borderColor: tokens.borderSubtle },
                 ]}
                 onPress={() => onSetChatSource('telegram')}
                 activeOpacity={0.7}
@@ -153,7 +153,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
       {/* 2. Search & Add Contact (when expanded) */}
       {!isLeftCollapsed && (
         <>
-          <View style={styles.searchBox}>
+          <View style={[styles.searchBox, { borderBottomColor: tokens.borderSubtle }]}>
             <View style={[styles.searchInputWrapper, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
               <RemixIcon name="search-line" size={13} color={tokens.textMuted} />
               <TextInput
@@ -172,7 +172,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
 
             {isTelegram && (
               <TouchableOpacity
-                style={[styles.addContactBtn, { backgroundColor: tokens.surfaceMuted }]}
+                style={[styles.addContactBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                 onPress={onOpenAddContactModal}
                 activeOpacity={0.75}
               >
@@ -186,7 +186,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              style={styles.folderScroll}
+              style={[styles.folderScroll, { borderBottomColor: tokens.borderSubtle }]}
               contentContainerStyle={styles.folderScrollContent}
             >
               {[
@@ -205,7 +205,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                     style={[
                       styles.folderChip,
                       { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
-                      isActive && { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder },
+                      isActive && { backgroundColor: tokens.accentSoft, borderColor: tokens.borderSubtle },
                     ]}
                     onPress={() => onSetActiveFolder(f.id)}
                     activeOpacity={0.7}
@@ -215,8 +215,8 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                       {f.label}
                     </Text>
                     {count > 0 && (
-                      <View style={[styles.folderCountBadge, { backgroundColor: tokens.surfaceBg }, isActive && { backgroundColor: tokens.accentColor }]}>
-                        <Text style={[styles.folderCountText, { color: tokens.textSecondary }, isActive && { color: tokens.accentFg }]}>
+                      <View style={[styles.folderCountBadge, { backgroundColor: isActive ? tokens.accentColor : tokens.surfaceBg }]}>
+                        <Text style={[styles.folderCountText, { color: isActive ? tokens.accentFg : tokens.textSecondary }]}>
                           {count}
                         </Text>
                       </View>
