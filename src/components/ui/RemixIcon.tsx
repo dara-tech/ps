@@ -240,20 +240,20 @@ export const RemixIcon: React.FC<RemixIconProps> = ({
     );
   }
 
-  // Ghost Mode Icons
+  // Ghost Mode Icons - Pixel-Perfect High-End Vectors
   if (name === 'ghost-line' || name === 'ghost-fill') {
     return (
       <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
         <Path
-          d="M12 2a9 9 0 0 0-9 9v7.5a1.5 1.5 0 0 0 2.56 1.06L7 18.12l1.44 1.44a1.5 1.5 0 0 0 2.12 0L12 18.12l1.44 1.44a1.5 1.5 0 0 0 2.12 0L17 18.12l1.44 1.44A1.5 1.5 0 0 0 21 18.5V11a9 9 0 0 0-9-9z"
+          d="M12 2C7.58 2 4 5.58 4 10v9.5c0 .67.75 1.08 1.32.73L8 18.5l2.68 1.73c.41.27.95.27 1.36 0L14.72 18.5l2.68 1.73c.57.35 1.32-.06 1.32-.73V10c0-4.42-3.58-8-8-8z"
+          fill={name === 'ghost-fill' ? color : 'none'}
           stroke={color}
-          strokeWidth="1.8"
+          strokeWidth={name === 'ghost-fill' ? '0' : '1.8'}
           strokeLinecap="round"
           strokeLinejoin="round"
-          fill={name === 'ghost-fill' ? color : 'none'}
         />
-        <Circle cx="9" cy="9.5" r="1.3" fill={name === 'ghost-fill' ? '#FFFFFF' : color} />
-        <Circle cx="15" cy="9.5" r="1.3" fill={name === 'ghost-fill' ? '#FFFFFF' : color} />
+        <Circle cx="9" cy="9.5" r="1.4" fill={name === 'ghost-fill' ? '#FFFFFF' : color} />
+        <Circle cx="15" cy="9.5" r="1.4" fill={name === 'ghost-fill' ? '#FFFFFF' : color} />
       </Svg>
     );
   }
@@ -277,8 +277,11 @@ export const RemixIcon: React.FC<RemixIconProps> = ({
     return (
       <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
         <Path
-          d="M4.93 4.93l4.29 4.29A4.98 4.98 0 0 0 8 12a4 4 0 0 0 4 4c1.03 0 1.97-.39 2.68-1.03l4.39 4.39 1.41-1.41L6.34 3.51 4.93 4.93zM12 14a2 2 0 0 1-2-2c0-.35.09-.68.25-.97l2.72 2.72c-.29.16-.62.25-.97.25zm-7.66-2C5.9 7.91 8.7 5.5 12 5.5c1.47 0 2.84.48 4 1.31l1.47-1.47A11.96 11.96 0 0 0 12 3.5C6.48 3.5 1.83 7.84.5 12c1.03 3.23 3.65 5.75 6.94 6.84L8.85 17.4A9.97 9.97 0 0 1 4.34 12zM12 8.5c.35 0 .68.09.97.25l1.78-1.78A4.98 4.98 0 0 0 12 6.5a4 4 0 0 0-4 4c0 .97.35 1.86.94 2.55l1.78-1.78c-.16-.29-.25-.62-.25-.97a2 2 0 0 1 2-2zm7.66 3.5c-.75 2.09-2.17 3.86-4 4.97l1.44 1.44C19.34 16.89 21.1 14.65 22 12c-1.33-4.16-5.98-8.5-11.5-8.5-1.07 0-2.1.18-3.08.51l1.58 1.58c.49-.06 1-.09 1.5-.09 3.3 0 6.1 2.41 7.66 6.5z"
-          fill={color}
+          d="M3 3l18 18M10.5 10.677a2 2 0 0 0 2.823 2.823M7.362 7.561C5.68 8.74 4.279 10.42 3 12c1.88 3.5 5.5 6 9 6 1.55 0 3.03-.49 4.342-1.334M9.88 4.253C10.565 4.09 11.27 4 12 4c3.5 0 7.12 2.5 9 6a15.46 15.46 0 0 1-2.57 3.75"
+          stroke={color}
+          strokeWidth="1.9"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       </Svg>
     );
@@ -288,8 +291,11 @@ export const RemixIcon: React.FC<RemixIconProps> = ({
     return (
       <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
         <Path
-          d="M2.81 2.81L1.39 4.22l2.36 2.36A15.93 15.93 0 0 0 .5 9.47l1.41 1.41a13.93 13.93 0 0 1 3.82-2.73l2.25 2.25A9.94 9.94 0 0 0 5 12.94l1.41 1.41a7.95 7.95 0 0 1 2.37-1.76l2.19 2.19A4.96 4.96 0 0 0 10 16.47l1.41 1.41a2.97 2.97 0 0 1 .59-.59l7.78 7.78 1.41-1.41L2.81 2.81zM12 3c3.78 0 7.23 1.34 9.94 3.58l-1.41 1.41A13.93 13.93 0 0 0 12 5c-2.47 0-4.78.69-6.75 1.88L3.8 5.44A15.93 15.93 0 0 1 12 3zm0 4c2.81 0 5.37 1.05 7.35 2.78l-1.41 1.41A7.95 7.95 0 0 0 12 9c-1.46 0-2.83.42-4 1.15L6.55 8.7A9.94 9.94 0 0 1 12 7zm0 4c1.78 0 3.39.73 4.56 1.91l-1.41 1.41A4.96 4.96 0 0 0 12 13c-.45 0-.88.08-1.28.22L9.27 11.79A6.95 6.95 0 0 1 12 11z"
-          fill={color}
+          d="M3 3l18 18M12 17.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM8.5 14.5a5 5 0 0 1 6.36-.64M5 10.5a10 10 0 0 1 12.73-.36M1.5 6.5a15 15 0 0 1 19.8 0"
+          stroke={color}
+          strokeWidth="1.9"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       </Svg>
     );
@@ -299,8 +305,11 @@ export const RemixIcon: React.FC<RemixIconProps> = ({
     return (
       <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
         <Path
-          d="M15.728 9.686l-1.414-1.414L5 17.586V19h1.414l9.314-9.314zm1.414-1.414l1.414-1.414a1 1 0 0 0 0-1.414l-1.414-1.414a1 1 0 0 0-1.414 0l-1.414 1.414 2.828 2.828zM7.071 21H3v-4.071L16.435 3.494a3 3 0 0 1 4.243 0l1.414 1.414a3 3 0 0 1 0 4.243L7.071 21z"
-          fill={color}
+          d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+          stroke={color}
+          strokeWidth="1.9"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       </Svg>
     );
@@ -310,8 +319,18 @@ export const RemixIcon: React.FC<RemixIconProps> = ({
     return (
       <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
         <Path
-          d="M12 2l8 3.5v6.5c0 5.25-3.4 10.15-8 11.5-4.6-1.35-8-6.25-8-11.5V5.5L12 2zm0 2.18L6 6.8v5.2c0 4.14 2.62 8.04 6 9.17 3.38-1.13 6-5.03 6-9.17V6.8l-6-2.62zm3.3 5.11l1.4 1.42L11 16.4l-3.7-3.7 1.4-1.42 2.3 2.3 4.3-4.29z"
-          fill={color}
+          d="M12 2l7 3.5v6c0 4.8-3.1 9.3-7 10.5-3.9-1.2-7-5.7-7-10.5v-6L12 2z"
+          stroke={color}
+          strokeWidth="1.9"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <Path
+          d="M9 12l2 2 4-4"
+          stroke={color}
+          strokeWidth="1.9"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       </Svg>
     );
@@ -320,10 +339,9 @@ export const RemixIcon: React.FC<RemixIconProps> = ({
   if (name === 'movie-line') {
     return (
       <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-        <Path
-          d="M2 3.993A1 1 0 0 1 2.992 3h18.016c.548 0 .992.445.992.993v16.014a1 1 0 0 1-.992.993H2.992A.993.993 0 0 1 2 20.007V3.993zM4 5v14h16V5H4zm2 2h2v2H6V7zm0 4h2v2H6v-2zm0 4h2v2H6v-2zm10-8h2v2h-2V7zm0 4h2v2h-2v-2zm0 4h2v2h-2v-2zM9 7h6v10H9V7z"
-          fill={color}
-        />
+        <Circle cx="12" cy="12" r="9" stroke={color} strokeWidth="1.9" />
+        <Circle cx="12" cy="12" r="3.5" stroke={color} strokeWidth="1.8" />
+        <Path d="M12 3v2M12 19v2M3 12h2M19 12h2" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
       </Svg>
     );
   }
