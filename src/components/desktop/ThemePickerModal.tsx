@@ -190,16 +190,16 @@ export const ThemePickerModal: React.FC<ThemePickerModalProps> = ({ visible, onC
                   >
                     {/* Character Corner Badges */}
                     {Boolean(tokens.tiktokBubbleDecor?.topLeft) && (
-                      <Text style={styles.ttDecorTopLeft}>{tokens.tiktokBubbleDecor.topLeft}</Text>
+                      <Text style={styles.ttDecorTopLeft}>{tokens.tiktokBubbleDecor?.topLeft}</Text>
                     )}
                     {Boolean(tokens.tiktokBubbleDecor?.topRight) && (
-                      <Text style={styles.ttDecorTopRight}>{tokens.tiktokBubbleDecor.topRight}</Text>
+                      <Text style={styles.ttDecorTopRight}>{tokens.tiktokBubbleDecor?.topRight}</Text>
                     )}
                     {Boolean(tokens.tiktokBubbleDecor?.bottomLeft) && (
-                      <Text style={styles.ttDecorBottomLeft}>{tokens.tiktokBubbleDecor.bottomLeft}</Text>
+                      <Text style={styles.ttDecorBottomLeft}>{tokens.tiktokBubbleDecor?.bottomLeft}</Text>
                     )}
                     {Boolean(tokens.tiktokBubbleDecor?.bottomRight) && (
-                      <Text style={styles.ttDecorBottomRight}>{tokens.tiktokBubbleDecor.bottomRight}</Text>
+                      <Text style={styles.ttDecorBottomRight}>{tokens.tiktokBubbleDecor?.bottomRight}</Text>
                     )}
 
                     <Text style={[styles.ttBubbleText, { color: tokens.bubbleOutgoingText }]}>

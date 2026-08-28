@@ -338,22 +338,22 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                     {/* TikTok Character Corner Badges */}
                     {Boolean(isMe && tokens.tiktokBubbleDecor?.topLeft) && (
                       <Text style={styles.bubbleDecorTopLeft}>
-                        {tokens.tiktokBubbleDecor.topLeft}
+                        {tokens.tiktokBubbleDecor?.topLeft}
                       </Text>
                     )}
                     {Boolean(isMe && tokens.tiktokBubbleDecor?.topRight) && (
                       <Text style={styles.bubbleDecorTopRight}>
-                        {tokens.tiktokBubbleDecor.topRight}
+                        {tokens.tiktokBubbleDecor?.topRight}
                       </Text>
                     )}
                     {Boolean(isMe && tokens.tiktokBubbleDecor?.bottomLeft) && (
                       <Text style={styles.bubbleDecorBottomLeft}>
-                        {tokens.tiktokBubbleDecor.bottomLeft}
+                        {tokens.tiktokBubbleDecor?.bottomLeft}
                       </Text>
                     )}
                     {Boolean(isMe && tokens.tiktokBubbleDecor?.bottomRight) && (
                       <Text style={styles.bubbleDecorBottomRight}>
-                        {tokens.tiktokBubbleDecor.bottomRight}
+                        {tokens.tiktokBubbleDecor?.bottomRight}
                       </Text>
                     )}
 
