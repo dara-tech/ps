@@ -3,9 +3,11 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator
 import { useDesktopStore } from '../../../store/useDesktopStore';
 import { useLanguageStore } from '../../../store/useLanguageStore';
 import { RemixIcon } from '../../ui/RemixIcon';
+import { BankLogo } from '../../ui/BankLogo';
 import { CustomModal } from '../../ui/CustomModal';
 import { ModernAvatar } from '../../ui/ModernAvatar';
 import { toast } from '../../../store/useToastStore';
+import { detectBankBrand, parseTransactionNote } from './PersonalFinanceModule';
 
 export const LifeDashboardModule: React.FC = () => {
   const t = useLanguageStore((state) => state.t);
@@ -405,36 +407,38 @@ export const LifeDashboardModule: React.FC = () => {
                   <Text style={styles.emptyText}>No financial records logged yet</Text>
                 </View>
               ) : (
-                finances.slice(0, 5).map((f) => (
-                  <View key={f.id} style={styles.financeItem}>
-                    <View
-                      style={[
-                        styles.financeIconBox,
-                        f.type === 'income' ? styles.incomeIcon : styles.expenseIcon,
-                      ]}
+                finances.slice(0, 5).map((f) => {
+                  const { title, sub } = parseTransactionNote(f.note);
+                  const bankInfo = detectBankBrand(f.note, f.category, f.type);
+                  const isIncome = f.type === 'income';
+
+                  return (
+                    <TouchableOpacity
+                      key={f.id}
+                      style={styles.financeItem}
+                      onPress={() => setActiveModule('finances')}
+                      activeOpacity={0.7}
                     >
-                      <RemixIcon
-                        name={f.type === 'income' ? 'check-line' : 'bank-card-line'}
-                        size={12}
-                        color={f.type === 'income' ? '#16A34A' : '#DC2626'}
-                      />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.financeTitle} numberOfLines={1}>
-                        {f.category}
+                      <BankLogo brand={bankInfo.brand} size={28} height={28} />
+                      <View style={{ flex: 1, marginLeft: 9 }}>
+                        <Text style={styles.financeTitle} numberOfLines={1}>
+                          {title || f.category}
+                        </Text>
+                        <Text style={styles.financeDate} numberOfLines={1}>
+                          {sub || f.date || 'Recent'}
+                        </Text>
+                      </View>
+                      <Text
+                        style={[
+                          styles.financeAmount,
+                          { color: isIncome ? '#16A34A' : '#DC2626' },
+                        ]}
+                      >
+                        {isIncome ? '+' : '-'}${f.amount.toFixed(2)}
                       </Text>
-                      <Text style={styles.financeDate}>{f.date || 'Recent'}</Text>
-                    </View>
-                    <Text
-                      style={[
-                        styles.financeAmount,
-                        f.type === 'income' ? styles.incomeAmount : styles.expenseAmount,
-                      ]}
-                    >
-                      {f.type === 'income' ? '+' : '-'}${f.amount.toFixed(2)}
-                    </Text>
-                  </View>
-                ))
+                    </TouchableOpacity>
+                  );
+                })
               )}
             </View>
           </View>

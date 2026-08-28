@@ -135,7 +135,7 @@ export const detectBankBrand = (note: string, category: string, type: string): B
 };
 
 // Helper to clean and parse bank statement notes into Clean Recipient Title & Sub-metadata
-const parseTransactionNote = (rawNote: string) => {
+export const parseTransactionNote = (rawNote: string) => {
   if (!rawNote) return { title: 'Transaction', sub: '', ref: '', time: '' };
 
   if (rawNote.includes('|')) {
