@@ -799,7 +799,7 @@ export const CalendarModule: React.FC = () => {
 
                   {/* Collapse Button */}
                   <TouchableOpacity
-                    style={[styles.closeAgendaBtn, { borderColor: tokens.borderSubtle }]}
+                    style={[styles.closeAgendaBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                     onPress={toggleRightPanel}
                     activeOpacity={0.7}
                     hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
@@ -867,10 +867,15 @@ export const CalendarModule: React.FC = () => {
                         activeOpacity={0.8}
                       >
                         <View style={styles.agendaCardTop}>
-                          <View style={[styles.agendaTypeBadge, (ev.id.startsWith('gh-') || ev.title.startsWith('[Git')) && styles.agendaGithubBadge]}>
+                          <View
+                            style={[
+                              styles.agendaTypeBadge,
+                              { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle, borderWidth: 1, borderRadius: 4, paddingHorizontal: 6, paddingVertical: 2 },
+                            ]}
+                          >
                             {ev.id.startsWith('gh-') || ev.title.startsWith('[Git') ? (
-                              <View style={styles.githubRoundBadge}>
-                                <RemixIcon name="github-fill" size={8} color="#FFFFFF" />
+                              <View style={[styles.githubRoundBadge, { backgroundColor: tokens.textPrimary }]}>
+                                <RemixIcon name="github-fill" size={8} color={tokens.textInverse} />
                               </View>
                             ) : (
                               <View
@@ -887,7 +892,7 @@ export const CalendarModule: React.FC = () => {
                                 ]}
                               />
                             )}
-                            <Text style={[styles.agendaTypeText, (ev.id.startsWith('gh-') || ev.title.startsWith('[Git')) && styles.agendaGithubText]}>
+                            <Text style={[styles.agendaTypeText, { color: tokens.textPrimary, fontWeight: '700' }]}>
                               {ev.id.startsWith('gh-') || ev.title.startsWith('[Git') ? 'GITHUB' : ev.type.toUpperCase()} • {ev.time || t.calAllDay}
                             </Text>
                           </View>
@@ -900,20 +905,20 @@ export const CalendarModule: React.FC = () => {
                               <RemixIcon
                                 name={ev.isCompleted ? 'check-line' : 'time-line'}
                                 size={12}
-                                color={ev.isCompleted ? '#10B981' : '#64748B'}
+                                color={ev.isCompleted ? '#10B981' : tokens.textSecondary}
                               />
                             </TouchableOpacity>
                             <TouchableOpacity
                               onPress={() => openEditEventModal(ev)}
                               style={styles.iconAction}
                             >
-                              <RemixIcon name="pencil-line" size={12} color="#64748B" />
+                              <RemixIcon name="pencil-line" size={12} color={tokens.textSecondary} />
                             </TouchableOpacity>
                             <TouchableOpacity
                               onPress={() => deleteCalendarEvent(ev.id)}
                               style={styles.iconAction}
                             >
-                              <RemixIcon name="close-line" size={12} color="#94A3B8" />
+                              <RemixIcon name="close-line" size={12} color={tokens.textMuted} />
                             </TouchableOpacity>
                           </View>
                         </View>
@@ -921,6 +926,7 @@ export const CalendarModule: React.FC = () => {
                         <Text
                           style={[
                             styles.agendaCardTitle,
+                            { color: tokens.textPrimary },
                             ev.isCompleted && styles.agendaCardTitleCompleted,
                           ]}
                         >
@@ -928,21 +934,26 @@ export const CalendarModule: React.FC = () => {
                         </Text>
 
                         {ev.description ? (
-                          <Text style={styles.agendaCardDesc}>{ev.description}</Text>
+                          <Text style={[styles.agendaCardDesc, { color: tokens.textSecondary }]}>{ev.description}</Text>
                         ) : null}
                       </TouchableOpacity>
                     ))}
 
                     {filteredAgendaTasks.map((t) => (
-                      <View key={t.id} style={[styles.agendaCard, styles.agendaTaskCard]}>
+                      <View key={t.id} style={[styles.agendaCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
                         <View style={styles.agendaCardTop}>
-                          <View style={styles.agendaTypeBadge}>
-                            <View style={[styles.typeDot, { backgroundColor: '#6366F1' }]} />
-                            <Text style={styles.agendaTypeText}>PLANNER TASK</Text>
+                          <View
+                            style={[
+                              styles.agendaTypeBadge,
+                              { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle, borderWidth: 1, borderRadius: 4, paddingHorizontal: 6, paddingVertical: 2 },
+                            ]}
+                          >
+                            <View style={[styles.typeDot, { backgroundColor: tokens.accentColor }]} />
+                            <Text style={[styles.agendaTypeText, { color: tokens.textSecondary }]}>PLANNER TASK</Text>
                           </View>
-                          <Text style={styles.taskStatusTag}>{t.status.toUpperCase()}</Text>
+                          <Text style={[styles.taskStatusTag, { color: tokens.accentColor }]}>{t.status.toUpperCase()}</Text>
                         </View>
-                        <Text style={styles.agendaCardTitle}>{t.title}</Text>
+                        <Text style={[styles.agendaCardTitle, { color: tokens.textPrimary }]}>{t.title}</Text>
                       </View>
                     ))}
                   </View>
@@ -952,7 +963,11 @@ export const CalendarModule: React.FC = () => {
                     {paginatedSideEvents.map((ev) => (
                       <TouchableOpacity
                         key={ev.id}
-                        style={[styles.agendaListItem, ev.isCompleted && styles.agendaListItemCompleted]}
+                        style={[
+                          styles.agendaListItem,
+                          { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
+                          ev.isCompleted && styles.agendaListItemCompleted,
+                        ]}
                         onPress={() => {
                           if (ev.date) {
                             const parts = ev.date.split('-');
@@ -972,7 +987,7 @@ export const CalendarModule: React.FC = () => {
                           <RemixIcon
                             name={ev.isCompleted ? 'checkbox-circle-fill' : 'time-line'}
                             size={14}
-                            color={ev.isCompleted ? '#10B981' : '#94A3B8'}
+                            color={ev.isCompleted ? '#10B981' : tokens.textMuted}
                           />
                         </TouchableOpacity>
 
@@ -991,15 +1006,19 @@ export const CalendarModule: React.FC = () => {
                         />
 
                         <Text
-                          style={[styles.listTitle, ev.isCompleted && styles.listTitleCompleted]}
+                          style={[
+                            styles.listTitle,
+                            { color: tokens.textPrimary },
+                            ev.isCompleted && styles.listTitleCompleted,
+                          ]}
                           numberOfLines={1}
                         >
                           {ev.title}
                         </Text>
 
                         {ev.time ? (
-                          <View style={styles.listTimeBadge}>
-                            <Text style={styles.listTimeText}>{ev.time}</Text>
+                          <View style={[styles.listTimeBadge, { backgroundColor: tokens.surfaceMuted }]}>
+                            <Text style={[styles.listTimeText, { color: tokens.textSecondary }]}>{ev.time}</Text>
                           </View>
                         ) : null}
 
@@ -1007,30 +1026,25 @@ export const CalendarModule: React.FC = () => {
                           style={styles.listDeleteBtn}
                           onPress={() => openEditEventModal(ev)}
                         >
-                          <RemixIcon name="pencil-line" size={12} color="#64748B" />
+                          <RemixIcon name="pencil-line" size={12} color={tokens.textSecondary} />
                         </TouchableOpacity>
 
                         <TouchableOpacity
                           style={styles.listDeleteBtn}
                           onPress={() => deleteCalendarEvent(ev.id)}
                         >
-                          <RemixIcon name="close-line" size={12} color="#94A3B8" />
+                          <RemixIcon name="close-line" size={12} color={tokens.textMuted} />
                         </TouchableOpacity>
                       </TouchableOpacity>
                     ))}
 
                     {filteredAgendaTasks.map((t) => (
-                      <View key={t.id} style={styles.agendaListItem}>
+                      <View key={t.id} style={[styles.agendaListItem, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
                         <View style={styles.listCheckBtn}>
-                          <RemixIcon name="task-line" size={14} color="#6366F1" />
+                          <RemixIcon name="task-line" size={14} color={tokens.accentColor} />
                         </View>
-                        <View style={[styles.typeDot, { backgroundColor: '#6366F1' }]} />
-                        <Text style={styles.listTitle} numberOfLines={1}>
-                          {t.title}
-                        </Text>
-                        <View style={styles.listTaskBadge}>
-                          <Text style={styles.listTaskBadgeText}>{t.status}</Text>
-                        </View>
+                        <Text style={[styles.listTitle, { color: tokens.textPrimary }]} numberOfLines={1}>{t.title}</Text>
+                        <Text style={[styles.taskStatusTag, { color: tokens.accentColor }]}>{t.status.toUpperCase()}</Text>
                       </View>
                     ))}
                   </View>
@@ -1039,26 +1053,26 @@ export const CalendarModule: React.FC = () => {
 
               {/* Side Agenda Pagination Controls */}
               {totalSidePages > 1 && (
-                <View style={styles.sidePaginationBar}>
-                  <Text style={styles.sidePaginationText}>
+                <View style={[styles.sidePaginationBar, { borderTopColor: tokens.borderSubtle, backgroundColor: tokens.surfaceBg }]}>
+                  <Text style={[styles.sidePaginationText, { color: tokens.textSecondary }]}>
                     Page {sideAgendaPage} of {totalSidePages} ({filteredAgendaEvents.length})
                   </Text>
                   <View style={styles.sidePaginationBtns}>
                     <TouchableOpacity
-                      style={[styles.sidePageBtn, sideAgendaPage <= 1 && styles.sidePageBtnDisabled]}
+                      style={[styles.sidePageBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }, sideAgendaPage <= 1 && styles.sidePageBtnDisabled]}
                       onPress={() => setSideAgendaPage((p) => Math.max(1, p - 1))}
                       disabled={sideAgendaPage <= 1}
                       activeOpacity={0.7}
                     >
-                      <RemixIcon name="chevron-left-line" size={12} color={sideAgendaPage <= 1 ? '#CBD5E1' : '#475569'} />
+                      <RemixIcon name="chevron-left-line" size={12} color={sideAgendaPage <= 1 ? tokens.textMuted : tokens.textPrimary} />
                     </TouchableOpacity>
                     <TouchableOpacity
-                      style={[styles.sidePageBtn, sideAgendaPage >= totalSidePages && styles.sidePageBtnDisabled]}
+                      style={[styles.sidePageBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }, sideAgendaPage >= totalSidePages && styles.sidePageBtnDisabled]}
                       onPress={() => setSideAgendaPage((p) => Math.min(totalSidePages, p + 1))}
                       disabled={sideAgendaPage >= totalSidePages}
                       activeOpacity={0.7}
                     >
-                      <RemixIcon name="chevron-right-line" size={12} color={sideAgendaPage >= totalSidePages ? '#CBD5E1' : '#475569'} />
+                      <RemixIcon name="chevron-right-line" size={12} color={sideAgendaPage >= totalSidePages ? tokens.textMuted : tokens.textPrimary} />
                     </TouchableOpacity>
                   </View>
                 </View>
