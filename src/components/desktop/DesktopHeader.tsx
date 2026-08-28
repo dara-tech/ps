@@ -60,9 +60,23 @@ export const DesktopHeader: React.FC = () => {
   const toggleRightPanel = useDesktopStore((state) => state.toggleRightPanel);
   const t = useLanguageStore((state) => state.t);
 
+  const syncGithubEvents = useDesktopStore((state) => state.syncGithubEvents);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isBottomOpen, setIsBottomOpen] = useState(false);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  const handleGlobalRefresh = async () => {
+    if (isSyncing) return;
+    setIsSyncing(true);
+    try {
+      await syncGithubEvents();
+    } catch (err) {
+      console.error('Failed to sync events in navbar:', err);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   const isSidebarExpanded = sidebarMode === 'expanded';
 
@@ -91,7 +105,6 @@ export const DesktopHeader: React.FC = () => {
           <PanelBottomIcon active={isBottomOpen} size={15} color={isBottomOpen ? '#0F172A' : '#64748B'} />
         </TouchableOpacity>
 
-
         {/* Right Sidebar / Details Panel Toggle (Only in Calendar Module) */}
         {activeModule === 'calendar' && (
           <TouchableOpacity
@@ -102,6 +115,16 @@ export const DesktopHeader: React.FC = () => {
             <PanelRightIcon active={isRightPanelVisible} size={15} color={isRightPanelVisible ? '#0F172A' : '#64748B'} />
           </TouchableOpacity>
         )}
+
+        {/* Global Refresh / Sync Action Button (Icon Only) */}
+        <TouchableOpacity
+          style={[styles.toolIconBtn, isSyncing && styles.toolIconBtnActive]}
+          onPress={handleGlobalRefresh}
+          activeOpacity={0.7}
+          disabled={isSyncing}
+        >
+          <RemixIcon name="refresh-line" size={14} color={isSyncing ? '#2563EB' : '#64748B'} />
+        </TouchableOpacity>
 
         {/* Quick Search Button */}
         <TouchableOpacity style={styles.toolIconBtn} activeOpacity={0.7}>

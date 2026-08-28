@@ -516,20 +516,6 @@ export const CalendarModule: React.FC = () => {
             ))}
           </View>
 
-          {/* Refresh / Sync Button (Icon Only) */}
-          <TouchableOpacity
-            style={[styles.refreshIconBtn, isSyncingGh && styles.refreshIconBtnSyncing]}
-            onPress={handleManualSync}
-            activeOpacity={0.75}
-            disabled={isSyncingGh}
-          >
-            <RemixIcon
-              name="refresh-line"
-              size={13}
-              color={isSyncingGh ? '#2563EB' : '#475569'}
-            />
-          </TouchableOpacity>
-
           <TouchableOpacity
             style={styles.addEventBtn}
             onPress={() => {
