@@ -1,5 +1,5 @@
-export type ThemeMode = 'light' | 'dark' | 'midnight' | 'warm';
-export type AccentColor = 'blue' | 'indigo' | 'emerald' | 'amber' | 'rose' | 'graphite';
+export type ThemeMode = 'light' | 'dark' | 'midnight' | 'warm' | 'tiktok';
+export type AccentColor = 'blue' | 'indigo' | 'emerald' | 'amber' | 'rose' | 'graphite' | 'tiktok' | 'cyan';
 
 export interface ThemeTokens {
   mode: ThemeMode;
@@ -58,6 +58,24 @@ export const ACCENT_PALETTES: Record<
     borderLight: '#DBEAFE',
     borderDark: 'rgba(37, 99, 235, 0.35)',
   },
+  tiktok: {
+    label: 'TikTok Red',
+    khLabel: 'ក្រហម TikTok',
+    hex: '#FE2C55',
+    softLight: '#FFF1F3',
+    softDark: 'rgba(254, 44, 85, 0.18)',
+    borderLight: '#FECDD6',
+    borderDark: 'rgba(254, 44, 85, 0.35)',
+  },
+  cyan: {
+    label: 'TikTok Cyan',
+    khLabel: 'ផ្ទៃមេឃ TikTok',
+    hex: '#25F4EE',
+    softLight: '#ECFEFF',
+    softDark: 'rgba(37, 244, 238, 0.18)',
+    borderLight: '#A5F3FC',
+    borderDark: 'rgba(37, 244, 238, 0.35)',
+  },
   indigo: {
     label: 'Linear Indigo',
     khLabel: 'ស្វាយអាំងឌីហ្គោ',
@@ -107,11 +125,47 @@ export const ACCENT_PALETTES: Record<
 
 export const generateThemeTokens = (mode: ThemeMode, accent: AccentColor): ThemeTokens => {
   const pal = ACCENT_PALETTES[accent] || ACCENT_PALETTES.blue;
-  const isDark = mode === 'dark' || mode === 'midnight';
+  const isDark = mode === 'dark' || mode === 'midnight' || mode === 'tiktok';
 
   const accentColor = pal.hex;
   const accentSoft = isDark ? pal.softDark : pal.softLight;
   const accentBorder = isDark ? pal.borderDark : pal.borderLight;
+
+  if (mode === 'tiktok') {
+    // TikTok Sleek Dark (#121212 / #161823) with Neon Contrast
+    const effectiveAccent = accent === 'blue' ? '#FE2C55' : accentColor;
+    return {
+      mode,
+      accent,
+      windowBg: '#121212',
+      surfaceBg: '#161823',
+      surfaceMuted: '#222436',
+      surfaceHover: '#2A2D42',
+      surfaceActive: '#333752',
+      borderSubtle: '#2F3142',
+      borderStrong: '#444760',
+      textPrimary: '#FFFFFF',
+      textSecondary: '#A6A7AB',
+      textMuted: '#73747B',
+      textInverse: '#121212',
+      accentColor: effectiveAccent,
+      accentSoft: accent === 'blue' ? 'rgba(254, 44, 85, 0.18)' : accentSoft,
+      accentBorder: accent === 'blue' ? 'rgba(254, 44, 85, 0.35)' : accentBorder,
+      accentFg: '#FFFFFF',
+      bubbleIncoming: '#222436',
+      bubbleIncomingText: '#FFFFFF',
+      bubbleIncomingBorder: '#2F3142',
+      bubbleOutgoing: effectiveAccent,
+      bubbleOutgoingText: '#FFFFFF',
+      bubbleOutgoingBorder: effectiveAccent,
+      success: '#25F4EE',
+      successSoft: '#00F2FE22',
+      danger: '#FE2C55',
+      dangerSoft: '#FE2C5522',
+      warning: '#F59E0B',
+      warningSoft: '#78350F33',
+    };
+  }
 
   if (mode === 'midnight') {
     // Pure OLED Jet Black
