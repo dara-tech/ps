@@ -356,9 +356,6 @@ export const SettingsModule: React.FC = () => {
                           </View>
                         )}
                       </View>
-                      <Text style={styles.categoryDesc} numberOfLines={1}>
-                        {language === 'kh' ? item.descKh : item.descEn}
-                      </Text>
                     </View>
 
                     <RemixIcon
@@ -387,13 +384,8 @@ export const SettingsModule: React.FC = () => {
                   <View style={styles.bannerInfo}>
                     <Text style={styles.bannerHeading}>
                       {language === 'kh'
-                        ? 'ភ្ជាប់ទិន្នន័យ GitHub ស្វ័យប្រវត្តទៅកាន់ Calendar'
+                        ? 'GitHub Calendar Auto-Sync'
                         : 'GitHub Calendar Auto-Sync Integration'}
-                    </Text>
-                    <Text style={styles.bannerSubtext}>
-                      {language === 'kh'
-                        ? 'ទាញយកកំណត់ត្រា Code Commits, Project Milestones, និង Version Releases មកដាក់លើ Calendar ដោយស្វ័យប្រវត្ត'
-                        : 'Automatically sync commits, sprint milestones, and release schedules into your Personal Workspace calendar.'}
                     </Text>
                     {githubConfig.lastSyncedAt && (
                       <View style={styles.syncMetaRow}>
@@ -419,11 +411,6 @@ export const SettingsModule: React.FC = () => {
                           {language === 'kh' ? 'បើកដំណើរការ Auto-Sync' : 'Enable Background Auto-Sync'}
                         </Text>
                       </View>
-                      <Text style={styles.prefSub}>
-                        {language === 'kh'
-                          ? 'Sync ដោយស្វ័យប្រវត្តរាល់ពេលបើកកាលវិភាគ ឬកែប្រែទិន្នន័យ'
-                          : 'Silently fetch latest GitHub activities whenever Calendar is viewed'}
-                      </Text>
                     </View>
 
                     <TouchableOpacity
@@ -792,11 +779,6 @@ export const SettingsModule: React.FC = () => {
                           {language === 'kh' ? 'បើក Touch ID / Passcode នៅពេល Login' : 'Enable Touch ID / Passcode Lock'}
                         </Text>
                       </View>
-                      <Text style={styles.prefSub}>
-                        {language === 'kh'
-                          ? 'ការពារគណនី និងទិន្នន័យហិរញ្ញវត្ថុដោយប្រើប្រព័ន្ធសុវត្ថិភាព Native Biometrics'
-                          : 'Require biometric authorization to unlock system workspace and view private records'}
-                      </Text>
                     </View>
 
                     <TouchableOpacity
@@ -895,11 +877,6 @@ export const SettingsModule: React.FC = () => {
                   <Text style={styles.sectionHeaderTitle}>
                     {language === 'kh' ? 'ម៉ូដែលបញ្ញាសិប្បនិម្មិត Gemini AI' : 'Gemini AI Model Engine'}
                   </Text>
-                  <Text style={styles.sectionDescText}>
-                    {language === 'kh'
-                      ? 'ជ្រើសរើស Cloud LLM Model សម្រាប់ដំណើរការ Daily AI Briefing និង Copilot Assistant'
-                      : 'Choose between ultra-fast Flash models or enhanced reasoning versions for Copilot interactions.'}
-                  </Text>
 
                   <View style={styles.formGrid}>
                     <View style={styles.formField}>
@@ -991,19 +968,11 @@ export const SettingsModule: React.FC = () => {
                   <Text style={styles.sectionHeaderTitle}>
                     {language === 'kh' ? 'ភាសា និងតំបន់ (Language & Region)' : 'Language & Region'}
                   </Text>
-                  <Text style={styles.sectionDescText}>
-                    {language === 'kh'
-                      ? 'ប្តូរភាសាបង្ហាញរបស់ប្រព័ន្ធ Personal OS រវាង ភាសាខ្មែរ និង ភាសាអង់គ្លេស'
-                      : 'Toggle display localization between native Khmer and English.'}
-                  </Text>
 
                   <View style={styles.prefRow}>
                     <View style={styles.prefLeft}>
                       <Text style={styles.prefTitle}>
                         {language === 'kh' ? 'ភាសាកម្មវិធី (Active Language)' : 'Active Language'}
-                      </Text>
-                      <Text style={styles.prefSub}>
-                        {language === 'kh' ? 'បច្ចុប្បន្ន៖ ភាសាខ្មែរ (Khmer)' : 'Current: English (United States)'}
                       </Text>
                     </View>
 
@@ -1025,9 +994,6 @@ export const SettingsModule: React.FC = () => {
                     <View style={styles.prefLeft}>
                       <Text style={styles.prefTitle}>
                         {language === 'kh' ? 'សំឡេងរោទិ៍ប្រព័ន្ធ (Sound Alerts)' : 'Sound Alerts'}
-                      </Text>
-                      <Text style={styles.prefSub}>
-                        {language === 'kh' ? 'បន្លឺសំឡេងពេលមានកិច្ចការដល់ម៉ោង ឬសារថ្មី' : 'Play subtle audio chime on tasks and new events'}
                       </Text>
                     </View>
 
@@ -1052,9 +1018,6 @@ export const SettingsModule: React.FC = () => {
                     <View style={styles.prefLeft}>
                       <Text style={styles.prefTitle}>
                         {language === 'kh' ? 'ការជូនដំណឹងលើ Desktop (Banner Notifications)' : 'Desktop Banner Alerts'}
-                      </Text>
-                      <Text style={styles.prefSub}>
-                        {language === 'kh' ? 'បង្ហាញផ្ទាំង Pop-up លើអេក្រង់កុំព្យូទ័រ' : 'Display macOS native banner notifications'}
                       </Text>
                     </View>
 
