@@ -595,7 +595,7 @@ export const CalendarModule: React.FC = () => {
                 <Text style={styles.insightStripValDark}>{monthCompletedTasksCount} {isKh ? 'រួចរាល់' : 'done'} / {monthPendingTasksCount} {isKh ? 'រង់ចាំ' : 'pending'}</Text>
               </View>
 
-              <View style={styles.insightStripItem}>
+              <View style={[styles.insightStripItem, { borderRightWidth: 0 }]}>
                 <View style={[styles.insightStripIconWrap, { backgroundColor: '#EFF6FF' }]}>
                   <RemixIcon name="calendar-line" size={11} color="#2563EB" />
                 </View>
@@ -604,7 +604,7 @@ export const CalendarModule: React.FC = () => {
               </View>
             </View>
 
-            {/* Days of Week Header */}
+            {/* Days of Week Header (Seamlessly attached below insight strip) */}
             <View style={styles.weekHeader}>
               {daysOfWeek.map((d) => (
                 <View key={d} style={styles.weekHeaderCol}>
@@ -1855,19 +1855,21 @@ const styles = StyleSheet.create({
   },
   gridContainer: {
     flex: 1,
-    borderRightWidth: 1,
-    borderRightColor: '#E2E8F0',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    borderRadius: 8,
+    overflow: 'hidden',
     backgroundColor: '#FFFFFF',
   },
   gridContainerFull: {
-    borderRightWidth: 0,
+    borderRightWidth: 1,
   },
   weekHeader: {
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderBottomColor: '#E2E8F0',
     backgroundColor: '#F8FAFC',
-    paddingVertical: 8,
+    paddingVertical: 7,
   },
   weekHeaderCol: {
     flex: 1,
@@ -2075,33 +2077,30 @@ const styles = StyleSheet.create({
   monthInsightStrip: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 10,
-    flexWrap: 'wrap',
-    gap: 8,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
   },
   insightStripItem: {
     flex: 1,
-    minWidth: 140,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 7,
-    backgroundColor: '#F8FAFC',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 7,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRightWidth: 1,
+    borderRightColor: '#E2E8F0',
+    backgroundColor: '#FFFFFF',
   },
   insightStripIconWrap: {
-    width: 22,
-    height: 22,
-    borderRadius: 5,
+    width: 20,
+    height: 20,
+    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
   },
   insightStripLabel: {
-    fontSize: 10.5,
+    fontSize: 11,
     fontFamily: 'Krasar-Regular',
     color: '#64748B',
   },
