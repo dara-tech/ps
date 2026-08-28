@@ -73,7 +73,7 @@ export const AICopilotModule: React.FC = () => {
       return {
         text: 'Good morning',
         image: TIME_MORNING_IMG,
-        fallbackIcon: 'sun-foggy-fill' as const,
+        fallbackIcon: 'sparkles-fill' as const,
         iconColor: '#F59E0B',
       };
     }
@@ -81,7 +81,7 @@ export const AICopilotModule: React.FC = () => {
       return {
         text: 'Good afternoon',
         image: TIME_AFTERNOON_IMG,
-        fallbackIcon: 'sun-fill' as const,
+        fallbackIcon: 'sparkles-fill' as const,
         iconColor: '#F59E0B',
       };
     }
@@ -89,14 +89,14 @@ export const AICopilotModule: React.FC = () => {
       return {
         text: 'Good evening',
         image: null,
-        fallbackIcon: 'sun-cloudy-fill' as const,
+        fallbackIcon: 'sparkles-fill' as const,
         iconColor: '#F97316',
       };
     }
     return {
       text: 'Good night',
       image: null,
-      fallbackIcon: 'moon-stars-fill' as const,
+      fallbackIcon: 'sparkles-fill' as const,
       iconColor: '#8B5CF6',
     };
   }, []);
@@ -226,27 +226,21 @@ export const AICopilotModule: React.FC = () => {
           <Text style={[styles.moduleTitle, { color: tokens.textPrimary }]}>Copilot</Text>
 
           {/* Model Selector Pill */}
-          <CustomSelect
-            options={aiModels.map((m) => ({
-              label: m,
-              value: m,
-              badgeColor: isAiOnline ? '#10B981' : '#F59E0B',
-            }))}
-            value={selectedModel}
-            onChange={setSelectedModel}
-            size="sm"
-            variant="filled"
-            menuWidth={210}
-          />
+          <View style={{ width: 150 }}>
+            <CustomSelect
+              options={aiModels.map((m) => ({ label: m, value: m }))}
+              value={selectedModel}
+              onChange={setSelectedModel}
+              placeholder="Select AI Model"
+              size="sm"
+            />
+          </View>
         </View>
 
         <View style={styles.headerRight}>
           <TouchableOpacity
-            style={[styles.clearChatBtn, { borderColor: tokens.borderSubtle, backgroundColor: tokens.surfaceMuted }]}
-            onPress={() => {
-              clearAiMessages();
-              toast.info('Chat Cleared', 'Conversation history reset.');
-            }}
+            style={[styles.clearChatBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
+            onPress={clearAiMessages}
             activeOpacity={0.7}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
@@ -313,7 +307,7 @@ export const AICopilotModule: React.FC = () => {
               >
                 <View style={[styles.insightCardHeader, { borderBottomColor: tokens.borderSubtle }]}>
                   <View style={styles.insightHeaderTitleBox}>
-                    <Image source={AI_PRIORITY_IMG} style={styles.insightHeader3dImg} resizeMode="cover" />
+                    <RemixIcon name="checkbox-circle-fill" size={14} color={tokens.accentColor} />
                     <Text style={[styles.insightCardTitle, { color: tokens.textPrimary }]}>Daily Priorities</Text>
                   </View>
                   <View style={[styles.insightCountBadge, { backgroundColor: tokens.accentSoft }]}>
@@ -347,7 +341,7 @@ export const AICopilotModule: React.FC = () => {
               >
                 <View style={[styles.insightCardHeader, { borderBottomColor: tokens.borderSubtle }]}>
                   <View style={styles.insightHeaderTitleBox}>
-                    <Image source={AI_PULSE_IMG} style={styles.insightHeader3dImg} resizeMode="cover" />
+                    <RemixIcon name="bank-card-line" size={14} color="#10B981" />
                     <Text style={[styles.insightCardTitle, { color: tokens.textPrimary }]}>Financial Pulse</Text>
                   </View>
                   <View style={[styles.insightCountBadge, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
@@ -385,7 +379,7 @@ export const AICopilotModule: React.FC = () => {
               >
                 <View style={[styles.insightCardHeader, { borderBottomColor: tokens.borderSubtle }]}>
                   <View style={styles.insightHeaderTitleBox}>
-                    <Image source={AI_RADAR_IMG} style={styles.insightHeader3dImg} resizeMode="cover" />
+                    <RemixIcon name="shopping-bag-line" size={14} color="#0284C7" />
                     <Text style={[styles.insightCardTitle, { color: tokens.textPrimary }]}>Market Radar</Text>
                   </View>
                   <View style={[styles.insightCountBadge, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
