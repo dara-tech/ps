@@ -642,6 +642,10 @@ export const CalendarModule: React.FC = () => {
                     onPress={() => handleDayCellClick(item.dateStr)}
                     activeOpacity={0.7}
                   >
+                    {/* Top-Left Corner Triangle Flag */}
+                    {item.isToday && <View style={styles.todayCornerTriangle} />}
+                    {isSelected && !item.isToday && <View style={styles.selectedCornerTriangle} />}
+
                     <View style={styles.dayCellTop}>
                       <View
                         style={[
@@ -1914,6 +1918,32 @@ const styles = StyleSheet.create({
   },
   dayCellToday: {
     backgroundColor: '#F8FAFC',
+  },
+  todayCornerTriangle: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: 0,
+    height: 0,
+    borderTopWidth: 12,
+    borderRightWidth: 12,
+    borderTopColor: '#0F172A',
+    borderRightColor: 'transparent',
+    borderStyle: 'solid',
+    zIndex: 2,
+  },
+  selectedCornerTriangle: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: 0,
+    height: 0,
+    borderTopWidth: 12,
+    borderRightWidth: 12,
+    borderTopColor: '#2563EB',
+    borderRightColor: 'transparent',
+    borderStyle: 'solid',
+    zIndex: 2,
   },
   dayCellTop: {
     flexDirection: 'row',
