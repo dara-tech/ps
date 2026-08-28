@@ -252,12 +252,9 @@ export const AICopilotModule: React.FC = () => {
                     >
                       <RemixIcon
                         name={copiedId === msg.id ? 'check-line' : 'file-copy-line'}
-                        size={11}
+                        size={13}
                         color={copiedId === msg.id ? '#10B981' : '#64748B'}
                       />
-                      <Text style={[styles.msgActionBtnText, copiedId === msg.id && { color: '#10B981' }]}>
-                        {copiedId === msg.id ? 'Copied' : 'Copy'}
-                      </Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
@@ -265,8 +262,7 @@ export const AICopilotModule: React.FC = () => {
                       onPress={handleRegenerate}
                       activeOpacity={0.7}
                     >
-                      <RemixIcon name="refresh-line" size={11} color="#64748B" />
-                      <Text style={styles.msgActionBtnText}>Retry</Text>
+                      <RemixIcon name="refresh-line" size={13} color="#64748B" />
                     </TouchableOpacity>
 
                     <TouchableOpacity
@@ -276,12 +272,9 @@ export const AICopilotModule: React.FC = () => {
                     >
                       <RemixIcon
                         name="volume-up-line"
-                        size={11}
+                        size={13}
                         color={speakingId === msg.id ? '#6366F1' : '#64748B'}
                       />
-                      <Text style={[styles.msgActionBtnText, speakingId === msg.id && { color: '#6366F1' }]}>
-                        {speakingId === msg.id ? 'Stop' : 'Read'}
-                      </Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
@@ -291,12 +284,9 @@ export const AICopilotModule: React.FC = () => {
                     >
                       <RemixIcon
                         name="telegram-official"
-                        size={12}
+                        size={13}
                         color="#0284C7"
                       />
-                      <Text style={[styles.msgActionBtnText, { color: '#0284C7', fontWeight: '700' }]}>
-                        Telegram
-                      </Text>
                     </TouchableOpacity>
                   </View>
                 )}
@@ -732,12 +722,11 @@ const styles = StyleSheet.create({
     borderTopColor: '#F8FAFC',
   },
   msgActionBtn: {
-    flexDirection: 'row',
+    width: 26,
+    height: 26,
     alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 7,
-    paddingVertical: 3,
-    borderRadius: 4,
+    justifyContent: 'center',
+    borderRadius: 5,
     backgroundColor: '#F8FAFC',
     borderWidth: 1,
     borderColor: '#E2E8F0',
