@@ -562,7 +562,7 @@ export const ChatInputBar: React.FC<ChatInputBarProps> = React.memo(({
               onBlur={() => setIsFocused(false)}
             />
 
-            <View style={styles.inputToolbar}>
+            <View style={[styles.inputToolbar, { borderTopColor: tokens.borderSubtle }]}>
               <View style={styles.toolbarLeft}>
                 {/* Emoji Button */}
                 <TouchableOpacity
@@ -622,14 +622,18 @@ export const ChatInputBar: React.FC<ChatInputBarProps> = React.memo(({
                 <TouchableOpacity
                   style={[
                     styles.sendBtn,
-                    chatSource === 'telegram' && { backgroundColor: '#0284C7' },
-                    (!text.trim() && attachments.length === 0) && styles.sendBtnDisabled,
+                    { backgroundColor: tokens.accentColor },
+                    (!text.trim() && attachments.length === 0) && { backgroundColor: tokens.surfaceMuted, borderWidth: 1, borderColor: tokens.borderSubtle },
                   ]}
                   onPress={handleSend}
                   disabled={!text.trim() && attachments.length === 0}
                   activeOpacity={0.8}
                 >
-                  <RemixIcon name="send-plane-fill" size={13} color="#FFFFFF" />
+                  <RemixIcon
+                    name="send-plane-fill"
+                    size={13}
+                    color={(!text.trim() && attachments.length === 0) ? tokens.textMuted : tokens.accentFg}
+                  />
                 </TouchableOpacity>
               </View>
             </View>
