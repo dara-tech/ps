@@ -53,9 +53,6 @@ export const ForwardMessageModal: React.FC = () => {
 
   const isShareMode = Boolean(shareText);
   const count = isShareMode ? 1 : (forwardMessageIds.length || 1);
-  const snippet = isShareMode
-    ? (shareText || '')
-    : (forwardingMessage?.text || (forwardingMessage?.mediaType ? `[${forwardingMessage.mediaType.toUpperCase()}]` : 'Message'));
 
   return (
     <Modal
@@ -70,8 +67,8 @@ export const ForwardMessageModal: React.FC = () => {
           <View style={styles.header}>
             <Text style={styles.headerTitle}>
               {isShareMode
-                ? (isKh ? 'ផ្ញើទៅកាន់ Telegram...' : 'Send to Telegram...')
-                : (isKh ? 'បញ្ជូនសារបន្តទៅកាន់...' : 'Forward to...')}
+                ? (isKh ? 'ផ្ញើទៅកាន់ Telegram' : 'Send to Telegram')
+                : (isKh ? 'បញ្ជូនសារបន្តទៅកាន់' : 'Forward to')}
             </Text>
             <TouchableOpacity
               style={styles.closeBtn}
@@ -163,26 +160,8 @@ export const ForwardMessageModal: React.FC = () => {
             )}
           </ScrollView>
 
-          {/* 4. Bottom Forward Preview & Send Action */}
+          {/* 4. Bottom Send Actions */}
           <View style={styles.footer}>
-            {/* Forward Preview Card */}
-            <View style={styles.previewBox}>
-              <View style={styles.previewAccent} />
-              <View style={styles.previewContent}>
-                <View style={styles.previewHeaderRow}>
-                  <RemixIcon name={isShareMode ? 'sparkles-fill' : 'share-forward-line'} size={12} color="#0284C7" />
-                  <Text style={styles.previewSender}>
-                    {hideAuthor
-                      ? (isKh ? 'លាក់ឈ្មោះអ្នកផ្ញើ' : 'Sender hidden')
-                      : (isShareMode ? (shareTitle || 'AI Copilot Note') : (forwardingMessage?.senderName || 'Original Sender'))}
-                  </Text>
-                </View>
-                <Text style={styles.previewSnippet} numberOfLines={2}>
-                  {snippet}
-                </Text>
-              </View>
-            </View>
-
             {/* Toggle: Hide Author Name (Only in forward mode) */}
             {!isShareMode && (
               <TouchableOpacity
@@ -383,42 +362,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#F1F5F9',
     backgroundColor: '#FAFBFD',
-    gap: 10,
-  },
-  previewBox: {
-    flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    overflow: 'hidden',
-  },
-  previewAccent: {
-    width: 3.5,
-    backgroundColor: '#0284C7',
-  },
-  previewContent: {
-    flex: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    minWidth: 0,
-  },
-  previewHeaderRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  previewSender: {
-    fontSize: 11,
-    fontFamily: 'Krasar-Bold',
-    fontWeight: '700',
-    color: '#0284C7',
-  },
-  previewSnippet: {
-    fontSize: 11.5,
-    fontFamily: 'Krasar-Regular',
-    color: '#475569',
-    marginTop: 1,
+    gap: 8,
   },
   hideAuthorRow: {
     flexDirection: 'row',
