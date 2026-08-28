@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import { RemixIcon } from './RemixIcon';
+import { useThemeStore } from '../../store/useThemeStore';
 import { toast } from '../../store/useToastStore';
 
 interface RichMarkdownViewProps {
@@ -9,8 +10,10 @@ interface RichMarkdownViewProps {
 }
 
 export const RichMarkdownView: React.FC<RichMarkdownViewProps> = ({ content, isUser = false }) => {
+  const tokens = useThemeStore((state) => state.tokens);
+
   if (isUser) {
-    return <Text style={styles.userText}>{content}</Text>;
+    return <Text style={[styles.userText, { color: tokens.accentFg }]}>{content}</Text>;
   }
 
   // Parse lines into structured blocks
@@ -20,7 +23,7 @@ export const RichMarkdownView: React.FC<RichMarkdownViewProps> = ({ content, isU
     <View style={styles.container}>
       {blocks.map((block, idx) => {
         if (block.type === 'code') {
-          return <CodeBlock key={idx} language={block.language || 'text'} code={block.text} />;
+          return <CodeBlock key={idx} language={block.language || 'text'} code={block.text} tokens={tokens} />;
         }
 
         if (block.type === 'table') {
@@ -30,54 +33,55 @@ export const RichMarkdownView: React.FC<RichMarkdownViewProps> = ({ content, isU
               headers={block.tableHeaders || []}
               rows={block.tableRows || []}
               alignments={block.tableAlignments || []}
+              tokens={tokens}
             />
           );
         }
 
         if (block.type === 'h1') {
           return (
-            <Text key={idx} style={styles.h1}>
-              {renderFormattedInline(block.text)}
+            <Text key={idx} style={[styles.h1, { color: tokens.textPrimary }]}>
+              {renderFormattedInline(block.text, tokens)}
             </Text>
           );
         }
 
         if (block.type === 'h2') {
           return (
-            <Text key={idx} style={styles.h2}>
-              {renderFormattedInline(block.text)}
+            <Text key={idx} style={[styles.h2, { color: tokens.textPrimary }]}>
+              {renderFormattedInline(block.text, tokens)}
             </Text>
           );
         }
 
         if (block.type === 'h3') {
           return (
-            <Text key={idx} style={styles.h3}>
-              {renderFormattedInline(block.text)}
+            <Text key={idx} style={[styles.h3, { color: tokens.textPrimary }]}>
+              {renderFormattedInline(block.text, tokens)}
             </Text>
           );
         }
 
         if (block.type === 'h4') {
           return (
-            <Text key={idx} style={styles.h4}>
-              {renderFormattedInline(block.text)}
+            <Text key={idx} style={[styles.h4, { color: tokens.textPrimary }]}>
+              {renderFormattedInline(block.text, tokens)}
             </Text>
           );
         }
 
         if (block.type === 'h5') {
           return (
-            <Text key={idx} style={styles.h5}>
-              {renderFormattedInline(block.text)}
+            <Text key={idx} style={[styles.h5, { color: tokens.textPrimary }]}>
+              {renderFormattedInline(block.text, tokens)}
             </Text>
           );
         }
 
         if (block.type === 'h6') {
           return (
-            <Text key={idx} style={styles.h6}>
-              {renderFormattedInline(block.text)}
+            <Text key={idx} style={[styles.h6, { color: tokens.textSecondary }]}>
+              {renderFormattedInline(block.text, tokens)}
             </Text>
           );
         }
@@ -85,8 +89,8 @@ export const RichMarkdownView: React.FC<RichMarkdownViewProps> = ({ content, isU
         if (block.type === 'bullet') {
           return (
             <View key={idx} style={styles.bulletRow}>
-              <View style={styles.bulletDot} />
-              <Text style={styles.bulletText}>{renderFormattedInline(block.text)}</Text>
+              <View style={[styles.bulletDot, { backgroundColor: tokens.textSecondary }]} />
+              <Text style={[styles.bulletText, { color: tokens.textPrimary }]}>{renderFormattedInline(block.text, tokens)}</Text>
             </View>
           );
         }
@@ -94,28 +98,28 @@ export const RichMarkdownView: React.FC<RichMarkdownViewProps> = ({ content, isU
         if (block.type === 'numbered') {
           return (
             <View key={idx} style={styles.bulletRow}>
-              <Text style={styles.numberedIndex}>{block.index}.</Text>
-              <Text style={styles.bulletText}>{renderFormattedInline(block.text)}</Text>
+              <Text style={[styles.numberedIndex, { color: tokens.textSecondary }]}>{block.index}.</Text>
+              <Text style={[styles.bulletText, { color: tokens.textPrimary }]}>{renderFormattedInline(block.text, tokens)}</Text>
             </View>
           );
         }
 
         if (block.type === 'quote') {
           return (
-            <View key={idx} style={styles.quoteBox}>
-              <Text style={styles.quoteText}>{renderFormattedInline(block.text)}</Text>
+            <View key={idx} style={[styles.quoteBox, { borderLeftColor: tokens.borderStrong }]}>
+              <Text style={[styles.quoteText, { color: tokens.textSecondary }]}>{renderFormattedInline(block.text, tokens)}</Text>
             </View>
           );
         }
 
         if (block.type === 'divider') {
-          return <View key={idx} style={styles.divider} />;
+          return <View key={idx} style={[styles.divider, { backgroundColor: tokens.borderSubtle }]} />;
         }
 
         // Standard paragraph
         return (
-          <Text key={idx} style={styles.paragraph} selectable={true}>
-            {renderFormattedInline(block.text)}
+          <Text key={idx} style={[styles.paragraph, { color: tokens.textPrimary }]} selectable={true}>
+            {renderFormattedInline(block.text, tokens)}
           </Text>
         );
       })}
@@ -259,30 +263,30 @@ function parseMarkdownBlocks(raw: string): Block[] {
 /**
  * Parses inline formatting: `code`, ***bold-italic***, **bold**, *italic*, _italic_
  */
-function renderFormattedInline(text: string): React.ReactNode[] {
+function renderFormattedInline(text: string, tokens?: any): React.ReactNode[] {
   const parts: React.ReactNode[] = [];
   // Tokenize regex: `inline code`, ***bold italic***, **bold**, *italic*, _italic_
   const regex = /(`[^`]+`|\*\*\*[^*]+\*\*\*|\*\*[^*]+\*\*|\*[^*]+\*|_[^_]+_)/g;
-  const tokens = text.split(regex);
+  const tokenList = text.split(regex);
 
-  tokens.forEach((token, index) => {
+  tokenList.forEach((token, index) => {
     if (!token) return;
 
     if (token.startsWith('`') && token.endsWith('`') && token.length > 1) {
       parts.push(
-        <Text key={index} style={styles.inlineCode}>
+        <Text key={index} style={[styles.inlineCode, tokens && { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle, color: tokens.textPrimary }]}>
           {token.slice(1, -1)}
         </Text>
       );
     } else if (token.startsWith('***') && token.endsWith('***') && token.length > 5) {
       parts.push(
-        <Text key={index} style={styles.boldItalicText}>
+        <Text key={index} style={[styles.boldItalicText, tokens && { color: tokens.textPrimary }]}>
           {token.slice(3, -3)}
         </Text>
       );
     } else if (token.startsWith('**') && token.endsWith('**') && token.length > 3) {
       parts.push(
-        <Text key={index} style={styles.boldText}>
+        <Text key={index} style={[styles.boldText, tokens && { color: tokens.textPrimary }]}>
           {token.slice(2, -2)}
         </Text>
       );
@@ -291,12 +295,12 @@ function renderFormattedInline(text: string): React.ReactNode[] {
       (token.startsWith('_') && token.endsWith('_') && token.length > 2)
     ) {
       parts.push(
-        <Text key={index} style={styles.italicText}>
+        <Text key={index} style={[styles.italicText, tokens && { color: tokens.textSecondary }]}>
           {token.slice(1, -1)}
         </Text>
       );
     } else {
-      parts.push(<Text key={index}>{token}</Text>);
+      parts.push(<Text key={index} style={tokens && { color: tokens.textPrimary }}>{token}</Text>);
     }
   });
 
@@ -307,7 +311,8 @@ const TableView: React.FC<{
   headers: string[];
   rows: string[][];
   alignments: ('left' | 'center' | 'right')[];
-}> = ({ headers, rows, alignments }) => {
+  tokens?: any;
+}> = ({ headers, rows, alignments, tokens }) => {
   const colCount = Math.max(headers.length, ...rows.map((r) => r.length), 1);
 
   // Compute fixed column width for each column index so that all rows and header have the exact same column width
@@ -325,25 +330,27 @@ const TableView: React.FC<{
 
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tableScroll}>
-      <View style={styles.tableContainer}>
+      <View style={[styles.tableContainer, tokens && { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
         {/* Table Header */}
-        <View style={styles.tableHeaderRow}>
+        <View style={[styles.tableHeaderRow, tokens && { backgroundColor: tokens.surfaceMuted, borderBottomColor: tokens.borderSubtle }]}>
           {headers.map((h, idx) => (
             <View
               key={idx}
               style={[
                 styles.tableHeaderCell,
                 { width: colWidths[idx] },
+                tokens && { borderRightColor: tokens.borderSubtle },
                 idx === headers.length - 1 && { borderRightWidth: 0 },
               ]}
             >
               <Text
                 style={[
                   styles.tableHeaderText,
+                  tokens && { color: tokens.textPrimary },
                   { textAlign: alignments[idx] || 'left' },
                 ]}
               >
-                {renderFormattedInline(h)}
+                {renderFormattedInline(h, tokens)}
               </Text>
             </View>
           ))}
@@ -355,7 +362,8 @@ const TableView: React.FC<{
             key={rIdx}
             style={[
               styles.tableBodyRow,
-              rIdx % 2 === 1 && styles.tableBodyRowAlt,
+              tokens && { backgroundColor: tokens.surfaceBg, borderBottomColor: tokens.borderSubtle },
+              rIdx % 2 === 1 && (tokens ? { backgroundColor: tokens.surfaceMuted } : styles.tableBodyRowAlt),
               rIdx === rows.length - 1 && { borderBottomWidth: 0 },
             ]}
           >
@@ -367,16 +375,18 @@ const TableView: React.FC<{
                   style={[
                     styles.tableBodyCell,
                     { width: colWidths[cIdx] },
+                    tokens && { borderRightColor: tokens.borderSubtle },
                     cIdx === headers.length - 1 && { borderRightWidth: 0 },
                   ]}
                 >
                   <Text
                     style={[
                       styles.tableCellText,
+                      tokens && { color: tokens.textPrimary },
                       { textAlign: alignments[cIdx] || 'left' },
                     ]}
                   >
-                    {renderFormattedInline(cellVal)}
+                    {renderFormattedInline(cellVal, tokens)}
                   </Text>
                 </View>
               );
@@ -388,7 +398,7 @@ const TableView: React.FC<{
   );
 };
 
-const CodeBlock: React.FC<{ language: string; code: string }> = ({ language, code }) => {
+const CodeBlock: React.FC<{ language: string; code: string; tokens?: any }> = ({ language, code, tokens }) => {
   const handleCopy = () => {
     if (Platform.OS === 'web' && navigator.clipboard) {
       navigator.clipboard.writeText(code);
@@ -397,7 +407,7 @@ const CodeBlock: React.FC<{ language: string; code: string }> = ({ language, cod
   };
 
   return (
-    <View style={styles.codeContainer}>
+    <View style={[styles.codeContainer, tokens && { borderColor: tokens.borderSubtle }]}>
       <View style={styles.codeHeader}>
         <Text style={styles.codeLangText}>{language.toUpperCase() || 'CODE'}</Text>
         <TouchableOpacity style={styles.codeCopyBtn} onPress={handleCopy} activeOpacity={0.7}>

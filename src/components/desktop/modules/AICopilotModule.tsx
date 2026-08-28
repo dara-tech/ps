@@ -473,21 +473,23 @@ export const AICopilotModule: React.FC = () => {
                 <View
                   style={[
                     styles.bubble,
-                    isUser ? styles.bubbleUser : styles.bubbleAssistant,
+                    isUser
+                      ? [styles.bubbleUser, { backgroundColor: tokens.accentColor }]
+                      : [styles.bubbleAssistant, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }],
                   ]}
                 >
                   {!isUser && (
-                    <View style={styles.assistantHeaderRow}>
+                    <View style={[styles.assistantHeaderRow, { borderBottomColor: tokens.borderSubtle }]}>
                       <View style={styles.assistantMetaLeft}>
-                        <View style={styles.geminiIconBadge}>
-                          <RemixIcon name="sparkles-fill" size={11} color="#6366F1" />
+                        <View style={[styles.geminiIconBadge, { backgroundColor: tokens.accentSoft }]}>
+                          <RemixIcon name="sparkles-fill" size={11} color={tokens.accentColor} />
                         </View>
-                        <Text style={styles.assistantName}>Gemini</Text>
-                        <View style={styles.modelTagPill}>
-                          <Text style={styles.modelTagPillText}>{msg.model || selectedModel}</Text>
+                        <Text style={[styles.assistantName, { color: tokens.textPrimary }]}>Gemini</Text>
+                        <View style={[styles.modelTagPill, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle, borderWidth: 1 }]}>
+                          <Text style={[styles.modelTagPillText, { color: tokens.textSecondary }]}>{msg.model || selectedModel}</Text>
                         </View>
                       </View>
-                      <Text style={styles.messageTimeTag}>{msg.timestamp}</Text>
+                      <Text style={[styles.messageTimeTag, { color: tokens.textMuted }]}>{msg.timestamp}</Text>
                     </View>
                   )}
 
@@ -495,51 +497,51 @@ export const AICopilotModule: React.FC = () => {
 
                   {isUser ? (
                     <View style={styles.bubbleFooter}>
-                      <Text style={styles.timestampUser}>{msg.timestamp}</Text>
+                      <Text style={[styles.timestampUser, { color: 'rgba(255, 255, 255, 0.7)' }]}>{msg.timestamp}</Text>
                     </View>
                   ) : (
-                    <View style={styles.assistantActionToolbar}>
+                    <View style={[styles.assistantActionToolbar, { borderTopColor: tokens.borderSubtle }]}>
                       <TouchableOpacity
-                        style={[styles.msgActionBtn, copiedId === msg.id && styles.msgActionBtnActive]}
+                        style={[styles.msgActionBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }, copiedId === msg.id && { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}
                         onPress={() => handleCopyMessage(msg.id, msg.content)}
                         activeOpacity={0.7}
                       >
                         <RemixIcon
                           name={copiedId === msg.id ? 'check-line' : 'file-copy-line'}
                           size={13}
-                          color={copiedId === msg.id ? '#10B981' : '#64748B'}
+                          color={copiedId === msg.id ? '#10B981' : tokens.textSecondary}
                         />
                       </TouchableOpacity>
 
                       <TouchableOpacity
-                        style={styles.msgActionBtn}
+                        style={[styles.msgActionBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
                         onPress={handleRegenerate}
                         activeOpacity={0.7}
                       >
-                        <RemixIcon name="refresh-line" size={13} color="#64748B" />
+                        <RemixIcon name="refresh-line" size={13} color={tokens.textSecondary} />
                       </TouchableOpacity>
 
                       <TouchableOpacity
-                        style={[styles.msgActionBtn, speakingId === msg.id && styles.msgActionBtnActive]}
+                        style={[styles.msgActionBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }, speakingId === msg.id && { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}
                         onPress={() => handleSpeakMessage(msg.id, msg.content)}
                         activeOpacity={0.7}
                       >
                         <RemixIcon
                           name="volume-up-line"
                           size={13}
-                          color={speakingId === msg.id ? '#6366F1' : '#64748B'}
+                          color={speakingId === msg.id ? tokens.accentColor : tokens.textSecondary}
                         />
                       </TouchableOpacity>
 
                       <TouchableOpacity
-                        style={[styles.msgActionBtn, { borderColor: '#BAE6FD', backgroundColor: '#F0F9FF' }]}
+                        style={[styles.msgActionBtn, { borderColor: tokens.accentBorder, backgroundColor: tokens.accentSoft }]}
                         onPress={() => handleForwardToTelegram(msg.content)}
                         activeOpacity={0.7}
                       >
                         <RemixIcon
                           name="telegram-official"
                           size={13}
-                          color="#0284C7"
+                          color={tokens.accentColor}
                         />
                       </TouchableOpacity>
                     </View>
@@ -552,20 +554,20 @@ export const AICopilotModule: React.FC = () => {
 
         {isAiThinking && (
           <View style={[styles.messageRow, styles.messageRowAssistant]}>
-            <View style={[styles.bubble, styles.bubbleAssistant, styles.thinkingBubble]}>
+            <View style={[styles.bubble, styles.bubbleAssistant, styles.thinkingBubble, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
               <View style={styles.thinkingHeader}>
-                <View style={styles.geminiIconBadge}>
-                  <RemixIcon name="sparkles-fill" size={11} color="#6366F1" />
+                <View style={[styles.geminiIconBadge, { backgroundColor: tokens.accentSoft }]}>
+                  <RemixIcon name="sparkles-fill" size={11} color={tokens.accentColor} />
                 </View>
-                <Text style={styles.thinkingTitle}>Gemini AI is reasoning</Text>
-                <View style={styles.modelTagPill}>
-                  <Text style={styles.modelTagPillText}>{selectedModel}</Text>
+                <Text style={[styles.thinkingTitle, { color: tokens.textPrimary }]}>Gemini AI is reasoning</Text>
+                <View style={[styles.modelTagPill, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle, borderWidth: 1 }]}>
+                  <Text style={[styles.modelTagPillText, { color: tokens.textSecondary }]}>{selectedModel}</Text>
                 </View>
               </View>
 
               <View style={styles.thinkingBody}>
-                <ActivityIndicator size="small" color="#6366F1" />
-                <Text style={styles.thinkingText}>Generating response with live context...</Text>
+                <ActivityIndicator size="small" color={tokens.accentColor} />
+                <Text style={[styles.thinkingText, { color: tokens.textSecondary }]}>Generating response with live context...</Text>
               </View>
             </View>
           </View>
