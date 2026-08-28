@@ -47,6 +47,30 @@ export const RichMarkdownView: React.FC<RichMarkdownViewProps> = ({ content, isU
           );
         }
 
+        if (block.type === 'h4') {
+          return (
+            <Text key={idx} style={styles.h4}>
+              {renderFormattedInline(block.text)}
+            </Text>
+          );
+        }
+
+        if (block.type === 'h5') {
+          return (
+            <Text key={idx} style={styles.h5}>
+              {renderFormattedInline(block.text)}
+            </Text>
+          );
+        }
+
+        if (block.type === 'h6') {
+          return (
+            <Text key={idx} style={styles.h6}>
+              {renderFormattedInline(block.text)}
+            </Text>
+          );
+        }
+
         if (block.type === 'bullet') {
           return (
             <View key={idx} style={styles.bulletRow}>
@@ -89,7 +113,7 @@ export const RichMarkdownView: React.FC<RichMarkdownViewProps> = ({ content, isU
 };
 
 interface Block {
-  type: 'paragraph' | 'h1' | 'h2' | 'h3' | 'bullet' | 'numbered' | 'quote' | 'code' | 'divider';
+  type: 'paragraph' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'bullet' | 'numbered' | 'quote' | 'code' | 'divider';
   text: string;
   language?: string;
   index?: number;
@@ -138,14 +162,18 @@ function parseMarkdownBlocks(raw: string): Block[] {
       continue;
     }
 
-    if (trimmed.startsWith('# ')) {
-      blocks.push({ type: 'h1', text: trimmed.slice(2).trim() });
-    } else if (trimmed.startsWith('## ')) {
-      blocks.push({ type: 'h2', text: trimmed.slice(3).trim() });
-    } else if (trimmed.startsWith('### ')) {
-      blocks.push({ type: 'h3', text: trimmed.slice(4).trim() });
-    } else if (trimmed.startsWith('- ') || trimmed.startsWith('* ') || trimmed.startsWith('• ')) {
-      blocks.push({ type: 'bullet', text: trimmed.replace(/^[-*•]\s+/, '') });
+    // Header matching level 1 through 6
+    const headerMatch = trimmed.match(/^(#{1,6})\s+(.*)$/);
+    if (headerMatch) {
+      const level = headerMatch[1].length;
+      const text = headerMatch[2].trim();
+      const type = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+      blocks.push({ type, text });
+      continue;
+    }
+
+    if (trimmed.startsWith('- ') || trimmed.startsWith('* ') || trimmed.startsWith('• ') || trimmed.startsWith('+ ')) {
+      blocks.push({ type: 'bullet', text: trimmed.replace(/^[-*•+]\s+/, '') });
     } else if (/^\d+\.\s+/.test(trimmed)) {
       const match = trimmed.match(/^(\d+)\.\s+(.*)/);
       if (match) {
@@ -172,12 +200,12 @@ function parseMarkdownBlocks(raw: string): Block[] {
 }
 
 /**
- * Parses inline formatting like **bold**, *italic*, `inline code`, and plain text
+ * Parses inline formatting: `code`, ***bold-italic***, **bold**, *italic*, _italic_
  */
 function renderFormattedInline(text: string): React.ReactNode[] {
   const parts: React.ReactNode[] = [];
-  // Tokenize regex: `code`, **bold**, *italic*
-  const regex = /(`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*)/g;
+  // Tokenize regex: `inline code`, ***bold italic***, **bold**, *italic*, _italic_
+  const regex = /(`[^`]+`|\*\*\*[^*]+\*\*\*|\*\*[^*]+\*\*|\*[^*]+\*|_[^_]+_)/g;
   const tokens = text.split(regex);
 
   tokens.forEach((token, index) => {
@@ -189,13 +217,22 @@ function renderFormattedInline(text: string): React.ReactNode[] {
           {token.slice(1, -1)}
         </Text>
       );
+    } else if (token.startsWith('***') && token.endsWith('***') && token.length > 5) {
+      parts.push(
+        <Text key={index} style={styles.boldItalicText}>
+          {token.slice(3, -3)}
+        </Text>
+      );
     } else if (token.startsWith('**') && token.endsWith('**') && token.length > 3) {
       parts.push(
         <Text key={index} style={styles.boldText}>
           {token.slice(2, -2)}
         </Text>
       );
-    } else if (token.startsWith('*') && token.endsWith('*') && token.length > 2) {
+    } else if (
+      (token.startsWith('*') && token.endsWith('*') && token.length > 2) ||
+      (token.startsWith('_') && token.endsWith('_') && token.length > 2)
+    ) {
       parts.push(
         <Text key={index} style={styles.italicText}>
           {token.slice(1, -1)}
@@ -260,39 +297,70 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     color: '#334155',
   },
+  boldItalicText: {
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
+    fontStyle: 'italic',
+    color: '#0F172A',
+  },
   inlineCode: {
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
     fontSize: 11.5,
     backgroundColor: '#F1F5F9',
     color: '#0F172A',
-    paddingHorizontal: 4,
-    paddingVertical: 1,
-    borderRadius: 3,
+    paddingHorizontal: 5,
+    paddingVertical: 1.5,
+    borderRadius: 4,
     borderWidth: 1,
     borderColor: '#E2E8F0',
   },
   h1: {
-    fontSize: 15,
+    fontSize: 15.5,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
+    color: '#0F172A',
+    marginTop: 8,
+    marginBottom: 3,
+  },
+  h2: {
+    fontSize: 14,
     fontFamily: 'Krasar-Bold',
     fontWeight: '700',
     color: '#0F172A',
     marginTop: 6,
     marginBottom: 2,
   },
-  h2: {
-    fontSize: 13.5,
+  h3: {
+    fontSize: 13,
     fontFamily: 'Krasar-Bold',
     fontWeight: '700',
     color: '#0F172A',
-    marginTop: 4,
+    marginTop: 5,
     marginBottom: 2,
   },
-  h3: {
+  h4: {
     fontSize: 12.5,
     fontFamily: 'Krasar-Bold',
     fontWeight: '700',
-    color: '#1E293B',
+    color: '#0F172A',
+    marginTop: 5,
+    marginBottom: 2,
+  },
+  h5: {
+    fontSize: 12,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
+    color: '#334155',
+    marginTop: 4,
+    marginBottom: 1,
+  },
+  h6: {
+    fontSize: 11.5,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
+    color: '#64748B',
     marginTop: 3,
+    marginBottom: 1,
   },
   bulletRow: {
     flexDirection: 'row',
@@ -383,4 +451,3 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
 });
-
