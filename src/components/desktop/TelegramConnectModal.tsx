@@ -13,6 +13,7 @@ import { RemixIcon } from '../ui/RemixIcon';
 import { ModernAvatar } from '../ui/ModernAvatar';
 import { useTelegramStore } from '../../store/useTelegramStore';
 import { useLanguageStore } from '../../store/useLanguageStore';
+import { useThemeStore } from '../../store/useThemeStore';
 import { toast } from '../../store/useToastStore';
 
 interface TelegramConnectModalProps {
@@ -28,6 +29,7 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
 }) => {
   const language = useLanguageStore((state) => state.language);
   const isKh = language === 'kh';
+  const tokens = useThemeStore((state) => state.tokens);
 
   const isConnected = useTelegramStore((state) => state.isConnected);
   const isConnecting = useTelegramStore((state) => state.isConnecting);
@@ -172,7 +174,7 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
           /* Telegram Desktop Settings UI */
           <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
             {/* Top Profile Header */}
-            <View style={styles.avatarSection}>
+            <View style={[styles.avatarSection, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
               <TouchableOpacity
                 style={styles.avatarPickerWrap}
                 onPress={handlePickPhoto}
@@ -186,7 +188,7 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                   showPresence={true}
                   isOnline={true}
                 />
-                <View style={styles.avatarCameraBadge}>
+                <View style={[styles.avatarCameraBadge, { backgroundColor: tokens.accentColor, borderColor: tokens.surfaceBg }]}>
                   {isUploadingPhoto ? (
                     <ActivityIndicator size="small" color="#FFFFFF" />
                   ) : (
@@ -197,38 +199,42 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
 
               <View style={styles.profileTextCol}>
                 <View style={styles.nameRow}>
-                  <Text style={styles.profileName}>
+                  <Text style={[styles.profileName, { color: tokens.textPrimary }]}>
                     {user.firstName} {(user as any)?.lastName || ''}
                   </Text>
-                  <View style={styles.activePill}>
-                    <View style={styles.activeDot} />
-                    <Text style={styles.activePillText}>{isKh ? 'បានភ្ជាប់' : 'Active'}</Text>
+                  <View style={[styles.activePill, { backgroundColor: tokens.successSoft, borderColor: tokens.success }]}>
+                    <View style={[styles.activeDot, { backgroundColor: tokens.success }]} />
+                    <Text style={[styles.activePillText, { color: tokens.success }]}>{isKh ? 'បានភ្ជាប់' : 'Active'}</Text>
                   </View>
                 </View>
                 {user.username && (
-                  <Text style={styles.profileHandle}>@{user.username}</Text>
+                  <Text style={[styles.profileHandle, { color: tokens.accentColor }]}>@{user.username}</Text>
                 )}
                 {user.phone && (
-                  <Text style={styles.profilePhone}>+{user.phone}</Text>
+                  <Text style={[styles.profilePhone, { color: tokens.textMuted }]}>+{user.phone}</Text>
                 )}
               </View>
             </View>
 
             {/* Consistent 4-Segment Tab Bar */}
-            <View style={styles.tabBar}>
+            <View style={[styles.tabBar, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
               <TouchableOpacity
-                style={[styles.tabBtn, activeTab === 'account' && styles.tabBtnActive]}
+                style={[
+                  styles.tabBtn,
+                  activeTab === 'account' && [styles.tabBtnActive, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderStrong }],
+                ]}
                 onPress={() => setActiveTab('account')}
                 activeOpacity={0.7}
               >
                 <RemixIcon
                   name="user-line"
                   size={14}
-                  color={activeTab === 'account' ? '#0F172A' : '#64748B'}
+                  color={activeTab === 'account' ? tokens.textPrimary : tokens.textSecondary}
                 />
                 <Text
                   style={[
                     styles.tabBtnText,
+                    { color: activeTab === 'account' ? tokens.textPrimary : tokens.textSecondary },
                     activeTab === 'account' && styles.tabBtnTextActive,
                   ]}
                   numberOfLines={1}
@@ -238,20 +244,23 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.tabBtn, activeTab === 'ghost' && styles.tabBtnActive]}
+                style={[
+                  styles.tabBtn,
+                  activeTab === 'ghost' && [styles.tabBtnActive, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderStrong }],
+                ]}
                 onPress={() => setActiveTab('ghost')}
                 activeOpacity={0.7}
               >
                 <RemixIcon
                   name="ghost-line"
                   size={14}
-                  color={activeTab === 'ghost' ? '#7C3AED' : '#64748B'}
+                  color={activeTab === 'ghost' ? '#A855F7' : tokens.textSecondary}
                 />
                 <Text
                   style={[
                     styles.tabBtnText,
+                    { color: activeTab === 'ghost' ? '#A855F7' : tokens.textSecondary },
                     activeTab === 'ghost' && styles.tabBtnTextActive,
-                    activeTab === 'ghost' && { color: '#7C3AED' },
                   ]}
                   numberOfLines={1}
                 >
@@ -260,18 +269,22 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.tabBtn, activeTab === 'chats' && styles.tabBtnActive]}
+                style={[
+                  styles.tabBtn,
+                  activeTab === 'chats' && [styles.tabBtnActive, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderStrong }],
+                ]}
                 onPress={() => setActiveTab('chats')}
                 activeOpacity={0.7}
               >
                 <RemixIcon
                   name="chat-3-line"
                   size={14}
-                  color={activeTab === 'chats' ? '#0F172A' : '#64748B'}
+                  color={activeTab === 'chats' ? tokens.textPrimary : tokens.textSecondary}
                 />
                 <Text
                   style={[
                     styles.tabBtnText,
+                    { color: activeTab === 'chats' ? tokens.textPrimary : tokens.textSecondary },
                     activeTab === 'chats' && styles.tabBtnTextActive,
                   ]}
                   numberOfLines={1}
@@ -281,18 +294,22 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.tabBtn, activeTab === 'storage' && styles.tabBtnActive]}
+                style={[
+                  styles.tabBtn,
+                  activeTab === 'storage' && [styles.tabBtnActive, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderStrong }],
+                ]}
                 onPress={() => setActiveTab('storage')}
                 activeOpacity={0.7}
               >
                 <RemixIcon
                   name="folder-line"
                   size={14}
-                  color={activeTab === 'storage' ? '#0F172A' : '#64748B'}
+                  color={activeTab === 'storage' ? tokens.textPrimary : tokens.textSecondary}
                 />
                 <Text
                   style={[
                     styles.tabBtnText,
+                    { color: activeTab === 'storage' ? tokens.textPrimary : tokens.textSecondary },
                     activeTab === 'storage' && styles.tabBtnTextActive,
                   ]}
                   numberOfLines={1}
@@ -307,27 +324,27 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
               <View style={styles.tabContent}>
                 {isEditingProfile ? (
                   /* Edit Profile Form */
-                  <View style={styles.cardSection}>
+                  <View style={[styles.cardSection, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
                     <View style={styles.sectionHeaderRow}>
-                      <Text style={styles.sectionTitle}>
+                      <Text style={[styles.sectionTitle, { color: tokens.textPrimary }]}>
                         {isKh ? 'កែសម្រួលព័ត៌មានគណនី' : 'Edit Telegram Profile'}
                       </Text>
                       <TouchableOpacity
                         style={styles.cancelEditBtn}
                         onPress={() => setIsEditingProfile(false)}
                       >
-                        <Text style={styles.cancelEditText}>{isKh ? 'បោះបង់' : 'Cancel'}</Text>
+                        <Text style={[styles.cancelEditText, { color: tokens.textSecondary }]}>{isKh ? 'បោះបង់' : 'Cancel'}</Text>
                       </TouchableOpacity>
                     </View>
 
                     <TouchableOpacity
-                      style={styles.changePhotoBtn}
+                      style={[styles.changePhotoBtn, { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}
                       onPress={handlePickPhoto}
                       disabled={isUploadingPhoto}
                       activeOpacity={0.75}
                     >
-                      <RemixIcon name={'camera-fill' as any} size={14} color="#0284C7" />
-                      <Text style={styles.changePhotoBtnText}>
+                      <RemixIcon name={'camera-fill' as any} size={14} color={tokens.accentColor} />
+                      <Text style={[styles.changePhotoBtnText, { color: tokens.accentColor }]}>
                         {isUploadingPhoto
                           ? isKh ? 'កំពុងផ្ទុករូបភាព...' : 'Uploading Photo...'
                           : isKh ? 'ប្តូររូបថត Profile (Change Photo)' : 'Change Profile Photo'}
@@ -336,62 +353,62 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
 
                     <View style={styles.formRow}>
                       <View style={{ flex: 1, gap: 4 }}>
-                        <Text style={styles.inputLabel}>{isKh ? 'ឈ្មោះដំបូង (First Name) *' : 'First Name *'}</Text>
-                        <View style={styles.inputField}>
+                        <Text style={[styles.inputLabel, { color: tokens.textSecondary }]}>{isKh ? 'ឈ្មោះដំបូង (First Name) *' : 'First Name *'}</Text>
+                        <View style={[styles.inputField, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
                           <TextInput
-                            style={styles.formInput}
+                            style={[styles.formInput, { color: tokens.textPrimary }]}
                             value={editFirstName}
                             onChangeText={setEditFirstName}
                             placeholder="First Name"
-                            placeholderTextColor="#94A3B8"
+                            placeholderTextColor={tokens.textMuted}
                           />
                         </View>
                       </View>
                       <View style={{ flex: 1, gap: 4 }}>
-                        <Text style={styles.inputLabel}>{isKh ? 'ត្រកូល (Last Name)' : 'Last Name'}</Text>
-                        <View style={styles.inputField}>
+                        <Text style={[styles.inputLabel, { color: tokens.textSecondary }]}>{isKh ? 'ត្រកូល (Last Name)' : 'Last Name'}</Text>
+                        <View style={[styles.inputField, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
                           <TextInput
-                            style={styles.formInput}
+                            style={[styles.formInput, { color: tokens.textPrimary }]}
                             value={editLastName}
                             onChangeText={setEditLastName}
                             placeholder="Last Name"
-                            placeholderTextColor="#94A3B8"
+                            placeholderTextColor={tokens.textMuted}
                           />
                         </View>
                       </View>
                     </View>
 
                     <View style={{ gap: 4 }}>
-                      <Text style={styles.inputLabel}>{isKh ? 'ឈ្មោះអ្នកប្រើប្រាស់ (Username)' : 'Username'}</Text>
-                      <View style={styles.inputField}>
-                        <Text style={styles.inputPrefix}>@</Text>
+                      <Text style={[styles.inputLabel, { color: tokens.textSecondary }]}>{isKh ? 'ឈ្មោះអ្នកប្រើប្រាស់ (Username)' : 'Username'}</Text>
+                      <View style={[styles.inputField, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                        <Text style={[styles.inputPrefix, { color: tokens.textMuted }]}>@</Text>
                         <TextInput
-                          style={styles.formInput}
+                          style={[styles.formInput, { color: tokens.textPrimary }]}
                           value={editUsername}
                           onChangeText={setEditUsername}
                           placeholder="username"
-                          placeholderTextColor="#94A3B8"
+                          placeholderTextColor={tokens.textMuted}
                           autoCapitalize="none"
                         />
                       </View>
                     </View>
 
                     <View style={{ gap: 4 }}>
-                      <Text style={styles.inputLabel}>{isKh ? 'អំពីខ្ញុំ / Bio' : 'Bio / About'}</Text>
-                      <View style={[styles.inputField, { height: 64, alignItems: 'flex-start', paddingTop: 6 }]}>
+                      <Text style={[styles.inputLabel, { color: tokens.textSecondary }]}>{isKh ? 'អំពីខ្ញុំ / Bio' : 'Bio / About'}</Text>
+                      <View style={[styles.inputField, { height: 64, alignItems: 'flex-start', paddingTop: 6, backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
                         <TextInput
-                          style={[styles.formInput, { height: '100%' }]}
+                          style={[styles.formInput, { height: '100%', color: tokens.textPrimary }]}
                           value={editBio}
                           onChangeText={setEditBio}
                           placeholder={isKh ? 'រៀបរាប់សង្ខេបអំពីអ្នក...' : 'A few words about you...'}
-                          placeholderTextColor="#94A3B8"
+                          placeholderTextColor={tokens.textMuted}
                           multiline={true}
                         />
                       </View>
                     </View>
 
                     <TouchableOpacity
-                      style={[styles.saveProfileBtn, isSavingProfile && styles.btnDisabled]}
+                      style={[styles.saveProfileBtn, { backgroundColor: tokens.accentColor }, isSavingProfile && styles.btnDisabled]}
                       onPress={handleSaveProfile}
                       disabled={isSavingProfile}
                       activeOpacity={0.8}
@@ -410,42 +427,42 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                   </View>
                 ) : (
                   /* Profile Details & Features */
-                  <View style={styles.cardSection}>
+                  <View style={[styles.cardSection, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
                     <View style={styles.sectionHeaderRow}>
-                      <Text style={styles.sectionTitle}>
+                      <Text style={[styles.sectionTitle, { color: tokens.textPrimary }]}>
                         {isKh ? 'ព័ត៌មានមូលដ្ឋាន' : 'Basic Information'}
                       </Text>
                       <TouchableOpacity
-                        style={styles.editPillBtn}
+                        style={[styles.editPillBtn, { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}
                         onPress={() => setIsEditingProfile(true)}
                         activeOpacity={0.7}
                       >
-                        <RemixIcon name={'edit-box-line' as any} size={13} color="#0284C7" />
-                        <Text style={styles.editPillText}>{isKh ? 'កែសម្រួល' : 'Edit'}</Text>
+                        <RemixIcon name={'edit-box-line' as any} size={13} color={tokens.accentColor} />
+                        <Text style={[styles.editPillText, { color: tokens.accentColor }]}>{isKh ? 'កែសម្រួល' : 'Edit'}</Text>
                       </TouchableOpacity>
                     </View>
 
                     <View style={styles.infoGrid}>
                       <View style={styles.infoRow}>
-                        <Text style={styles.infoKey}>{isKh ? 'ឈ្មោះ' : 'Name'}:</Text>
-                        <Text style={styles.infoValue}>
+                        <Text style={[styles.infoKey, { color: tokens.textSecondary }]}>{isKh ? 'ឈ្មោះ' : 'Name'}:</Text>
+                        <Text style={[styles.infoValue, { color: tokens.textPrimary }]}>
                           {user.firstName} {(user as any)?.lastName || ''}
                         </Text>
                       </View>
                       <View style={styles.infoRow}>
-                        <Text style={styles.infoKey}>{isKh ? 'Username' : 'Username'}:</Text>
-                        <Text style={styles.infoValue}>
+                        <Text style={[styles.infoKey, { color: tokens.textSecondary }]}>{isKh ? 'Username' : 'Username'}:</Text>
+                        <Text style={[styles.infoValue, { color: tokens.textPrimary }]}>
                           {user.username ? `@${user.username}` : isKh ? 'មិនទាន់កំណត់' : 'Not set'}
                         </Text>
                       </View>
                       <View style={styles.infoRow}>
-                        <Text style={styles.infoKey}>{isKh ? 'ទូរស័ព្ទ' : 'Phone'}:</Text>
-                        <Text style={styles.infoValue}>+{user.phone}</Text>
+                        <Text style={[styles.infoKey, { color: tokens.textSecondary }]}>{isKh ? 'ទូរស័ព្ទ' : 'Phone'}:</Text>
+                        <Text style={[styles.infoValue, { color: tokens.textPrimary }]}>+{user.phone}</Text>
                       </View>
                       {(user as any)?.about ? (
                         <View style={styles.infoRow}>
-                          <Text style={styles.infoKey}>{isKh ? 'Bio' : 'Bio'}:</Text>
-                          <Text style={styles.infoValue}>{(user as any).about}</Text>
+                          <Text style={[styles.infoKey, { color: tokens.textSecondary }]}>{isKh ? 'Bio' : 'Bio'}:</Text>
+                          <Text style={[styles.infoValue, { color: tokens.textPrimary }]}>{(user as any).about}</Text>
                         </View>
                       ) : null}
                     </View>
@@ -458,20 +475,20 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
             {activeTab === 'ghost' && (
               <View style={styles.tabContent}>
                 {/* Master Ghost Mode Banner Card */}
-                <View style={[styles.ghostHeroCard, ghostSettings.enabled && styles.ghostHeroCardActive]}>
+                <View style={[styles.ghostHeroCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }, ghostSettings.enabled && { borderColor: '#A855F7' }]}>
                   <View style={styles.ghostHeroLeft}>
-                    <View style={[styles.ghostHeroIconBox, ghostSettings.enabled && styles.ghostHeroIconBoxActive]}>
+                    <View style={[styles.ghostHeroIconBox, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }, ghostSettings.enabled && { backgroundColor: '#7E22CE22', borderColor: '#A855F7' }]}>
                       <RemixIcon
                         name="ghost-fill"
                         size={16}
-                        color={ghostSettings.enabled ? '#7C3AED' : '#64748B'}
+                        color={ghostSettings.enabled ? '#A855F7' : tokens.textSecondary}
                       />
                     </View>
-                    <Text style={[styles.ghostHeroTitle, ghostSettings.enabled && { color: '#7C3AED' }]}>
+                    <Text style={[styles.ghostHeroTitle, { color: tokens.textPrimary }, ghostSettings.enabled && { color: '#A855F7' }]}>
                       {isKh ? 'Ghost Mode (មុខងារសម្ងាត់)' : 'Master Ghost Mode'}
                     </Text>
-                    <View style={[styles.ghostBadge, { backgroundColor: ghostSettings.enabled ? '#EDE9FE' : '#F1F5F9', borderColor: ghostSettings.enabled ? '#DDD6FE' : '#E2E8F0' }]}>
-                      <Text style={[styles.ghostBadgeText, { color: ghostSettings.enabled ? '#7C3AED' : '#64748B' }]}>
+                    <View style={[styles.ghostBadge, { backgroundColor: ghostSettings.enabled ? '#7E22CE22' : tokens.surfaceMuted, borderColor: ghostSettings.enabled ? '#A855F7' : tokens.borderSubtle }]}>
+                      <Text style={[styles.ghostBadgeText, { color: ghostSettings.enabled ? '#A855F7' : tokens.textSecondary }]}>
                         {ghostSettings.enabled ? (isKh ? '● កំពុងដំណើរការ' : '● ACTIVE') : (isKh ? '○ បានបិទ' : '○ INACTIVE')}
                       </Text>
                     </View>
@@ -486,14 +503,14 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                 </View>
 
                 {/* Granular Ghost Mode Capabilities */}
-                <View style={styles.cardSection}>
-                  {/* 1. Stealth Read (Don't Send Read Receipts) */}
+                <View style={[styles.cardSection, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+                  {/* 1. Stealth Read */}
                   <View style={styles.settingRow}>
-                    <View style={[styles.stealthIconBox, { backgroundColor: '#F0F9FF', borderColor: '#BAE6FD' }]}>
-                      <RemixIcon name="eye-off-line" size={14} color="#0284C7" />
+                    <View style={[styles.stealthIconBox, { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}>
+                      <RemixIcon name="eye-off-line" size={14} color={tokens.accentColor} />
                     </View>
                     <View style={styles.settingTextCol}>
-                      <Text style={styles.settingLabel}>
+                      <Text style={[styles.settingLabel, { color: tokens.textPrimary }]}>
                         {isKh ? 'អានសារដោយសម្ងាត់ (Stealth Read)' : 'Stealth Read'}
                       </Text>
                     </View>
@@ -507,15 +524,15 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                     </TouchableOpacity>
                   </View>
 
-                  <View style={styles.rowDivider} />
+                  <View style={[styles.rowDivider, { backgroundColor: tokens.borderSubtle }]} />
 
-                  {/* 2. Hide Online Status (Always Offline) */}
+                  {/* 2. Hide Online Status */}
                   <View style={styles.settingRow}>
-                    <View style={[styles.stealthIconBox, { backgroundColor: '#F5F3FF', borderColor: '#DDD6FE' }]}>
-                      <RemixIcon name="wifi-off-line" size={14} color="#7C3AED" />
+                    <View style={[styles.stealthIconBox, { backgroundColor: '#7E22CE22', borderColor: '#A855F7' }]}>
+                      <RemixIcon name="wifi-off-line" size={14} color="#A855F7" />
                     </View>
                     <View style={styles.settingTextCol}>
-                      <Text style={styles.settingLabel}>
+                      <Text style={[styles.settingLabel, { color: tokens.textPrimary }]}>
                         {isKh ? 'លាក់ស្ថានភាព Online (Ghost Online)' : 'Hide Online Status'}
                       </Text>
                     </View>
@@ -529,15 +546,15 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                     </TouchableOpacity>
                   </View>
 
-                  <View style={styles.rowDivider} />
+                  <View style={[styles.rowDivider, { backgroundColor: tokens.borderSubtle }]} />
 
                   {/* 3. Hide Typing Broadcast */}
                   <View style={styles.settingRow}>
-                    <View style={[styles.stealthIconBox, { backgroundColor: '#FFFBEB', borderColor: '#FDE68A' }]}>
-                      <RemixIcon name="edit-line" size={14} color="#D97706" />
+                    <View style={[styles.stealthIconBox, { backgroundColor: tokens.warningSoft, borderColor: tokens.warning }]}>
+                      <RemixIcon name="edit-line" size={14} color={tokens.warning} />
                     </View>
                     <View style={styles.settingTextCol}>
-                      <Text style={styles.settingLabel}>
+                      <Text style={[styles.settingLabel, { color: tokens.textPrimary }]}>
                         {isKh ? 'លាក់ការវាយអក្សរ (Ghost Typing)' : 'Hide Typing Status'}
                       </Text>
                     </View>
@@ -551,15 +568,15 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                     </TouchableOpacity>
                   </View>
 
-                  <View style={styles.rowDivider} />
+                  <View style={[styles.rowDivider, { backgroundColor: tokens.borderSubtle }]} />
 
                   {/* 4. Anti-Delete Message Vault */}
                   <View style={styles.settingRow}>
-                    <View style={[styles.stealthIconBox, { backgroundColor: '#FEF2F2', borderColor: '#FECACA' }]}>
-                      <RemixIcon name="shield-check-line" size={14} color="#DC2626" />
+                    <View style={[styles.stealthIconBox, { backgroundColor: tokens.dangerSoft, borderColor: tokens.danger }]}>
+                      <RemixIcon name="shield-check-line" size={14} color={tokens.danger} />
                     </View>
                     <View style={styles.settingTextCol}>
-                      <Text style={styles.settingLabel}>
+                      <Text style={[styles.settingLabel, { color: tokens.textPrimary }]}>
                         {isKh ? 'រក្សាទុកសារគេលុប (Anti-Delete)' : 'Anti-Delete Message Vault'}
                       </Text>
                     </View>
@@ -573,15 +590,15 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                     </TouchableOpacity>
                   </View>
 
-                  <View style={styles.rowDivider} />
+                  <View style={[styles.rowDivider, { backgroundColor: tokens.borderSubtle }]} />
 
                   {/* 5. Stealth Story Viewing */}
                   <View style={styles.settingRow}>
-                    <View style={[styles.stealthIconBox, { backgroundColor: '#ECFDF5', borderColor: '#A7F3D0' }]}>
-                      <RemixIcon name="movie-line" size={14} color="#059669" />
+                    <View style={[styles.stealthIconBox, { backgroundColor: tokens.successSoft, borderColor: tokens.success }]}>
+                      <RemixIcon name="movie-line" size={14} color={tokens.success} />
                     </View>
                     <View style={styles.settingTextCol}>
-                      <Text style={styles.settingLabel}>
+                      <Text style={[styles.settingLabel, { color: tokens.textPrimary }]}>
                         {isKh ? 'មើល Story ដោយសម្ងាត់ (Stealth Stories)' : 'Anonymous Story Viewer'}
                       </Text>
                     </View>
@@ -601,10 +618,10 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
             {/* Tab 3: Chat & Notification Settings */}
             {activeTab === 'chats' && (
               <View style={styles.tabContent}>
-                <View style={styles.cardSection}>
+                <View style={[styles.cardSection, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
                   <View style={styles.settingRow}>
                     <View style={styles.settingTextCol}>
-                      <Text style={styles.settingLabel}>
+                      <Text style={[styles.settingLabel, { color: tokens.textPrimary }]}>
                         {isKh ? 'ចុច Enter ដើម្បីផ្ញើសារ (Send on Enter)' : 'Send on Enter'}
                       </Text>
                     </View>
@@ -617,11 +634,11 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                     </TouchableOpacity>
                   </View>
 
-                  <View style={styles.rowDivider} />
+                  <View style={[styles.rowDivider, { backgroundColor: tokens.borderSubtle }]} />
 
                   <View style={styles.settingRow}>
                     <View style={styles.settingTextCol}>
-                      <Text style={styles.settingLabel}>
+                      <Text style={[styles.settingLabel, { color: tokens.textPrimary }]}>
                         {isKh ? 'ទាញយករូបភាពស្វ័យប្រវត្តិ (Auto-download Media)' : 'Auto-download Media'}
                       </Text>
                     </View>
@@ -634,11 +651,11 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                     </TouchableOpacity>
                   </View>
 
-                  <View style={styles.rowDivider} />
+                  <View style={[styles.rowDivider, { backgroundColor: tokens.borderSubtle }]} />
 
                   <View style={styles.settingRow}>
                     <View style={styles.settingTextCol}>
-                      <Text style={styles.settingLabel}>
+                      <Text style={[styles.settingLabel, { color: tokens.textPrimary }]}>
                         {isKh ? 'សំឡេងសារចូល (Sound Notifications)' : 'Sound Notifications'}
                       </Text>
                     </View>
@@ -651,11 +668,11 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                     </TouchableOpacity>
                   </View>
 
-                  <View style={styles.rowDivider} />
+                  <View style={[styles.rowDivider, { backgroundColor: tokens.borderSubtle }]} />
 
                   <View style={styles.settingRow}>
                     <View style={styles.settingTextCol}>
-                      <Text style={styles.settingLabel}>
+                      <Text style={[styles.settingLabel, { color: tokens.textPrimary }]}>
                         {isKh ? 'ការជូនដំណឹង Desktop (Push Notifications)' : 'Desktop Push Notifications'}
                       </Text>
                     </View>
@@ -674,37 +691,37 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
             {/* Tab 3: Data & Storage */}
             {activeTab === 'storage' && (
               <View style={styles.tabContent}>
-                <View style={styles.statsCard}>
+                <View style={[styles.statsCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
                   <View style={styles.statItem}>
-                    <Text style={styles.statLabel}>{isKh ? 'បញ្ជីសន្ទនា (Dialogs)' : 'Active Dialogs'}</Text>
-                    <Text style={styles.statVal}>{dialogsCount}</Text>
+                    <Text style={[styles.statLabel, { color: tokens.textSecondary }]}>{isKh ? 'បញ្ជីសន្ទនា (Dialogs)' : 'Active Dialogs'}</Text>
+                    <Text style={[styles.statVal, { color: tokens.textPrimary }]}>{dialogsCount}</Text>
                   </View>
-                  <View style={styles.statDivider} />
+                  <View style={[styles.statDivider, { backgroundColor: tokens.borderSubtle }]} />
                   <View style={styles.statItem}>
-                    <Text style={styles.statLabel}>{isKh ? 'ពិធីការ Sync' : 'Sync Engine'}</Text>
-                    <Text style={styles.statVal}>MTProto 2.0</Text>
+                    <Text style={[styles.statLabel, { color: tokens.textSecondary }]}>{isKh ? 'ពិធីការ Sync' : 'Sync Engine'}</Text>
+                    <Text style={[styles.statVal, { color: tokens.textPrimary }]}>MTProto 2.0</Text>
                   </View>
                 </View>
 
                 <View style={styles.actionRowBox}>
                   <TouchableOpacity
-                    style={styles.outlineActionBtn}
+                    style={[styles.outlineActionBtn, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}
                     onPress={handleClearCache}
                     activeOpacity={0.7}
                   >
-                    <RemixIcon name="task-line" size={14} color="#0284C7" />
-                    <Text style={styles.outlineActionText}>
+                    <RemixIcon name="task-line" size={14} color={tokens.accentColor} />
+                    <Text style={[styles.outlineActionText, { color: tokens.textPrimary }]}>
                       {isKh ? 'លុបសម្អាត In-Memory Cache' : 'Clear In-Memory Cache'}
                     </Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    style={styles.outlineActionBtn}
+                    style={[styles.outlineActionBtn, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}
                     onPress={handleResync}
                     activeOpacity={0.7}
                   >
-                    <RemixIcon name="chat-double-fill" size={14} color="#0284C7" />
-                    <Text style={styles.outlineActionText}>
+                    <RemixIcon name="chat-double-fill" size={14} color={tokens.accentColor} />
+                    <Text style={[styles.outlineActionText, { color: tokens.textPrimary }]}>
                       {isKh ? 'ទាញយកបញ្ជី Chats ឡើងវិញ' : 'Re-sync Dialogs'}
                     </Text>
                   </TouchableOpacity>
@@ -714,25 +731,25 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
 
             {/* Disconnect Confirmation Alert Box */}
             {showConfirmDisconnect ? (
-              <View style={styles.confirmBox}>
-                <Text style={styles.confirmTitle}>
+              <View style={[styles.confirmBox, { backgroundColor: tokens.dangerSoft, borderColor: tokens.danger }]}>
+                <Text style={[styles.confirmTitle, { color: tokens.danger }]}>
                   {isKh ? 'តើអ្នកពិតជាចង់ផ្តាច់គណនី Telegram មែនទេ?' : 'Disconnect Telegram Account?'}
                 </Text>
-                <Text style={styles.confirmSub}>
+                <Text style={[styles.confirmSub, { color: tokens.textSecondary }]}>
                   {isKh
                     ? 'បន្ទាប់ពីផ្តាច់ ការផ្ញើ និងទទួលសារនឹងត្រូវបញ្ឈប់រហូតដល់អ្នក Sign in ម្តងទៀត។'
                     : 'Real-time message synchronization will stop until you connect again.'}
                 </Text>
                 <View style={styles.confirmActions}>
                   <TouchableOpacity
-                    style={styles.cancelBtn}
+                    style={[styles.cancelBtn, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}
                     onPress={() => setShowConfirmDisconnect(false)}
                     activeOpacity={0.7}
                   >
-                    <Text style={styles.cancelBtnText}>{isKh ? 'បោះបង់' : 'Cancel'}</Text>
+                    <Text style={[styles.cancelBtnText, { color: tokens.textSecondary }]}>{isKh ? 'បោះបង់' : 'Cancel'}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    style={styles.confirmDisconnectBtn}
+                    style={[styles.confirmDisconnectBtn, { backgroundColor: tokens.danger }]}
                     onPress={handleDisconnect}
                     activeOpacity={0.7}
                   >
@@ -744,24 +761,24 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
               </View>
             ) : (
               /* Footer Actions */
-              <View style={styles.footerRow}>
+              <View style={[styles.footerRow, { borderTopColor: tokens.borderSubtle }]}>
                 <TouchableOpacity
-                  style={styles.disconnectBtn}
+                  style={[styles.disconnectBtn, { backgroundColor: tokens.dangerSoft, borderColor: tokens.danger }]}
                   onPress={() => setShowConfirmDisconnect(true)}
                   activeOpacity={0.7}
                 >
-                  <RemixIcon name="close-circle-fill" size={13} color="#DC2626" />
-                  <Text style={styles.disconnectBtnText}>
+                  <RemixIcon name="close-circle-fill" size={13} color={tokens.danger} />
+                  <Text style={[styles.disconnectBtnText, { color: tokens.danger }]}>
                     {isKh ? 'ផ្តាច់ការភ្ជាប់ (Disconnect)' : 'Disconnect Account'}
                   </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={styles.doneBtn}
+                  style={[styles.doneBtn, { backgroundColor: tokens.accentColor }]}
                   onPress={onClose}
                   activeOpacity={0.7}
                 >
-                  <Text style={styles.doneBtnText}>{isKh ? 'រួចរាល់' : 'Done'}</Text>
+                  <Text style={[styles.doneBtnText, { color: tokens.accentFg }]}>{isKh ? 'រួចរាល់' : 'Done'}</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -769,7 +786,7 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
         ) : (
           /* Sign In Flow */
           <View style={styles.formContainer}>
-            <Text style={styles.subtext}>
+            <Text style={[styles.subtext, { color: tokens.textSecondary }]}>
               {isKh
                 ? 'ភ្ជាប់គណនី Telegram ផ្ទាល់ខ្លួនរបស់អ្នកដើម្បីជជែក និង Sync សារផ្ទាល់ក្នុង Desktop Workspace។'
                 : 'Connect your personal Telegram account to chat and sync messages directly in Desktop Workspace.'}
@@ -778,25 +795,25 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
             {!isCodeSent ? (
               /* Step 1: Input Phone Number */
               <View style={styles.stepBox}>
-                <Text style={styles.fieldLabel}>
+                <Text style={[styles.fieldLabel, { color: tokens.textPrimary }]}>
                   {isKh ? 'លេខទូរស័ព្ទ Telegram (រួមទាំងលេខកូដប្រទេស)៖' : 'Telegram Phone Number (with Country Code):'}
                 </Text>
 
-                <View style={styles.inputWrapper}>
-                  <RemixIcon name="phone-fill" size={15} color="#64748B" />
+                <View style={[styles.inputWrapper, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                  <RemixIcon name="phone-fill" size={15} color={tokens.textMuted} />
                   <TextInput
-                    style={styles.textInput}
+                    style={[styles.textInput, { color: tokens.textPrimary }]}
                     value={phone}
                     onChangeText={setPhone}
                     placeholder="+855 12 345 678"
-                    placeholderTextColor="#94A3B8"
+                    placeholderTextColor={tokens.textMuted}
                     keyboardType="phone-pad"
                     autoFocus={true}
                   />
                 </View>
 
                 <TouchableOpacity
-                  style={[styles.primaryBtn, isConnecting && styles.btnDisabled]}
+                  style={[styles.primaryBtn, { backgroundColor: tokens.accentColor }, isConnecting && styles.btnDisabled]}
                   onPress={handleSendCode}
                   disabled={isConnecting || !phone.trim()}
                   activeOpacity={0.8}
@@ -816,9 +833,9 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
             ) : (
               /* Step 2: Input Verification Code & 2FA */
               <View style={styles.stepBox}>
-                <View style={styles.codeNoticeBox}>
-                  <RemixIcon name="information-fill" size={14} color="#0284C7" />
-                  <Text style={styles.codeNoticeText}>
+                <View style={[styles.codeNoticeBox, { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}>
+                  <RemixIcon name="information-fill" size={14} color={tokens.accentColor} />
+                  <Text style={[styles.codeNoticeText, { color: tokens.accentColor }]}>
                     {isCodeViaApp
                       ? isKh
                         ? 'លេខកូដត្រូវបានផ្ញើទៅកាន់ Telegram App របស់អ្នក'
@@ -829,18 +846,18 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                   </Text>
                 </View>
 
-                <Text style={styles.fieldLabel}>
+                <Text style={[styles.fieldLabel, { color: tokens.textPrimary }]}>
                   {isKh ? 'បញ្ចូលលេខកូដផ្ទៀងផ្ទាត់ (OTP Code)៖' : 'Enter Verification Code:'}
                 </Text>
 
-                <View style={styles.inputWrapper}>
-                  <RemixIcon name="lock-line" size={15} color="#64748B" />
+                <View style={[styles.inputWrapper, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                  <RemixIcon name="lock-line" size={15} color={tokens.textMuted} />
                   <TextInput
-                    style={styles.textInput}
+                    style={[styles.textInput, { color: tokens.textPrimary }]}
                     value={code}
                     onChangeText={setCode}
                     placeholder="12345"
-                    placeholderTextColor="#94A3B8"
+                    placeholderTextColor={tokens.textMuted}
                     keyboardType="number-pad"
                     autoFocus={true}
                   />
@@ -848,17 +865,17 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
 
                 {showPasswordInput ? (
                   <View style={{ marginTop: 12 }}>
-                    <Text style={styles.fieldLabel}>
+                    <Text style={[styles.fieldLabel, { color: tokens.textPrimary }]}>
                       {isKh ? 'ពាក្យសម្ងាត់ Two-Step Verification (2FA)៖' : '2-Step Verification Password (2FA):'}
                     </Text>
-                    <View style={styles.inputWrapper}>
-                      <RemixIcon name="lock-unlock-line" size={15} color="#64748B" />
+                    <View style={[styles.inputWrapper, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                      <RemixIcon name="lock-unlock-line" size={15} color={tokens.textMuted} />
                       <TextInput
-                        style={styles.textInput}
+                        style={[styles.textInput, { color: tokens.textPrimary }]}
                         value={password}
                         onChangeText={setPassword}
                         placeholder={isKh ? 'បញ្ចូល 2FA Password' : 'Enter 2FA Password'}
-                        placeholderTextColor="#94A3B8"
+                        placeholderTextColor={tokens.textMuted}
                         secureTextEntry={true}
                       />
                     </View>
@@ -868,7 +885,7 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
                     style={styles.twoFaToggle}
                     onPress={() => setShowPasswordInput(true)}
                   >
-                    <Text style={styles.twoFaToggleText}>
+                    <Text style={[styles.twoFaToggleText, { color: tokens.accentColor }]}>
                       {isKh ? '+ គណនីមានភ្ជាប់ 2FA Password?' : '+ Account has 2FA Password?'}
                     </Text>
                   </TouchableOpacity>
@@ -876,15 +893,15 @@ export const TelegramConnectModal: React.FC<TelegramConnectModalProps> = ({
 
                 <View style={styles.btnRow}>
                   <TouchableOpacity
-                    style={styles.secondaryBtn}
+                    style={[styles.secondaryBtn, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}
                     onPress={resetSignInState}
                     disabled={isConnecting}
                   >
-                    <Text style={styles.secondaryBtnText}>{isKh ? 'ត្រឡប់ក្រោយ' : 'Back'}</Text>
+                    <Text style={[styles.secondaryBtnText, { color: tokens.textSecondary }]}>{isKh ? 'ត្រឡប់ក្រោយ' : 'Back'}</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    style={[styles.primaryBtnFlex, isConnecting && styles.btnDisabled]}
+                    style={[styles.primaryBtnFlex, { backgroundColor: tokens.accentColor }, isConnecting && styles.btnDisabled]}
                     onPress={handleVerify}
                     disabled={isConnecting || !code.trim()}
                     activeOpacity={0.8}
