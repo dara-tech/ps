@@ -285,76 +285,108 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
           ) : (
             /* Telegram Dialogs List */
             telegramDialogs.length === 0 ? (
-              <View style={{ padding: 24, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+              <View style={{ paddingVertical: 40, paddingHorizontal: 16, alignItems: 'center', justifyContent: 'center', gap: 10 }}>
                 {loadingDialogs ? (
-                  <>
+                  <View style={{ alignItems: 'center', gap: 10 }}>
                     <ActivityIndicator size="small" color={tokens.accentColor} />
-                    <Text style={{ fontSize: 12, fontFamily: 'Krasar-Regular', color: tokens.textSecondary, textAlign: 'center' }}>
-                      {isKh ? 'កំពុងទាញយកការជជែក Telegram...' : 'Syncing Telegram dialogs...'}
+                    <Text style={{ fontSize: 11.5, fontFamily: 'Krasar-Regular', color: tokens.textSecondary, textAlign: 'center' }}>
+                      {isKh ? 'កំពុងទាញយកការជជែក...' : 'Syncing Telegram chats...'}
                     </Text>
-                  </>
+                  </View>
                 ) : isTelegramConnected ? (
-                  <>
-                    <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: tokens.accentSoft, alignItems: 'center', justifyContent: 'center' }}>
-                      <RemixIcon name="telegram-official" size={24} color={tokens.accentColor} />
+                  <View style={{ alignItems: 'center', gap: 8, maxWidth: 220 }}>
+                    <View
+                      style={{
+                        width: 44,
+                        height: 44,
+                        borderRadius: 12,
+                        backgroundColor: tokens.surfaceMuted,
+                        borderWidth: 1,
+                        borderColor: tokens.borderSubtle,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginBottom: 2,
+                      }}
+                    >
+                      <RemixIcon name="chat-3-line" size={20} color={tokens.textSecondary} />
                     </View>
+
                     <Text style={{ fontSize: 13, fontFamily: 'Krasar-Bold', color: tokens.textPrimary, textAlign: 'center' }}>
                       {isKh ? 'មិនទាន់មានការសន្ទនា' : 'No Conversations'}
                     </Text>
-                    <Text style={{ fontSize: 11.5, fontFamily: 'Krasar-Regular', color: tokens.textSecondary, textAlign: 'center', lineHeight: 16 }}>
-                      {isKh ? 'ចុចប៊ូតុងខាងក្រោមដើម្បីទាញយកបញ្ជី Chats ឡើងវិញ' : 'Click below to sync your active Telegram chat list'}
+
+                    <Text style={{ fontSize: 11, fontFamily: 'Krasar-Regular', color: tokens.textMuted, textAlign: 'center', lineHeight: 15 }}>
+                      {isKh ? 'បញ្ជីសារទទេ ឬមិនទាន់បាន Sync ចូលក្នុង Workspace' : 'Your Telegram chat list is empty or waiting to sync'}
                     </Text>
+
                     <TouchableOpacity
                       style={{
                         flexDirection: 'row',
                         alignItems: 'center',
                         gap: 6,
-                        backgroundColor: tokens.accentColor,
-                        paddingVertical: 8,
-                        paddingHorizontal: 16,
-                        borderRadius: 8,
+                        backgroundColor: tokens.surfaceBg,
+                        borderWidth: 1,
+                        borderColor: tokens.borderSubtle,
+                        paddingVertical: 6,
+                        paddingHorizontal: 14,
+                        borderRadius: 6,
                         marginTop: 4,
                       }}
                       onPress={() => fetchDialogs()}
-                      activeOpacity={0.8}
+                      activeOpacity={0.7}
                     >
-                      <RemixIcon name="refresh-line" size={13} color={tokens.accentFg} />
-                      <Text style={{ fontSize: 12, fontFamily: 'Krasar-Bold', color: tokens.accentFg }}>
+                      <RemixIcon name="refresh-line" size={13} color={tokens.textPrimary} />
+                      <Text style={{ fontSize: 11.5, fontFamily: 'Krasar-Medium', color: tokens.textPrimary }}>
                         {isKh ? 'ទាញយកសារឡើងវិញ' : 'Sync Dialogs'}
                       </Text>
                     </TouchableOpacity>
-                  </>
+                  </View>
                 ) : (
-                  <>
-                    <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: tokens.surfaceMuted, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: tokens.borderSubtle }}>
-                      <RemixIcon name={'telegram-official' as any} size={24} color={tokens.textSecondary} />
+                  <View style={{ alignItems: 'center', gap: 8, maxWidth: 220 }}>
+                    <View
+                      style={{
+                        width: 44,
+                        height: 44,
+                        borderRadius: 12,
+                        backgroundColor: tokens.surfaceMuted,
+                        borderWidth: 1,
+                        borderColor: tokens.borderSubtle,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginBottom: 2,
+                      }}
+                    >
+                      <RemixIcon name={'user-shared-line' as any} size={20} color={tokens.textSecondary} />
                     </View>
+
                     <Text style={{ fontSize: 13, fontFamily: 'Krasar-Bold', color: tokens.textPrimary, textAlign: 'center' }}>
                       {isKh ? 'មិនទាន់បានភ្ជាប់ Telegram' : 'Telegram Not Connected'}
                     </Text>
-                    <Text style={{ fontSize: 11.5, fontFamily: 'Krasar-Regular', color: tokens.textSecondary, textAlign: 'center', lineHeight: 16 }}>
-                      {isKh ? 'ភ្ជាប់គណនី Telegram របស់អ្នកដើម្បីផ្ញើ និងទទួលសារផ្ទាល់' : 'Connect your personal Telegram account to chat directly'}
+
+                    <Text style={{ fontSize: 11, fontFamily: 'Krasar-Regular', color: tokens.textMuted, textAlign: 'center', lineHeight: 15 }}>
+                      {isKh ? 'ភ្ជាប់គណនី Telegram របស់អ្នកដើម្បីជជែក និង Sync សារ' : 'Connect your Telegram account to chat directly in workspace'}
                     </Text>
+
                     <TouchableOpacity
                       style={{
                         flexDirection: 'row',
                         alignItems: 'center',
                         gap: 6,
                         backgroundColor: tokens.accentColor,
-                        paddingVertical: 8,
-                        paddingHorizontal: 16,
-                        borderRadius: 8,
+                        paddingVertical: 6,
+                        paddingHorizontal: 14,
+                        borderRadius: 6,
                         marginTop: 4,
                       }}
                       onPress={onOpenTelegramModal}
-                      activeOpacity={0.8}
+                      activeOpacity={0.7}
                     >
-                      <RemixIcon name={'telegram-official' as any} size={13} color={tokens.accentFg} />
-                      <Text style={{ fontSize: 12, fontFamily: 'Krasar-Bold', color: tokens.accentFg }}>
+                      <RemixIcon name={'login-circle-line' as any} size={13} color={tokens.accentFg} />
+                      <Text style={{ fontSize: 11.5, fontFamily: 'Krasar-Bold', color: tokens.accentFg }}>
                         {isKh ? 'ភ្ជាប់គណនី Telegram' : 'Connect Telegram'}
                       </Text>
                     </TouchableOpacity>
-                  </>
+                  </View>
                 )}
               </View>
             ) : (
