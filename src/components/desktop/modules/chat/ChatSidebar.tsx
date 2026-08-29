@@ -70,6 +70,8 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
   const tokens = useThemeStore((s) => s.tokens);
   const typingStatus = useTelegramStore((s) => s.typingStatus);
   const togglePinDialog = useTelegramStore((s) => s.togglePinDialog);
+  const loadingDialogs = useTelegramStore((s) => s.loadingDialogs);
+  const fetchDialogs = useTelegramStore((s) => s.fetchDialogs);
 
   const [contextMenu, setContextMenu] = useState<{
     visible: boolean;
@@ -282,8 +284,82 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
             )
           ) : (
             /* Telegram Dialogs List */
-            <>
-              {telegramDialogs.map((dialog) => {
+            telegramDialogs.length === 0 ? (
+              <View style={{ padding: 24, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+                {loadingDialogs ? (
+                  <>
+                    <ActivityIndicator size="small" color={tokens.accentColor} />
+                    <Text style={{ fontSize: 12, fontFamily: 'Krasar-Regular', color: tokens.textSecondary, textAlign: 'center' }}>
+                      {isKh ? 'កំពុងទាញយកការជជែក Telegram...' : 'Syncing Telegram dialogs...'}
+                    </Text>
+                  </>
+                ) : isTelegramConnected ? (
+                  <>
+                    <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: tokens.accentSoft, alignItems: 'center', justifyContent: 'center' }}>
+                      <RemixIcon name="telegram-official" size={24} color={tokens.accentColor} />
+                    </View>
+                    <Text style={{ fontSize: 13, fontFamily: 'Krasar-Bold', color: tokens.textPrimary, textAlign: 'center' }}>
+                      {isKh ? 'មិនទាន់មានការសន្ទនា' : 'No Conversations'}
+                    </Text>
+                    <Text style={{ fontSize: 11.5, fontFamily: 'Krasar-Regular', color: tokens.textSecondary, textAlign: 'center', lineHeight: 16 }}>
+                      {isKh ? 'ចុចប៊ូតុងខាងក្រោមដើម្បីទាញយកបញ្ជី Chats ឡើងវិញ' : 'Click below to sync your active Telegram chat list'}
+                    </Text>
+                    <TouchableOpacity
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 6,
+                        backgroundColor: tokens.accentColor,
+                        paddingVertical: 8,
+                        paddingHorizontal: 16,
+                        borderRadius: 8,
+                        marginTop: 4,
+                      }}
+                      onPress={() => fetchDialogs()}
+                      activeOpacity={0.8}
+                    >
+                      <RemixIcon name="refresh-line" size={13} color={tokens.accentFg} />
+                      <Text style={{ fontSize: 12, fontFamily: 'Krasar-Bold', color: tokens.accentFg }}>
+                        {isKh ? 'ទាញយកសារឡើងវិញ' : 'Sync Dialogs'}
+                      </Text>
+                    </TouchableOpacity>
+                  </>
+                ) : (
+                  <>
+                    <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: tokens.surfaceMuted, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: tokens.borderSubtle }}>
+                      <RemixIcon name="telegram-line" size={24} color={tokens.textSecondary} />
+                    </View>
+                    <Text style={{ fontSize: 13, fontFamily: 'Krasar-Bold', color: tokens.textPrimary, textAlign: 'center' }}>
+                      {isKh ? 'មិនទាន់បានភ្ជាប់ Telegram' : 'Telegram Not Connected'}
+                    </Text>
+                    <Text style={{ fontSize: 11.5, fontFamily: 'Krasar-Regular', color: tokens.textSecondary, textAlign: 'center', lineHeight: 16 }}>
+                      {isKh ? 'ភ្ជាប់គណនី Telegram របស់អ្នកដើម្បីផ្ញើ និងទទួលសារផ្ទាល់' : 'Connect your personal Telegram account to chat directly'}
+                    </Text>
+                    <TouchableOpacity
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 6,
+                        backgroundColor: tokens.accentColor,
+                        paddingVertical: 8,
+                        paddingHorizontal: 16,
+                        borderRadius: 8,
+                        marginTop: 4,
+                      }}
+                      onPress={onOpenTelegramModal}
+                      activeOpacity={0.8}
+                    >
+                      <RemixIcon name="telegram-fill" size={13} color={tokens.accentFg} />
+                      <Text style={{ fontSize: 12, fontFamily: 'Krasar-Bold', color: tokens.accentFg }}>
+                        {isKh ? 'ភ្ជាប់គណនី Telegram' : 'Connect Telegram'}
+                      </Text>
+                    </TouchableOpacity>
+                  </>
+                )}
+              </View>
+            ) : (
+              <>
+                {telegramDialogs.map((dialog) => {
                 const isSelected = dialog.id === activeTelegramChatId;
                 return isLeftCollapsed ? (
                   <View
@@ -463,7 +539,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                 </View>
               )}
             </>
-          )
+          ))
         ) : (
           /* Team Conversations */
           teamConversations.map((conv) => {
