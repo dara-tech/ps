@@ -360,7 +360,7 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                       {/* Message Content */}
                       {Boolean(msg.text) && (
                         <Text style={[styles.msgText, { color: bubbleText, fontSize: 13, lineHeight: 18 }]}>
-                          {renderFormattedMarkdown(msg.text, isMe, tokens)}
+                          {renderFormattedMarkdown(msg.text, [styles.msgText, { color: bubbleText }], `msg-${msg.id}`)}
                         </Text>
                       )}
 
