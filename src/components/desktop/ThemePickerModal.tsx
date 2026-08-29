@@ -155,7 +155,7 @@ export const ThemePickerModal: React.FC<ThemePickerModalProps> = ({ visible, onC
               activeOpacity={0.8}
             >
               <Text style={[styles.tabBtnText, { color: activeTab === 'tiktok' ? tokens.textPrimary : tokens.textSecondary }]}>
-                🫧 {isKh ? 'រចនាប័ទ្ម TikTok Bubble' : 'TikTok Bubble Style'}
+                {isKh ? 'រចនាប័ទ្ម TikTok Bubble' : 'TikTok Bubble Style'}
               </Text>
             </TouchableOpacity>
 
@@ -168,7 +168,7 @@ export const ThemePickerModal: React.FC<ThemePickerModalProps> = ({ visible, onC
               activeOpacity={0.8}
             >
               <Text style={[styles.tabBtnText, { color: activeTab === 'theme' ? tokens.textPrimary : tokens.textSecondary }]}>
-                🎨 {isKh ? 'ប្រព័ន្ធ Theme & ពណ៌' : 'Base Themes & Colors'}
+                {isKh ? 'ប្រព័ន្ធ Theme & ពណ៌' : 'Base Themes & Colors'}
               </Text>
             </TouchableOpacity>
           </View>
