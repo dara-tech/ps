@@ -10,7 +10,7 @@ import { QUICK_REACTION_EMOJIS, EMOJI_CATEGORIES } from './chatTypes';
 import { toast } from '../../../../store/useToastStore';
 import { useThemeStore } from '../../../../store/useThemeStore';
 import { getBubbleBorderRadius } from '../../../../styles/theme';
-import { TikTokCharacterArt } from './TikTokBubbleArt';
+import { TikTokCreativeShell } from './TikTokBubbleArt';
 
 interface ChatMessageListProps {
   messages: any[];
@@ -311,113 +311,116 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                 )}
 
                 <View style={styles.msgBubbleColumn}>
-                  <View
-                    style={[
-                      isSticker
-                        ? styles.msgBubbleSticker
-                        : isMediaOnly
-                        ? styles.msgBubblePhoto
-                        : isMediaWithCaption
-                        ? [
-                            styles.msgBubbleWithCaption,
-                            {
-                              backgroundColor: bubbleBg,
-                              borderColor: bubbleBorder,
-                            },
-                          ]
-                        : [
-                            styles.msgBubble,
-                            getBubbleBorderRadius(tokens.bubbleStyle, isMe),
-                            {
-                              backgroundColor: bubbleBg,
-                              borderColor: bubbleBorder,
-                            },
-                          ],
-                      isVoice && styles.msgBubbleVoice,
-                    ]}
-                  >
-                    {/* TikTok Vector Character Corner Badges */}
-                    {Boolean(isMe && tokens.tiktokBubbleId === 'frog_chick') && (
-                      <>
-                        <View style={styles.bubbleDecorTopLeft}>
-                          <TikTokCharacterArt type="frog_head" size={24} />
-                        </View>
-                        <View style={styles.bubbleDecorTopRight}>
-                          <TikTokCharacterArt type="chick_head" size={24} />
-                        </View>
-                        <View style={styles.bubbleDecorBottomRight}>
-                          <TikTokCharacterArt type="bubbles" size={20} />
-                        </View>
-                      </>
-                    )}
-                    {Boolean(isMe && tokens.tiktokBubbleId === 'cat_dog') && (
-                      <>
-                        <View style={styles.bubbleDecorTopLeft}>
-                          <TikTokCharacterArt type="cat" size={24} />
-                        </View>
-                        <View style={styles.bubbleDecorTopRight}>
-                          <TikTokCharacterArt type="dog" size={24} />
-                        </View>
-                      </>
-                    )}
-                    {Boolean(isMe && tokens.tiktokBubbleId === 'capybara') && (
-                      <>
-                        <View style={styles.bubbleDecorTopLeft}>
-                          <TikTokCharacterArt type="capybara" size={24} />
-                        </View>
-                        <View style={styles.bubbleDecorTopRight}>
-                          <TikTokCharacterArt type="bubbles" size={20} />
-                        </View>
-                      </>
-                    )}
-                    {Boolean(isMe && tokens.tiktokBubbleId === 'doge') && (
-                      <>
-                        <View style={styles.bubbleDecorTopLeft}>
-                          <TikTokCharacterArt type="doge" size={24} />
-                        </View>
-                        <View style={styles.bubbleDecorTopRight}>
-                          <TikTokCharacterArt type="dog" size={24} />
-                        </View>
-                      </>
-                    )}
-                    {Boolean(isMe && tokens.tiktokBubbleId === 'heart_pepe') && (
-                      <>
-                        <View style={styles.bubbleDecorTopLeft}>
-                          <TikTokCharacterArt type="heart_pepe" size={24} />
-                        </View>
-                        <View style={styles.bubbleDecorTopRight}>
-                          <TikTokCharacterArt type="frog_head" size={22} />
-                        </View>
-                      </>
-                    )}
-                    {Boolean(isMe && tokens.tiktokBubbleId === 'pig_shark') && (
-                      <>
-                        <View style={styles.bubbleDecorBottomLeft}>
-                          <TikTokCharacterArt type="pig" size={22} />
-                        </View>
-                        <View style={styles.bubbleDecorBottomRight}>
-                          <TikTokCharacterArt type="shark" size={22} />
-                        </View>
-                      </>
-                    )}
-                    {Boolean(isMe && tokens.tiktokBubbleId === 'dino') && (
-                      <View style={styles.bubbleDecorTopLeft}>
-                        <TikTokCharacterArt type="dino" size={24} />
-                      </View>
-                    )}
-
-                    {/* Forwarded from original sender */}
-                    {Boolean(msg.fwdFrom) && (
-                      <View style={styles.tgForwardHeader}>
-                        <RemixIcon name="share-forward-line" size={12} color={isMe ? 'rgba(255, 255, 255, 0.85)' : tokens.accentColor} />
-                        <Text style={[styles.tgForwardLabel, { color: isMe ? 'rgba(255, 255, 255, 0.85)' : tokens.textSecondary }]}>
-                          {isKh ? 'បញ្ជូនបន្តពី' : 'Forwarded from'}{' '}
-                          <Text style={[styles.tgForwardSender, { color: isMe ? '#FFFFFF' : tokens.accentColor }]}>
-                            {msg.fwdFrom.senderName || 'Original Sender'}
+                  {isMe && tokens.tiktokBubbleId && tokens.tiktokBubbleId !== 'default' && !isSticker && !isMediaOnly ? (
+                    <TikTokCreativeShell
+                      bubbleId={tokens.tiktokBubbleId}
+                      isMe={isMe}
+                      backgroundColor={bubbleBg}
+                      borderColor={bubbleBorder}
+                      textColor={bubbleText}
+                    >
+                      {/* Forwarded from original sender */}
+                      {Boolean(msg.fwdFrom) && (
+                        <View style={styles.tgForwardHeader}>
+                          <RemixIcon name="share-forward-line" size={12} color={isMe ? 'rgba(255, 255, 255, 0.85)' : tokens.accentColor} />
+                          <Text style={[styles.tgForwardLabel, { color: isMe ? 'rgba(255, 255, 255, 0.85)' : tokens.textSecondary }]}>
+                            {isKh ? 'បញ្ជូនបន្តពី' : 'Forwarded from'}{' '}
+                            <Text style={[styles.tgForwardSender, { color: isMe ? '#FFFFFF' : tokens.accentColor }]}>
+                              {msg.fwdFrom.senderName || 'Original Sender'}
+                            </Text>
                           </Text>
+                        </View>
+                      )}
+
+                      {/* Reply / Quote Preview */}
+                      {Boolean(msg.replyToMsgId) && (
+                        <View
+                          style={[
+                            styles.tgQuoteBox,
+                            {
+                              backgroundColor: isMe
+                                ? 'rgba(0, 0, 0, 0.15)'
+                                : tokens.surfaceMuted,
+                              borderLeftColor: isMe ? '#FFFFFF' : tokens.accentColor,
+                            },
+                          ]}
+                        >
+                          <View style={[styles.tgQuoteAccent, { backgroundColor: isMe ? '#FFFFFF' : tokens.accentColor }]} />
+                          <View style={styles.tgQuoteBody}>
+                            <Text style={[styles.tgQuoteSender, { color: isMe ? '#FFFFFF' : tokens.accentColor }]} numberOfLines={1}>
+                              {msg.replyToMsg?.senderName || 'Reply'}
+                            </Text>
+                            <Text style={[styles.tgQuoteText, { color: isMe ? 'rgba(255, 255, 255, 0.85)' : tokens.textSecondary }]} numberOfLines={1}>
+                              {msg.replyToMsg?.text || 'Original message'}
+                            </Text>
+                          </View>
+                        </View>
+                      )}
+
+                      {/* Message Content */}
+                      {Boolean(msg.text) && (
+                        <Text style={[styles.msgText, { color: bubbleText, fontSize: 13, lineHeight: 18 }]}>
+                          {renderFormattedMarkdown(msg.text, isMe, tokens)}
                         </Text>
+                      )}
+
+                      {/* Time & Delivery Status */}
+                      <View style={styles.tgMsgMetaRow}>
+                        {Boolean(msg.isEdited) && (
+                          <Text style={[styles.tgEditedLabel, { color: isMe ? 'rgba(255, 255, 255, 0.75)' : tokens.textMuted }]}>
+                            {isKh ? 'កែសម្រួល' : 'edited'}
+                          </Text>
+                        )}
+                        <Text style={[styles.tgMsgTime, { color: isMe ? 'rgba(255, 255, 255, 0.85)' : tokens.textMuted }]}>
+                          {msg.time || '12:00'}
+                        </Text>
+                        {isMe && (
+                          <RemixIcon
+                            name={msg.status === 'read' ? 'check-double-line' : 'check-line'}
+                            size={12}
+                            color={isMe ? 'rgba(255, 255, 255, 0.85)' : tokens.accentColor}
+                          />
+                        )}
                       </View>
-                    )}
+                    </TikTokCreativeShell>
+                  ) : (
+                    <View
+                      style={[
+                        isSticker
+                          ? styles.msgBubbleSticker
+                          : isMediaOnly
+                          ? styles.msgBubblePhoto
+                          : isMediaWithCaption
+                          ? [
+                              styles.msgBubbleWithCaption,
+                              {
+                                backgroundColor: bubbleBg,
+                                borderColor: bubbleBorder,
+                              },
+                            ]
+                          : [
+                              styles.msgBubble,
+                              getBubbleBorderRadius(tokens.bubbleStyle, isMe),
+                              {
+                                backgroundColor: bubbleBg,
+                                borderColor: bubbleBorder,
+                              },
+                            ],
+                        isVoice && styles.msgBubbleVoice,
+                      ]}
+                    >
+                      {/* Forwarded from original sender */}
+                      {Boolean(msg.fwdFrom) && (
+                        <View style={styles.tgForwardHeader}>
+                          <RemixIcon name="share-forward-line" size={12} color={isMe ? 'rgba(255, 255, 255, 0.85)' : tokens.accentColor} />
+                          <Text style={[styles.tgForwardLabel, { color: isMe ? 'rgba(255, 255, 255, 0.85)' : tokens.textSecondary }]}>
+                            {isKh ? 'បញ្ជូនបន្តពី' : 'Forwarded from'}{' '}
+                            <Text style={[styles.tgForwardSender, { color: isMe ? '#FFFFFF' : tokens.accentColor }]}>
+                              {msg.fwdFrom.senderName || 'Original Sender'}
+                            </Text>
+                          </Text>
+                        </View>
+                      )}
 
                     {/* Reply / Quote Preview */}
                     {Boolean(msg.replyToMsgId) && (
@@ -877,6 +880,7 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                       </View>
                     ) : null}
                   </View>
+                  )}
 
                   {/* Message Reactions Pills */}
                   {msg.reactions && msg.reactions.length > 0 && (
