@@ -327,7 +327,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                 ) : (
                   <>
                     <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: tokens.surfaceMuted, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: tokens.borderSubtle }}>
-                      <RemixIcon name="telegram-line" size={24} color={tokens.textSecondary} />
+                      <RemixIcon name={'telegram-official' as any} size={24} color={tokens.textSecondary} />
                     </View>
                     <Text style={{ fontSize: 13, fontFamily: 'Krasar-Bold', color: tokens.textPrimary, textAlign: 'center' }}>
                       {isKh ? 'មិនទាន់បានភ្ជាប់ Telegram' : 'Telegram Not Connected'}
@@ -349,7 +349,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                       onPress={onOpenTelegramModal}
                       activeOpacity={0.8}
                     >
-                      <RemixIcon name="telegram-fill" size={13} color={tokens.accentFg} />
+                      <RemixIcon name={'telegram-official' as any} size={13} color={tokens.accentFg} />
                       <Text style={{ fontSize: 12, fontFamily: 'Krasar-Bold', color: tokens.accentFg }}>
                         {isKh ? 'ភ្ជាប់គណនី Telegram' : 'Connect Telegram'}
                       </Text>
