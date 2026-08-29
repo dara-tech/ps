@@ -14,6 +14,7 @@ import {
   getBubbleBorderRadius,
 } from '../../styles/theme';
 import { RemixIcon } from '../ui/RemixIcon';
+import { TikTokDecoratedBubble } from './modules/chat/TikTokDecoratedBubble';
 
 interface ThemePickerModalProps {
   visible: boolean;
@@ -178,34 +179,16 @@ export const ThemePickerModal: React.FC<ThemePickerModalProps> = ({ visible, onC
               <View style={styles.ttContainer}>
                 {/* 1. Live Decorated Bubble Preview at the top */}
                 <View style={[styles.ttPreviewBox, { backgroundColor: mode === 'light' ? '#F8FAFC' : '#05070B', borderColor: tokens.borderSubtle }]}>
-                  <View
-                    style={[
-                      styles.ttDecoratedBubble,
-                      getBubbleBorderRadius(tokens.bubbleStyle, true),
-                      {
-                        backgroundColor: tokens.bubbleOutgoing,
-                        borderColor: tokens.bubbleOutgoingBorder,
-                      },
-                    ]}
+                  <TikTokDecoratedBubble
+                    bubbleId={tiktokBubbleId}
+                    isMe={true}
+                    backgroundColor={tokens.bubbleOutgoing}
+                    borderColor={tokens.bubbleOutgoingBorder}
                   >
-                    {/* Character Corner Badges */}
-                    {Boolean(tokens.tiktokBubbleDecor?.topLeft) && (
-                      <Text style={styles.ttDecorTopLeft}>{tokens.tiktokBubbleDecor?.topLeft}</Text>
-                    )}
-                    {Boolean(tokens.tiktokBubbleDecor?.topRight) && (
-                      <Text style={styles.ttDecorTopRight}>{tokens.tiktokBubbleDecor?.topRight}</Text>
-                    )}
-                    {Boolean(tokens.tiktokBubbleDecor?.bottomLeft) && (
-                      <Text style={styles.ttDecorBottomLeft}>{tokens.tiktokBubbleDecor?.bottomLeft}</Text>
-                    )}
-                    {Boolean(tokens.tiktokBubbleDecor?.bottomRight) && (
-                      <Text style={styles.ttDecorBottomRight}>{tokens.tiktokBubbleDecor?.bottomRight}</Text>
-                    )}
-
                     <Text style={[styles.ttBubbleText, { color: tokens.bubbleOutgoingText }]}>
                       {currentTikTokPreset.previewSample || 'Did you know you can change your bubble style and all your chats get the new look? So cool! ✨'}
                     </Text>
-                  </View>
+                  </TikTokDecoratedBubble>
                 </View>
 
                 {/* Subtitle helper note */}
@@ -237,34 +220,19 @@ export const ThemePickerModal: React.FC<ThemePickerModalProps> = ({ visible, onC
                         onPress={() => setTikTokBubbleId(preset.id)}
                         activeOpacity={0.8}
                       >
-                        {/* Mini Bubble Demo with Corners */}
+                        {/* Mini High-Fidelity Character Bubble Demo */}
                         <View style={styles.ttMiniBubbleWrapper}>
-                          <View
-                            style={[
-                              styles.ttMiniBubble,
-                              getBubbleBorderRadius(tokens.bubbleStyle, true),
-                              {
-                                backgroundColor: previewBg,
-                                borderColor: previewBorder,
-                              },
-                            ]}
+                          <TikTokDecoratedBubble
+                            bubbleId={preset.id}
+                            isMe={true}
+                            backgroundColor={previewBg}
+                            borderColor={previewBorder}
+                            mini={true}
+                            style={{ width: 88, height: 34, paddingHorizontal: 6 }}
                           >
-                            {Boolean(preset.topLeftEmoji) && (
-                              <Text style={styles.ttMiniDecorTopLeft}>{preset.topLeftEmoji}</Text>
-                            )}
-                            {Boolean(preset.topRightEmoji) && (
-                              <Text style={styles.ttMiniDecorTopRight}>{preset.topRightEmoji}</Text>
-                            )}
-                            {Boolean(preset.bottomLeftEmoji) && (
-                              <Text style={styles.ttMiniDecorBottomLeft}>{preset.bottomLeftEmoji}</Text>
-                            )}
-                            {Boolean(preset.bottomRightEmoji) && (
-                              <Text style={styles.ttMiniDecorBottomRight}>{preset.bottomRightEmoji}</Text>
-                            )}
-
                             <View style={[styles.ttMiniLine, { backgroundColor: previewText, opacity: 0.7 }]} />
                             <View style={[styles.ttMiniLine, { backgroundColor: previewText, width: '60%', opacity: 0.7 }]} />
-                          </View>
+                          </TikTokDecoratedBubble>
                         </View>
 
                         <Text

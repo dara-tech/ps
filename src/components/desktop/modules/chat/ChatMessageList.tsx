@@ -10,6 +10,7 @@ import { QUICK_REACTION_EMOJIS, EMOJI_CATEGORIES } from './chatTypes';
 import { toast } from '../../../../store/useToastStore';
 import { useThemeStore } from '../../../../store/useThemeStore';
 import { getBubbleBorderRadius } from '../../../../styles/theme';
+import { TikTokCharacterArt } from './TikTokBubbleArt';
 
 interface ChatMessageListProps {
   messages: any[];
@@ -335,26 +336,74 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                       isVoice && styles.msgBubbleVoice,
                     ]}
                   >
-                    {/* TikTok Character Corner Badges */}
-                    {Boolean(isMe && tokens.tiktokBubbleDecor?.topLeft) && (
-                      <Text style={styles.bubbleDecorTopLeft}>
-                        {tokens.tiktokBubbleDecor?.topLeft}
-                      </Text>
+                    {/* TikTok Vector Character Corner Badges */}
+                    {Boolean(isMe && tokens.tiktokBubbleId === 'frog_chick') && (
+                      <>
+                        <View style={styles.bubbleDecorTopLeft}>
+                          <TikTokCharacterArt type="frog_head" size={24} />
+                        </View>
+                        <View style={styles.bubbleDecorTopRight}>
+                          <TikTokCharacterArt type="chick_head" size={24} />
+                        </View>
+                        <View style={styles.bubbleDecorBottomRight}>
+                          <TikTokCharacterArt type="bubbles" size={20} />
+                        </View>
+                      </>
                     )}
-                    {Boolean(isMe && tokens.tiktokBubbleDecor?.topRight) && (
-                      <Text style={styles.bubbleDecorTopRight}>
-                        {tokens.tiktokBubbleDecor?.topRight}
-                      </Text>
+                    {Boolean(isMe && tokens.tiktokBubbleId === 'cat_dog') && (
+                      <>
+                        <View style={styles.bubbleDecorTopLeft}>
+                          <TikTokCharacterArt type="cat" size={24} />
+                        </View>
+                        <View style={styles.bubbleDecorTopRight}>
+                          <TikTokCharacterArt type="dog" size={24} />
+                        </View>
+                      </>
                     )}
-                    {Boolean(isMe && tokens.tiktokBubbleDecor?.bottomLeft) && (
-                      <Text style={styles.bubbleDecorBottomLeft}>
-                        {tokens.tiktokBubbleDecor?.bottomLeft}
-                      </Text>
+                    {Boolean(isMe && tokens.tiktokBubbleId === 'capybara') && (
+                      <>
+                        <View style={styles.bubbleDecorTopLeft}>
+                          <TikTokCharacterArt type="capybara" size={24} />
+                        </View>
+                        <View style={styles.bubbleDecorTopRight}>
+                          <TikTokCharacterArt type="bubbles" size={20} />
+                        </View>
+                      </>
                     )}
-                    {Boolean(isMe && tokens.tiktokBubbleDecor?.bottomRight) && (
-                      <Text style={styles.bubbleDecorBottomRight}>
-                        {tokens.tiktokBubbleDecor?.bottomRight}
-                      </Text>
+                    {Boolean(isMe && tokens.tiktokBubbleId === 'doge') && (
+                      <>
+                        <View style={styles.bubbleDecorTopLeft}>
+                          <TikTokCharacterArt type="doge" size={24} />
+                        </View>
+                        <View style={styles.bubbleDecorTopRight}>
+                          <TikTokCharacterArt type="dog" size={24} />
+                        </View>
+                      </>
+                    )}
+                    {Boolean(isMe && tokens.tiktokBubbleId === 'heart_pepe') && (
+                      <>
+                        <View style={styles.bubbleDecorTopLeft}>
+                          <TikTokCharacterArt type="heart_pepe" size={24} />
+                        </View>
+                        <View style={styles.bubbleDecorTopRight}>
+                          <TikTokCharacterArt type="frog_head" size={22} />
+                        </View>
+                      </>
+                    )}
+                    {Boolean(isMe && tokens.tiktokBubbleId === 'pig_shark') && (
+                      <>
+                        <View style={styles.bubbleDecorBottomLeft}>
+                          <TikTokCharacterArt type="pig" size={22} />
+                        </View>
+                        <View style={styles.bubbleDecorBottomRight}>
+                          <TikTokCharacterArt type="shark" size={22} />
+                        </View>
+                      </>
+                    )}
+                    {Boolean(isMe && tokens.tiktokBubbleId === 'dino') && (
+                      <View style={styles.bubbleDecorTopLeft}>
+                        <TikTokCharacterArt type="dino" size={24} />
+                      </View>
                     )}
 
                     {/* Forwarded from original sender */}
