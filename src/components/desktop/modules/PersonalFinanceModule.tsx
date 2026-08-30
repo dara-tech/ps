@@ -269,7 +269,7 @@ export const PersonalFinanceModule: React.FC = () => {
   const [selectedBank, setSelectedBank] = useState<string>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedPeriod, setSelectedPeriod] = useState<string>('all');
-  const [filterType, setFilterType] = useState<'all' | 'expense' | 'income'>('all');
+  const [filterType, setFilterType] = useState<'all' | 'expense' | 'income' | 'cashflow'>('all');
   const [pageSize, setPageSize] = useState(25);
   const [page, setPage] = useState(1);
 
@@ -310,7 +310,7 @@ export const PersonalFinanceModule: React.FC = () => {
         }
         if (selectedCategory !== 'all') {
           if (f.category !== selectedCategory) return false;
-        } else if (filterType !== 'all' && f.type !== filterType) {
+        } else if (filterType !== 'all' && filterType !== 'cashflow' && f.type !== filterType) {
           return false;
         }
         if (selectedPeriod !== 'all' && !f.date.includes(selectedPeriod)) return false;
@@ -345,6 +345,102 @@ export const PersonalFinanceModule: React.FC = () => {
   );
 
   const netSavings = totalIncome - totalExpense;
+
+  // Deep Cashflow Analytics & Intelligence Engine
+  const cashflowAnalytics = useMemo(() => {
+    const monthlyMap = new Map<string, { month: string; inflow: number; outflow: number; net: number; count: number }>();
+    const merchantMap = new Map<string, { name: string; count: number; totalOutflow: number; brand: BankBrand; latestDate: string }>();
+
+    let needsTotal = 0;
+    let wantsTotal = 0;
+    let totalOutflow = 0;
+    let totalInflow = 0;
+
+    finances.forEach((tx) => {
+      const amt = tx.amount || 0;
+      const isOut = tx.type === 'expense';
+      const isIn = tx.type === 'income';
+
+      if (isOut) totalOutflow += amt;
+      if (isIn) totalInflow += amt;
+
+      // Extract month key e.g. "Aug 2026", "Jul 2026"
+      let monthKey = 'Recent';
+      if (tx.date) {
+        const parts = tx.date.trim().split(' ');
+        if (parts.length >= 3) {
+          monthKey = `${parts[1]} ${parts[2]}`;
+        } else if (tx.date.includes('-')) {
+          monthKey = tx.date.slice(0, 7);
+        }
+      }
+
+      if (!monthlyMap.has(monthKey)) {
+        monthlyMap.set(monthKey, { month: monthKey, inflow: 0, outflow: 0, net: 0, count: 0 });
+      }
+      const mEntry = monthlyMap.get(monthKey)!;
+      mEntry.count++;
+      if (isIn) mEntry.inflow += amt;
+      if (isOut) mEntry.outflow += amt;
+      mEntry.net = mEntry.inflow - mEntry.outflow;
+
+      // Categorization for 50/30/20 Rule
+      if (isOut) {
+        const cat = (tx.category || '').toLowerCase();
+        const isNeed = cat.includes('food') || cat.includes('util') || cat.includes('health') || cat.includes('transport') || cat.includes('grocer') || cat.includes('bill');
+        if (isNeed) {
+          needsTotal += amt;
+        } else {
+          wantsTotal += amt;
+        }
+
+        // Extract merchant name
+        const parsed = parseTransactionNote(tx.note);
+        let mName = (parsed.title || 'General Transfer').trim();
+        if (mName.length > 28) mName = mName.slice(0, 28) + '...';
+        if (!merchantMap.has(mName)) {
+          const brand = detectBankBrand(tx.note, tx.category, tx.type).brand;
+          merchantMap.set(mName, { name: mName, count: 0, totalOutflow: 0, brand, latestDate: tx.date });
+        }
+        const mer = merchantMap.get(mName)!;
+        mer.count++;
+        mer.totalOutflow += amt;
+      }
+    });
+
+    const monthlyList = Array.from(monthlyMap.values()).slice(-6);
+    const maxMonthlyVal = Math.max(1, ...monthlyList.map((m) => Math.max(m.inflow, m.outflow)));
+
+    const topMerchants = Array.from(merchantMap.values())
+      .sort((a, b) => b.totalOutflow - a.totalOutflow)
+      .slice(0, 6);
+
+    const maxMerchantVal = Math.max(1, ...topMerchants.map((m) => m.totalOutflow));
+
+    const netVelocity = totalInflow - totalOutflow;
+    const savingsRate = totalInflow > 0 ? ((netVelocity / totalInflow) * 100) : 0;
+    const avgDailyBurn = totalOutflow / Math.max(1, finances.length > 0 ? 30 : 1);
+    const safeDailySpend = Math.max(15, (totalInflow - totalOutflow) > 0 ? ((totalInflow - totalOutflow) / 30) : 25);
+    const runwayMonths = totalOutflow > 0 && totalInflow > totalOutflow ? (totalInflow / (totalOutflow / 6)).toFixed(1) : '12+';
+
+    return {
+      monthlyList,
+      maxMonthlyVal,
+      topMerchants,
+      maxMerchantVal,
+      needsTotal,
+      wantsTotal,
+      needsPct: totalOutflow > 0 ? Math.round((needsTotal / totalOutflow) * 100) : 50,
+      wantsPct: totalOutflow > 0 ? Math.round((wantsTotal / totalOutflow) * 100) : 50,
+      totalInflow,
+      totalOutflow,
+      netVelocity,
+      savingsRate: Math.max(-100, Math.min(100, Math.round(savingsRate))),
+      avgDailyBurn,
+      safeDailySpend,
+      runwayMonths,
+    };
+  }, [finances]);
 
   const maxPage = Math.max(1, Math.ceil(filteredFinances.length / pageSize));
   const activePage = Math.min(page, maxPage);
@@ -447,9 +543,9 @@ export const PersonalFinanceModule: React.FC = () => {
             </Text>
           </TouchableOpacity>
 
-          {/* All / Expense / Income Type Filter */}
+          {/* All / Expense / Income / Cashflow Analysis Type Filter */}
           <View style={[styles.tabGroup, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
-            {(['all', 'expense', 'income'] as const).map((tab) => (
+            {(['all', 'expense', 'income', 'cashflow'] as const).map((tab) => (
               <Pressable
                 key={tab}
                 style={[
@@ -468,7 +564,13 @@ export const PersonalFinanceModule: React.FC = () => {
                     filterType === tab && { fontWeight: '700' },
                   ]}
                 >
-                  {tab === 'all' ? t.planAll : tab === 'expense' ? t.finExpense : t.finIncome}
+                  {tab === 'all'
+                    ? (language === 'kh' ? 'កិច្ចការទាំងអស់' : 'All')
+                    : tab === 'expense'
+                    ? (language === 'kh' ? 'ចំណាយសរុប' : 'Outflow')
+                    : tab === 'income'
+                    ? (language === 'kh' ? 'ចំណូលសរុប' : 'Inflow')
+                    : (language === 'kh' ? 'វិភាគ Cashflow' : 'Cashflow Analysis')}
                 </Text>
               </Pressable>
             ))}
@@ -827,196 +929,516 @@ export const PersonalFinanceModule: React.FC = () => {
         </View>
       </View>
 
-      {/* Main Bank Ledger Table Container */}
-      <View style={[styles.tableCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
-        {/* Sticky Fixed Table Column Headers */}
-        <View style={[styles.tableHeader, { backgroundColor: tokens.surfaceMuted, borderBottomColor: tokens.borderSubtle }]}>
-          <Text style={[styles.th, { color: tokens.textSecondary, flex: 3 }]}>
-            {language === 'kh' ? 'ប្រតិបត្តិការ / ធនាគារ & អ្នកទទួល' : 'Transaction / Bank & Merchant'}
-          </Text>
-          <Text style={[styles.th, { color: tokens.textSecondary, flex: 1.3 }]}>
-            {language === 'kh' ? 'ប្រភេទ' : 'Category'}
-          </Text>
-          <Text style={[styles.th, { color: tokens.textSecondary, flex: 1.1 }]}>
-            {language === 'kh' ? 'កាលបរិច្ឆេទ & ម៉ោង' : 'Date & Time'}
-          </Text>
-          <Text style={[styles.th, { color: tokens.textSecondary, flex: 1.2, textAlign: 'right' }]}>
-            {language === 'kh' ? 'ចំនួនទឹកប្រាក់' : 'Amount'}
-          </Text>
-          <View style={{ width: 36 }} />
-        </View>
+      {/* Conditional: Cashflow Intelligence View vs Main Bank Ledger Table */}
+      {filterType === 'cashflow' ? (
+        <ScrollView
+          style={styles.cashflowScroll}
+          contentContainerStyle={styles.cashflowScrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* 1. Cashflow Intelligence Hero Banner */}
+          <View style={[styles.cfHeroCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+            <View style={styles.cfHeroTop}>
+              <View style={styles.cfHeroHeaderLeft}>
+                <View style={[styles.cfIconCircle, { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}>
+                  <RemixIcon name="funds-line" size={18} color={tokens.accentColor} />
+                </View>
+                <View>
+                  <Text style={[styles.cfHeroTitle, { color: tokens.textPrimary }]}>
+                    {language === 'kh' ? 'ផ្ទាំងវិភាគចរន្តសាច់ប្រាក់ឆ្លាតវៃ (Cashflow Intelligence)' : 'Cashflow Intelligence & Runway Radar'}
+                  </Text>
+                  <Text style={[styles.cfHeroSub, { color: tokens.textSecondary }]}>
+                    {language === 'kh'
+                      ? `វិភាគលើប្រតិបត្តិការជាក់ស្តែង ${finances.length.toLocaleString()} ប្រតិបត្តិការ ពី ACLEDA & ABA Bank`
+                      : `Deep financial diagnosis across ${finances.length.toLocaleString()} real bank transactions`}
+                  </Text>
+                </View>
+              </View>
 
-        {/* Conditional Rendering: Empty State vs Bank Ledger Data Rows */}
-        {filteredFinances.length === 0 ? (
-          <View style={styles.emptyState}>
-            <View style={[styles.emptyIconCircle, { backgroundColor: tokens.surfaceMuted }]}>
-              <RemixIcon name="bank-card-line" size={24} color={tokens.textMuted} />
-            </View>
-            <Text style={[styles.emptyTitle, { color: tokens.textPrimary }]}>
-              {language === 'kh' ? 'មិនមានប្រតិបត្តិការត្រូវបង្ហាញទេ' : 'No Transactions Found'}
-            </Text>
-            <Text style={[styles.emptySub, { color: tokens.textSecondary }]}>
-              {searchQuery || selectedCategory !== 'all' || selectedPeriod !== 'all' || selectedBank !== 'all'
-                ? language === 'kh'
-                  ? 'សូមសាកល្បងផ្លាស់ប្តូរពាក្យស្វែងរក ឬកាលបរិច្ឆេទ'
-                  : 'Try clearing your bank, date, or category filter.'
-                : language === 'kh'
-                ? 'ប្រើប្រាស់ AI Bar ខាងលើ ឬចុច «នាំចូល Excel» ដើម្បីបញ្ចូលទិន្នន័យ។'
-                : 'Use the AI input bar above or click "Import Statement" to load transactions.'}
-            </Text>
-            {(searchQuery || selectedCategory !== 'all' || selectedPeriod !== 'all' || selectedBank !== 'all' || filterType !== 'all') && (
-              <TouchableOpacity
-                style={[styles.resetFiltersBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
-                onPress={() => {
-                  setSearchQuery('');
-                  setSelectedBank('all');
-                  setSelectedCategory('all');
-                  setSelectedPeriod('all');
-                  setFilterType('all');
-                  setPage(1);
-                }}
-                activeOpacity={0.75}
-              >
-                <RemixIcon name="refresh-line" size={12} color={tokens.accentColor} />
-                <Text style={[styles.resetFiltersBtnText, { color: tokens.accentColor }]}>
-                  {language === 'kh' ? 'សម្អាត Filter ទាំងអស់' : 'Reset All Filters'}
+              <View style={[styles.cfHealthPill, { backgroundColor: cashflowAnalytics.netVelocity >= 0 ? '#DCFCE7' : '#FEE2E2', borderColor: cashflowAnalytics.netVelocity >= 0 ? '#BBF7D0' : '#FECACA' }]}>
+                <View style={[styles.cfHealthDot, { backgroundColor: cashflowAnalytics.netVelocity >= 0 ? '#16A34A' : '#DC2626' }]} />
+                <Text style={[styles.cfHealthText, { color: cashflowAnalytics.netVelocity >= 0 ? '#15803D' : '#B91C1C' }]}>
+                  {cashflowAnalytics.netVelocity >= 0
+                    ? (language === 'kh' ? 'ចរន្តសាច់ប្រាក់រឹងមាំ (Healthy Surplus)' : 'Healthy Cashflow Surplus')
+                    : (language === 'kh' ? 'មានសម្ពាធចំណាយ (Deficit Burn)' : 'Deficit Burn Alert')}
                 </Text>
-              </TouchableOpacity>
-            )}
+              </View>
+            </View>
+
+            {/* 4 Health KPI Tiles */}
+            <View style={styles.cfMetricsGrid}>
+              {/* Metric 1: Net Velocity */}
+              <View style={[styles.cfMetricTile, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                <Text style={[styles.cfMetricLabel, { color: tokens.textSecondary }]}>
+                  {language === 'kh' ? 'ល្បឿនសាច់ប្រាក់សុទ្ធ (Net Velocity)' : 'Net Cashflow Velocity'}
+                </Text>
+                <Text style={[styles.cfMetricValue, { color: cashflowAnalytics.netVelocity >= 0 ? '#16A34A' : '#DC2626' }]}>
+                  {cashflowAnalytics.netVelocity >= 0 ? '+' : '-'}${Math.abs(cashflowAnalytics.netVelocity).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </Text>
+                <Text style={[styles.cfMetricSub, { color: tokens.textSecondary }]}>
+                  {cashflowAnalytics.savingsRate}% {language === 'kh' ? 'នៃចំណូលត្រូវបានរក្សាទុក' : 'net retained savings'}
+                </Text>
+              </View>
+
+              {/* Metric 2: Estimated Runway */}
+              <View style={[styles.cfMetricTile, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                <Text style={[styles.cfMetricLabel, { color: tokens.textSecondary }]}>
+                  {language === 'kh' ? 'រយៈពេលទ្រទ្រង់ (Cash Runway)' : 'Cash Runway & Buffer'}
+                </Text>
+                <Text style={[styles.cfMetricValue, { color: tokens.textPrimary }]}>
+                  {cashflowAnalytics.runwayMonths} {language === 'kh' ? 'ខែ' : 'Months'}
+                </Text>
+                <Text style={[styles.cfMetricSub, { color: tokens.textSecondary }]}>
+                  {language === 'kh' ? 'ការប៉ាន់ស្មានតាមកម្រិតចំណាយ' : 'Estimated buffer at current burn'}
+                </Text>
+              </View>
+
+              {/* Metric 3: Safe-to-Spend Daily Limit */}
+              <View style={[styles.cfMetricTile, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                <Text style={[styles.cfMetricLabel, { color: tokens.textSecondary }]}>
+                  {language === 'kh' ? 'កម្រិតចាយសុវត្ថិភាព (Daily Limit)' : 'Daily Safe-to-Spend'}
+                </Text>
+                <Text style={[styles.cfMetricValue, { color: tokens.accentColor }]}>
+                  ${cashflowAnalytics.safeDailySpend.toFixed(2)}
+                </Text>
+                <Text style={[styles.cfMetricSub, { color: tokens.textSecondary }]}>
+                  {language === 'kh' ? 'ពិដានចំណាយក្នុង ១ ថ្ងៃ' : 'Recommended daily ceiling'}
+                </Text>
+              </View>
+
+              {/* Metric 4: Savings Ratio */}
+              <View style={[styles.cfMetricTile, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                <Text style={[styles.cfMetricLabel, { color: tokens.textSecondary }]}>
+                  {language === 'kh' ? 'អត្រាសន្សំ & ចំណេញ (Savings Rate)' : 'Net Savings Ratio'}
+                </Text>
+                <Text style={[styles.cfMetricValue, { color: cashflowAnalytics.savingsRate >= 20 ? '#16A34A' : '#EAB308' }]}>
+                  {cashflowAnalytics.savingsRate}%
+                </Text>
+                <Text style={[styles.cfMetricSub, { color: tokens.textSecondary }]}>
+                  {cashflowAnalytics.savingsRate >= 20
+                    ? (language === 'kh' ? 'សម្រេចបានគោលដៅ 20%+' : 'Above 20% benchmark')
+                    : (language === 'kh' ? 'គោលដៅស្តង់ដារ 20%+' : 'Target: 20%+ benchmark')}
+                </Text>
+              </View>
+            </View>
           </View>
-        ) : (
-          /* Table Rows Body: Isolated Scroll with Date Grouping */
-          <ScrollView
-            style={styles.tableBodyScroll}
-            contentContainerStyle={styles.tableBodyContent}
-            showsVerticalScrollIndicator={false}
-          >
-            {groupedByDate.map((group) => (
-              <View key={group.date} style={[styles.dateGroupBlock, { borderBottomColor: tokens.borderSubtle }]}>
-                {/* Bank Statement Group Date Header */}
-                <View style={[styles.dateGroupHeader, { backgroundColor: tokens.surfaceMuted, borderTopColor: tokens.borderSubtle, borderBottomColor: tokens.borderSubtle }]}>
-                  <View style={styles.dateGroupHeaderLeft}>
-                    <Text style={[styles.dateGroupTitle, { color: tokens.textPrimary }]}>{group.date}</Text>
-                    <Text style={[styles.dateGroupCount, { color: tokens.textSecondary }]}>({group.items.length} {language === 'kh' ? 'ប្រតិបត្តិការ' : 'items'})</Text>
+
+          {/* 2. Middle Row: Monthly Inflow vs Outflow Velocity Chart + 50/30/20 Budget Breakdown */}
+          <View style={styles.cfMiddleRow}>
+            {/* Monthly Cashflow Velocity Chart */}
+            <View style={[styles.cfChartCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+              <View style={styles.cfCardHeader}>
+                <View style={styles.cfCardHeaderLeft}>
+                  <RemixIcon name="bar-chart-2-line" size={15} color={tokens.accentColor} />
+                  <Text style={[styles.cfCardTitle, { color: tokens.textPrimary }]}>
+                    {language === 'kh' ? 'ចរន្តសាច់ប្រាក់តាមខែ (Inflow vs Outflow Timeline)' : 'Monthly Cashflow Velocity'}
+                  </Text>
+                </View>
+                <View style={styles.cfLegendRow}>
+                  <View style={styles.cfLegendItem}>
+                    <View style={[styles.cfLegendDot, { backgroundColor: '#16A34A' }]} />
+                    <Text style={[styles.cfLegendText, { color: tokens.textSecondary }]}>Inflow</Text>
                   </View>
-                  <View style={styles.dateGroupHeaderRight}>
-                    <Text style={[styles.dateGroupNetLabel, { color: tokens.textSecondary }]}>Day Net:</Text>
-                    <Text
-                      style={[
-                        styles.dateGroupNetValue,
-                        { color: group.netDay >= 0 ? '#16A34A' : '#DC2626' },
-                      ]}
-                    >
-                      {group.netDay >= 0 ? '+' : '-'}${Math.abs(group.netDay).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  <View style={styles.cfLegendItem}>
+                    <View style={[styles.cfLegendDot, { backgroundColor: '#DC2626' }]} />
+                    <Text style={[styles.cfLegendText, { color: tokens.textSecondary }]}>Outflow</Text>
+                  </View>
+                </View>
+              </View>
+
+              <View style={styles.cfTimelineList}>
+                {cashflowAnalytics.monthlyList.map((m) => {
+                  const inPct = Math.max(8, Math.min(100, Math.round((m.inflow / cashflowAnalytics.maxMonthlyVal) * 100)));
+                  const outPct = Math.max(8, Math.min(100, Math.round((m.outflow / cashflowAnalytics.maxMonthlyVal) * 100)));
+                  return (
+                    <View key={m.month} style={styles.cfTimelineRow}>
+                      <View style={styles.cfMonthLabelBox}>
+                        <Text style={[styles.cfMonthName, { color: tokens.textPrimary }]}>{m.month}</Text>
+                        <Text style={[styles.cfMonthCount, { color: tokens.textSecondary }]}>{m.count} txs</Text>
+                      </View>
+
+                      <View style={styles.cfBarsTrack}>
+                        {/* Inflow Bar */}
+                        <View style={styles.cfBarRow}>
+                          <View style={[styles.cfBarFill, { width: `${inPct}%`, backgroundColor: '#16A34A' }]} />
+                          <Text style={[styles.cfBarAmt, { color: '#16A34A' }]}>
+                            +${m.inflow.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </Text>
+                        </View>
+
+                        {/* Outflow Bar */}
+                        <View style={styles.cfBarRow}>
+                          <View style={[styles.cfBarFill, { width: `${outPct}%`, backgroundColor: '#DC2626' }]} />
+                          <Text style={[styles.cfBarAmt, { color: '#DC2626' }]}>
+                            -${m.outflow.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </Text>
+                        </View>
+                      </View>
+
+                      {/* Net Badge */}
+                      <View style={[styles.cfMonthNetBadge, { backgroundColor: m.net >= 0 ? '#DCFCE7' : '#FEE2E2', borderColor: m.net >= 0 ? '#BBF7D0' : '#FECACA' }]}>
+                        <Text style={[styles.cfMonthNetText, { color: m.net >= 0 ? '#15803D' : '#B91C1C' }]}>
+                          {m.net >= 0 ? '+' : '-'}${Math.abs(m.net).toLocaleString('en-US', { maximumFractionDigits: 0 })}
+                        </Text>
+                      </View>
+                    </View>
+                  );
+                })}
+              </View>
+            </View>
+
+            {/* 50/30/20 Budget Breakdown Card */}
+            <View style={[styles.cfBudgetCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+              <View style={styles.cfCardHeader}>
+                <View style={styles.cfCardHeaderLeft}>
+                  <RemixIcon name="pie-chart-2-line" size={15} color={tokens.accentColor} />
+                  <Text style={[styles.cfCardTitle, { color: tokens.textPrimary }]}>
+                    {language === 'kh' ? 'ការបែងចែកថវិកា 50/30/20 Rule' : '50/30/20 Budget Rule'}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.cfBudgetBarsWrap}>
+                {/* 1. Essential Needs (Target 50%) */}
+                <View style={styles.cfBudgetItem}>
+                  <View style={styles.cfBudgetMetaRow}>
+                    <Text style={[styles.cfBudgetName, { color: tokens.textPrimary }]}>
+                      {language === 'kh' ? 'ចំណាយចាំបាច់ (Needs - 50% Target)' : 'Essential Needs (50% Target)'}
+                    </Text>
+                    <Text style={[styles.cfBudgetVal, { color: tokens.textPrimary }]}>
+                      ${cashflowAnalytics.needsTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })} ({cashflowAnalytics.needsPct}%)
+                    </Text>
+                  </View>
+                  <View style={[styles.cfProgressBarBg, { backgroundColor: tokens.surfaceMuted }]}>
+                    <View style={[styles.cfProgressBarFill, { width: `${Math.min(100, cashflowAnalytics.needsPct)}%`, backgroundColor: '#2563EB' }]} />
+                  </View>
+                  <Text style={[styles.cfBudgetSub, { color: tokens.textSecondary }]}>
+                    {language === 'kh' ? 'ម្ហូបអាហារ, ទឹកភ្លើង, សេវាដឹកជញ្ជូន, សុខភាព' : 'Food, utilities, transport, medicine'}
+                  </Text>
+                </View>
+
+                {/* 2. Discretionary Wants (Target 30%) */}
+                <View style={styles.cfBudgetItem}>
+                  <View style={styles.cfBudgetMetaRow}>
+                    <Text style={[styles.cfBudgetName, { color: tokens.textPrimary }]}>
+                      {language === 'kh' ? 'ចំណាយកម្សាន្ត (Wants - 30% Target)' : 'Discretionary Wants (30% Target)'}
+                    </Text>
+                    <Text style={[styles.cfBudgetVal, { color: tokens.textPrimary }]}>
+                      ${cashflowAnalytics.wantsTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })} ({cashflowAnalytics.wantsPct}%)
+                    </Text>
+                  </View>
+                  <View style={[styles.cfProgressBarBg, { backgroundColor: tokens.surfaceMuted }]}>
+                    <View style={[styles.cfProgressBarFill, { width: `${Math.min(100, cashflowAnalytics.wantsPct)}%`, backgroundColor: '#F59E0B' }]} />
+                  </View>
+                  <Text style={[styles.cfBudgetSub, { color: tokens.textSecondary }]}>
+                    {language === 'kh' ? 'Shopping, ញ៉ាំខាងក្រៅ, កាហ្វេ, កម្សាន្ត' : 'Shopping, dining out, lifestyle'}
+                  </Text>
+                </View>
+
+                {/* 3. Retained Savings (Target 20%) */}
+                <View style={styles.cfBudgetItem}>
+                  <View style={styles.cfBudgetMetaRow}>
+                    <Text style={[styles.cfBudgetName, { color: tokens.textPrimary }]}>
+                      {language === 'kh' ? 'ប្រាក់សន្សំសុទ្ធ (Savings - 20% Target)' : 'Retained Savings (20% Target)'}
+                    </Text>
+                    <Text style={[styles.cfBudgetVal, { color: '#16A34A' }]}>
+                      ${Math.max(0, cashflowAnalytics.netVelocity).toLocaleString('en-US', { minimumFractionDigits: 2 })} ({cashflowAnalytics.savingsRate}%)
+                    </Text>
+                  </View>
+                  <View style={[styles.cfProgressBarBg, { backgroundColor: tokens.surfaceMuted }]}>
+                    <View style={[styles.cfProgressBarFill, { width: `${Math.min(100, Math.max(0, cashflowAnalytics.savingsRate))}%`, backgroundColor: '#16A34A' }]} />
+                  </View>
+                  <Text style={[styles.cfBudgetSub, { color: tokens.textSecondary }]}>
+                    {language === 'kh' ? 'ប្រាក់បម្រុង, សន្សំ និងវិនិយោគអនាគត' : 'Surplus reserve, savings & investments'}
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          {/* 3. Bottom Row: Top Merchants / Counterparties + AI Financial Advisor Diagnosis */}
+          <View style={styles.cfBottomRow}>
+            {/* Top Merchants Card */}
+            <View style={[styles.cfMerchantsCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+              <View style={styles.cfCardHeader}>
+                <View style={styles.cfCardHeaderLeft}>
+                  <RemixIcon name="store-2-line" size={15} color={tokens.accentColor} />
+                  <Text style={[styles.cfCardTitle, { color: tokens.textPrimary }]}>
+                    {language === 'kh' ? 'ដៃគូ & ហាងដែលបានទូទាត់ច្រើនបំផុត (Top Counterparties)' : 'Top Spending Merchants & Counterparties'}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.cfMerchantsList}>
+                {cashflowAnalytics.topMerchants.map((mer, idx) => {
+                  const pct = cashflowAnalytics.totalOutflow > 0 ? Math.round((mer.totalOutflow / cashflowAnalytics.totalOutflow) * 100) : 0;
+                  return (
+                    <View key={mer.name} style={[styles.cfMerchantRow, { borderBottomColor: tokens.borderSubtle }]}>
+                      <View style={styles.cfRankBox}>
+                        <Text style={[styles.cfRankText, { color: idx === 0 ? tokens.accentColor : tokens.textSecondary }]}>#{idx + 1}</Text>
+                      </View>
+                      <BankLogo brand={mer.brand} size={28} height={28} />
+                      <View style={styles.cfMerchantInfo}>
+                        <Text style={[styles.cfMerchantName, { color: tokens.textPrimary }]} numberOfLines={1}>
+                          {mer.name}
+                        </Text>
+                        <Text style={[styles.cfMerchantMeta, { color: tokens.textSecondary }]}>
+                          {mer.count} {language === 'kh' ? 'ប្រតិបត្តិការ' : 'transfers'} • {mer.latestDate}
+                        </Text>
+                      </View>
+                      <View style={styles.cfMerchantAmtBox}>
+                        <Text style={[styles.cfMerchantAmt, { color: tokens.textPrimary }]}>
+                          ${mer.totalOutflow.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </Text>
+                        <Text style={[styles.cfMerchantPct, { color: tokens.textSecondary }]}>{pct}% {language === 'kh' ? 'នៃចំណាយ' : 'of spend'}</Text>
+                      </View>
+                    </View>
+                  );
+                })}
+              </View>
+            </View>
+
+            {/* AI Financial Advisor Insights Card */}
+            <View style={[styles.cfAdvisorCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+              <View style={styles.cfCardHeader}>
+                <View style={styles.cfCardHeaderLeft}>
+                  <RemixIcon name="sparkles-fill" size={15} color={tokens.accentColor} />
+                  <Text style={[styles.cfCardTitle, { color: tokens.textPrimary }]}>
+                    {language === 'kh' ? 'អនុសាសន៍ឆ្លាតវៃពី AI Advisor' : 'AI Financial Advisor Diagnosis'}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.cfAdvisorBody}>
+                <View style={[styles.cfInsightBlock, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                  <View style={styles.cfInsightIcon}>
+                    <RemixIcon name="shield-check-fill" size={15} color="#16A34A" />
+                  </View>
+                  <View style={styles.cfInsightContent}>
+                    <Text style={[styles.cfInsightTitle, { color: tokens.textPrimary }]}>
+                      {language === 'kh' ? 'សុខភាពចរន្តសាច់ប្រាក់វិជ្ជមាន' : 'Positive Cashflow Velocity'}
+                    </Text>
+                    <Text style={[styles.cfInsightText, { color: tokens.textSecondary }]}>
+                      {language === 'kh'
+                        ? `ចំណូលសរុប (+${cashflowAnalytics.totalInflow.toLocaleString('en-US', { maximumFractionDigits: 0 })}) គឺខ្ពស់ជាងចំណាយសរុប ដែលផ្តល់នូវប្រាក់សន្សំសុទ្ធ ${cashflowAnalytics.savingsRate}% សម្រាប់ការវិនិយោគ។`
+                        : `Inflows outpace total outflows with a strong ${cashflowAnalytics.savingsRate}% savings surplus for future growth.`}
                     </Text>
                   </View>
                 </View>
 
-                {/* Items in this date group */}
-                {group.items.map((item) => {
-                  const { title, sub, time } = parseTransactionNote(item.note);
-                  const bankInfo = detectBankBrand(item.note, item.category, item.type);
-                  const catStyle = getCategoryStyle(item.category);
-                  const isIncome = item.type === 'income';
+                <View style={[styles.cfInsightBlock, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                  <View style={styles.cfInsightIcon}>
+                    <RemixIcon name="lightbulb-fill" size={15} color="#F59E0B" />
+                  </View>
+                  <View style={styles.cfInsightContent}>
+                    <Text style={[styles.cfInsightTitle, { color: tokens.textPrimary }]}>
+                      {language === 'kh' ? 'ឱកាសបង្កើនប្រសិទ្ធភាពចំណាយ' : 'Cost Optimization Opportunity'}
+                    </Text>
+                    <Text style={[styles.cfInsightText, { color: tokens.textSecondary }]}>
+                      {language === 'kh'
+                        ? `ការចំណាយលើ Discretionary Wants គឺ ${cashflowAnalytics.wantsPct}%។ ការកំណត់ពិដានចំណាយប្រចាំថ្ងៃ $${cashflowAnalytics.safeDailySpend.toFixed(0)} នឹងជួយពង្រីក Runway លើសពី ${cashflowAnalytics.runwayMonths} ខែ។`
+                        : `Keeping daily spend below $${cashflowAnalytics.safeDailySpend.toFixed(0)} maintains your estimated ${cashflowAnalytics.runwayMonths} months of financial runway.`}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
+        </ScrollView>
+      ) : (
+        <>
+          {/* Main Bank Ledger Table Container */}
+          <View style={[styles.tableCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+            {/* Sticky Fixed Table Column Headers */}
+            <View style={[styles.tableHeader, { backgroundColor: tokens.surfaceMuted, borderBottomColor: tokens.borderSubtle }]}>
+              <Text style={[styles.th, { color: tokens.textSecondary, flex: 3 }]}>
+                {language === 'kh' ? 'ប្រតិបត្តិការ / ធនាគារ & អ្នកទទួល' : 'Transaction / Bank & Merchant'}
+              </Text>
+              <Text style={[styles.th, { color: tokens.textSecondary, flex: 1.3 }]}>
+                {language === 'kh' ? 'ប្រភេទ' : 'Category'}
+              </Text>
+              <Text style={[styles.th, { color: tokens.textSecondary, flex: 1.1 }]}>
+                {language === 'kh' ? 'កាលបរិច្ឆេទ & ម៉ោង' : 'Date & Time'}
+              </Text>
+              <Text style={[styles.th, { color: tokens.textSecondary, flex: 1.2, textAlign: 'right' }]}>
+                {language === 'kh' ? 'ចំនួនទឹកប្រាក់' : 'Amount'}
+              </Text>
+              <View style={{ width: 36 }} />
+            </View>
 
-                  return (
-                    <Pressable
-                      key={item.id}
-                      style={({ hovered }: any) => [
-                        styles.tableRow,
-                        { backgroundColor: tokens.surfaceBg, borderBottomColor: tokens.borderSubtle },
-                        hovered && { backgroundColor: tokens.surfaceMuted },
-                      ]}
-                      onPress={() => setSelectedTx(item)}
-                    >
-                      {/* Column 1: Real Official Bank Logo Avatar + Clean Merchant & Metadata */}
-                      <View style={[styles.td, { flex: 3, flexDirection: 'row', alignItems: 'center', gap: 12 }]}>
-                        {/* High-End Real Bank Logo Avatar */}
-                        <BankLogo brand={bankInfo.brand} size={36} height={36} />
-
-                        <View style={styles.noteWrap}>
-                          <Text style={[styles.rowTitle, { color: tokens.textPrimary }]} numberOfLines={1}>
-                            {title}
-                          </Text>
-                          {sub ? (
-                            <Text style={[styles.rowSub, { color: tokens.textSecondary }]} numberOfLines={1}>
-                              {sub}
-                            </Text>
-                          ) : null}
-                        </View>
+            {/* Conditional Rendering: Empty State vs Bank Ledger Data Rows */}
+            {filteredFinances.length === 0 ? (
+              <View style={styles.emptyState}>
+                <View style={[styles.emptyIconCircle, { backgroundColor: tokens.surfaceMuted }]}>
+                  <RemixIcon name="bank-card-line" size={24} color={tokens.textMuted} />
+                </View>
+                <Text style={[styles.emptyTitle, { color: tokens.textPrimary }]}>
+                  {language === 'kh' ? 'មិនមានប្រតិបត្តិការត្រូវបង្ហាញទេ' : 'No Transactions Found'}
+                </Text>
+                <Text style={[styles.emptySub, { color: tokens.textSecondary }]}>
+                  {searchQuery || selectedCategory !== 'all' || selectedPeriod !== 'all' || selectedBank !== 'all'
+                    ? language === 'kh'
+                      ? 'សូមសាកល្បងផ្លាស់ប្តូរពាក្យស្វែងរក ឬកាលបរិច្ឆេទ'
+                      : 'Try clearing your bank, date, or category filter.'
+                    : language === 'kh'
+                    ? 'ប្រើប្រាស់ AI Bar ខាងលើ ឬចុច «នាំចូល Excel» ដើម្បីបញ្ចូលទិន្នន័យ។'
+                    : 'Use the AI input bar above or click "Import Statement" to load transactions.'}
+                </Text>
+                {(searchQuery || selectedCategory !== 'all' || selectedPeriod !== 'all' || selectedBank !== 'all' || filterType !== 'all') && (
+                  <TouchableOpacity
+                    style={[styles.resetFiltersBtn, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}
+                    onPress={() => {
+                      setSearchQuery('');
+                      setSelectedBank('all');
+                      setSelectedCategory('all');
+                      setSelectedPeriod('all');
+                      setFilterType('all');
+                      setPage(1);
+                    }}
+                    activeOpacity={0.75}
+                  >
+                    <RemixIcon name="refresh-line" size={12} color={tokens.accentColor} />
+                    <Text style={[styles.resetFiltersBtnText, { color: tokens.accentColor }]}>
+                      {language === 'kh' ? 'សម្អាត Filter ទាំងអស់' : 'Reset All Filters'}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            ) : (
+              /* Table Rows Body: Isolated Scroll with Date Grouping */
+              <ScrollView
+                style={styles.tableBodyScroll}
+                contentContainerStyle={styles.tableBodyContent}
+                showsVerticalScrollIndicator={false}
+              >
+                {groupedByDate.map((group) => (
+                  <View key={group.date} style={[styles.dateGroupBlock, { borderBottomColor: tokens.borderSubtle }]}>
+                    {/* Bank Statement Group Date Header */}
+                    <View style={[styles.dateGroupHeader, { backgroundColor: tokens.surfaceMuted, borderTopColor: tokens.borderSubtle, borderBottomColor: tokens.borderSubtle }]}>
+                      <View style={styles.dateGroupHeaderLeft}>
+                        <Text style={[styles.dateGroupTitle, { color: tokens.textPrimary }]}>{group.date}</Text>
+                        <Text style={[styles.dateGroupCount, { color: tokens.textSecondary }]}>({group.items.length} {language === 'kh' ? 'ប្រតិបត្តិការ' : 'items'})</Text>
                       </View>
-
-                      {/* Column 2: Clean Category */}
-                      <View style={[styles.td, { flex: 1.3 }]}>
-                        {catStyle.isSimple ? (
-                          <Text style={[styles.categorySimpleText, { color: tokens.textSecondary }]} numberOfLines={1}>
-                            {item.category === 'Transfer & Payments' ? 'Transfer' : item.category}
-                          </Text>
-                        ) : (
-                          <View style={[styles.categoryPill, { backgroundColor: catStyle.bg }]}>
-                            <View style={[styles.categoryDot, { backgroundColor: catStyle.dot }]} />
-                            <Text style={[styles.categoryText, { color: catStyle.text }]} numberOfLines={1}>
-                              {item.category}
-                            </Text>
-                          </View>
-                        )}
-                      </View>
-
-                      {/* Column 3: Date & Time */}
-                      <View style={[styles.td, { flex: 1.1 }]}>
-                        <Text style={[styles.rowDate, { color: tokens.textSecondary }]}>{time || item.date}</Text>
-                      </View>
-
-                      {/* Column 4: Tabular Amount (Bold Green for In, Bold Red for Out) */}
-                      <View style={[styles.td, { flex: 1.2, alignItems: 'flex-end' }]}>
+                      <View style={styles.dateGroupHeaderRight}>
+                        <Text style={[styles.dateGroupNetLabel, { color: tokens.textSecondary }]}>Day Net:</Text>
                         <Text
                           style={[
-                            styles.rowAmount,
-                            { color: isIncome ? '#16A34A' : '#DC2626' },
+                            styles.dateGroupNetValue,
+                            { color: group.netDay >= 0 ? '#16A34A' : '#DC2626' },
                           ]}
                         >
-                          {isIncome ? '+' : '-'}${item.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          {group.netDay >= 0 ? '+' : '-'}${Math.abs(group.netDay).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </Text>
                       </View>
+                    </View>
 
-                      {/* Column 5: Delete Action */}
-                      <View style={{ width: 36, alignItems: 'flex-end' }}>
+                    {/* Items in this date group */}
+                    {group.items.map((item) => {
+                      const { title, sub, time } = parseTransactionNote(item.note);
+                      const bankInfo = detectBankBrand(item.note, item.category, item.type);
+                      const catStyle = getCategoryStyle(item.category);
+                      const isIncome = item.type === 'income';
+
+                      return (
                         <Pressable
+                          key={item.id}
                           style={({ hovered }: any) => [
-                            styles.deleteBtn,
-                            hovered && styles.deleteBtnHovered,
+                            styles.tableRow,
+                            { backgroundColor: tokens.surfaceBg, borderBottomColor: tokens.borderSubtle },
+                            hovered && { backgroundColor: tokens.surfaceMuted },
                           ]}
-                          onPress={(e) => {
-                            e.stopPropagation();
-                            deleteFinanceRecord(item.id);
-                          }}
-                          hitSlop={6}
+                          onPress={() => setSelectedTx(item)}
                         >
-                          {({ hovered }: any) => (
-                            <RemixIcon
-                              name="delete-bin-line"
-                              size={12}
-                              color={hovered ? '#DC2626' : '#94A3B8'}
-                            />
-                          )}
-                        </Pressable>
-                      </View>
-                    </Pressable>
-                  );
-                })}
-              </View>
-            ))}
-          </ScrollView>
-        )}
-      </View>
+                          {/* Column 1: Real Official Bank Logo Avatar + Clean Merchant & Metadata */}
+                          <View style={[styles.td, { flex: 3, flexDirection: 'row', alignItems: 'center', gap: 12 }]}>
+                            {/* High-End Real Bank Logo Avatar */}
+                            <BankLogo brand={bankInfo.brand} size={36} height={36} />
 
-      {/* Fixed Bottom Pagination Bar (Never Scrolls) */}
-      <DesktopPagination
-        currentPage={activePage}
-        totalItems={filteredFinances.length}
-        itemsPerPage={pageSize}
-        onPageChange={setPage}
-      />
+                            <View style={styles.noteWrap}>
+                              <Text style={[styles.rowTitle, { color: tokens.textPrimary }]} numberOfLines={1}>
+                                {title}
+                              </Text>
+                              {sub ? (
+                                <Text style={[styles.rowSub, { color: tokens.textSecondary }]} numberOfLines={1}>
+                                  {sub}
+                                </Text>
+                              ) : null}
+                            </View>
+                          </View>
+
+                          {/* Column 2: Clean Category */}
+                          <View style={[styles.td, { flex: 1.3 }]}>
+                            {catStyle.isSimple ? (
+                              <Text style={[styles.categorySimpleText, { color: tokens.textSecondary }]} numberOfLines={1}>
+                                {item.category === 'Transfer & Payments' ? 'Transfer' : item.category}
+                              </Text>
+                            ) : (
+                              <View style={[styles.categoryPill, { backgroundColor: catStyle.bg }]}>
+                                <View style={[styles.categoryDot, { backgroundColor: catStyle.dot }]} />
+                                <Text style={[styles.categoryText, { color: catStyle.text }]} numberOfLines={1}>
+                                  {item.category}
+                                </Text>
+                              </View>
+                            )}
+                          </View>
+
+                          {/* Column 3: Date & Time */}
+                          <View style={[styles.td, { flex: 1.1 }]}>
+                            <Text style={[styles.rowDate, { color: tokens.textSecondary }]}>{time || item.date}</Text>
+                          </View>
+
+                          {/* Column 4: Tabular Amount (Bold Green for In, Bold Red for Out) */}
+                          <View style={[styles.td, { flex: 1.2, alignItems: 'flex-end' }]}>
+                            <Text
+                              style={[
+                                styles.rowAmount,
+                                { color: isIncome ? '#16A34A' : '#DC2626' },
+                              ]}
+                            >
+                              {isIncome ? '+' : '-'}${item.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </Text>
+                          </View>
+
+                          {/* Column 5: Delete Action */}
+                          <View style={{ width: 36, alignItems: 'flex-end' }}>
+                            <Pressable
+                              style={({ hovered }: any) => [
+                                styles.deleteBtn,
+                                hovered && styles.deleteBtnHovered,
+                              ]}
+                              onPress={(e) => {
+                                e.stopPropagation();
+                                deleteFinanceRecord(item.id);
+                              }}
+                              hitSlop={6}
+                            >
+                              {({ hovered }: any) => (
+                                <RemixIcon
+                                  name="delete-bin-line"
+                                  size={12}
+                                  color={hovered ? '#DC2626' : '#94A3B8'}
+                                />
+                              )}
+                            </Pressable>
+                          </View>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                ))}
+              </ScrollView>
+            )}
+          </View>
+
+          {/* Fixed Bottom Pagination Bar (Never Scrolls) */}
+          <DesktopPagination
+            currentPage={activePage}
+            totalItems={filteredFinances.length}
+            itemsPerPage={pageSize}
+            onPageChange={setPage}
+          />
+        </>
+      )}
 
       {/* Excel Bank Statement Import Modal */}
       <ImportStatementModal
@@ -1794,5 +2216,334 @@ const styles = StyleSheet.create({
     fontFamily: 'Krasar-Bold',
     color: '#FFFFFF',
     fontWeight: '700',
+  },
+
+  // Cashflow Intelligence View Styles
+  cashflowScroll: {
+    flex: 1,
+  },
+  cashflowScrollContent: {
+    padding: 16,
+    gap: 16,
+    paddingBottom: 40,
+  },
+  cfHeroCard: {
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 16,
+    gap: 16,
+  },
+  cfHeroTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  cfHeroHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  cfIconCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cfHeroTitle: {
+    fontSize: 14,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
+  },
+  cfHeroSub: {
+    fontSize: 11,
+    fontFamily: 'Krasar-Regular',
+    marginTop: 2,
+  },
+  cfHealthPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 20,
+    borderWidth: 1,
+  },
+  cfHealthDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  cfHealthText: {
+    fontSize: 11,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
+  },
+  cfMetricsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  cfMetricTile: {
+    flex: 1,
+    minWidth: 180,
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 12,
+    gap: 4,
+  },
+  cfMetricLabel: {
+    fontSize: 10.5,
+    fontFamily: 'Krasar-Regular',
+  },
+  cfMetricValue: {
+    fontSize: 18,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '800',
+    fontVariant: ['tabular-nums'],
+  },
+  cfMetricSub: {
+    fontSize: 9.5,
+    fontFamily: 'Krasar-Regular',
+    marginTop: 2,
+  },
+  cfMiddleRow: {
+    flexDirection: 'row',
+    gap: 16,
+    flexWrap: 'wrap',
+  },
+  cfChartCard: {
+    flex: 1.4,
+    minWidth: 320,
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 16,
+    gap: 14,
+  },
+  cfCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  cfCardHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  cfCardTitle: {
+    fontSize: 12.5,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
+  },
+  cfLegendRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  cfLegendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  cfLegendDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 3.5,
+  },
+  cfLegendText: {
+    fontSize: 10.5,
+    fontFamily: 'Krasar-Regular',
+  },
+  cfTimelineList: {
+    gap: 10,
+  },
+  cfTimelineRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  cfMonthLabelBox: {
+    width: 70,
+  },
+  cfMonthName: {
+    fontSize: 11,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
+  },
+  cfMonthCount: {
+    fontSize: 9.5,
+    fontFamily: 'Krasar-Regular',
+  },
+  cfBarsTrack: {
+    flex: 1,
+    gap: 4,
+  },
+  cfBarRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  cfBarFill: {
+    height: 8,
+    borderRadius: 4,
+    minWidth: 6,
+  },
+  cfBarAmt: {
+    fontSize: 9.5,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '600',
+    fontVariant: ['tabular-nums'],
+  },
+  cfMonthNetBadge: {
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 4,
+    borderWidth: 1,
+    minWidth: 62,
+    alignItems: 'center',
+  },
+  cfMonthNetText: {
+    fontSize: 10,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
+    fontVariant: ['tabular-nums'],
+  },
+  cfBudgetCard: {
+    flex: 1,
+    minWidth: 260,
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 16,
+    gap: 14,
+  },
+  cfBudgetBarsWrap: {
+    gap: 14,
+  },
+  cfBudgetItem: {
+    gap: 4,
+  },
+  cfBudgetMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  cfBudgetName: {
+    fontSize: 11,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
+  },
+  cfBudgetVal: {
+    fontSize: 10.5,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
+    fontVariant: ['tabular-nums'],
+  },
+  cfProgressBarBg: {
+    height: 7,
+    borderRadius: 3.5,
+    overflow: 'hidden',
+  },
+  cfProgressBarFill: {
+    height: '100%',
+    borderRadius: 3.5,
+  },
+  cfBudgetSub: {
+    fontSize: 9.5,
+    fontFamily: 'Krasar-Regular',
+  },
+  cfBottomRow: {
+    flexDirection: 'row',
+    gap: 16,
+    flexWrap: 'wrap',
+  },
+  cfMerchantsCard: {
+    flex: 1.3,
+    minWidth: 300,
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 16,
+    gap: 12,
+  },
+  cfMerchantsList: {
+    gap: 8,
+  },
+  cfMerchantRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 6,
+    borderBottomWidth: 1,
+  },
+  cfRankBox: {
+    width: 22,
+  },
+  cfRankText: {
+    fontSize: 11,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '800',
+  },
+  cfMerchantInfo: {
+    flex: 1,
+  },
+  cfMerchantName: {
+    fontSize: 11.5,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
+  },
+  cfMerchantMeta: {
+    fontSize: 9.5,
+    fontFamily: 'Krasar-Regular',
+    marginTop: 1,
+  },
+  cfMerchantAmtBox: {
+    alignItems: 'flex-end',
+  },
+  cfMerchantAmt: {
+    fontSize: 11.5,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
+    fontVariant: ['tabular-nums'],
+  },
+  cfMerchantPct: {
+    fontSize: 9.5,
+    fontFamily: 'Krasar-Regular',
+  },
+  cfAdvisorCard: {
+    flex: 1,
+    minWidth: 260,
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 16,
+    gap: 12,
+  },
+  cfAdvisorBody: {
+    gap: 10,
+  },
+  cfInsightBlock: {
+    flexDirection: 'row',
+    gap: 10,
+    borderWidth: 1,
+    borderRadius: 7,
+    padding: 10,
+  },
+  cfInsightIcon: {
+    marginTop: 2,
+  },
+  cfInsightContent: {
+    flex: 1,
+    gap: 2,
+  },
+  cfInsightTitle: {
+    fontSize: 11.5,
+    fontFamily: 'Krasar-Bold',
+    fontWeight: '700',
+  },
+  cfInsightText: {
+    fontSize: 10.5,
+    fontFamily: 'Krasar-Regular',
+    lineHeight: 15,
   },
 });
