@@ -12,6 +12,7 @@ import { CustomModal } from '../ui/CustomModal';
 import { RemixIcon } from '../ui/RemixIcon';
 import { useDesktopStore } from '../../store/useDesktopStore';
 import { useLanguageStore } from '../../store/useLanguageStore';
+import { useThemeStore } from '../../store/useThemeStore';
 import { toast } from '../../store/useToastStore';
 
 interface ImportStatementModalProps {
@@ -32,6 +33,7 @@ export const ImportStatementModal: React.FC<ImportStatementModalProps> = ({
 }) => {
   const language = useLanguageStore((state) => state.language);
   const isKh = language === 'kh';
+  const tokens = useThemeStore((state) => state.tokens);
   const importFinanceStatement = useDesktopStore((state) => state.importFinanceStatement);
 
   const [selectedFile, setSelectedFile] = useState<UploadedFileInfo | null>(null);
@@ -122,19 +124,23 @@ export const ImportStatementModal: React.FC<ImportStatementModalProps> = ({
         {/* Interactive Drag & Drop / Upload File Box */}
         {!selectedFile ? (
           <TouchableOpacity
-            style={[styles.dropzone, isDragging && styles.dropzoneActive]}
+            style={[
+              styles.dropzone,
+              { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+              isDragging && { backgroundColor: tokens.accentSoft, borderColor: tokens.accentColor },
+            ]}
             onPress={handleTriggerFilePicker}
             activeOpacity={0.7}
           >
-            <View style={styles.uploadIconCircle}>
-              <RemixIcon name="upload-cloud-2-line" size={26} color="#2563EB" />
+            <View style={[styles.uploadIconCircle, { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}>
+              <RemixIcon name="upload-cloud-2-line" size={26} color={tokens.accentColor} />
             </View>
-            <Text style={styles.dropzoneTitle}>
+            <Text style={[styles.dropzoneTitle, { color: tokens.textPrimary }]}>
               {isKh
                 ? 'ចុចទីនេះដើម្បីជ្រើសរើសឯកសារ Excel'
                 : 'Click to select Excel statement file'}
             </Text>
-            <Text style={styles.dropzoneSub}>
+            <Text style={[styles.dropzoneSub, { color: tokens.textSecondary }]}>
               {isKh
                 ? 'គាំទ្រឯកសារ .xlsx, .xls (ACLEDA, ABA Bank Statement)'
                 : 'Supports .xlsx, .xls from ACLEDA, ABA Bank'}
@@ -142,27 +148,27 @@ export const ImportStatementModal: React.FC<ImportStatementModalProps> = ({
           </TouchableOpacity>
         ) : (
           /* Uploaded File Presentation Card */
-          <View style={styles.fileCard}>
-            <View style={styles.fileIconBox}>
-              <RemixIcon name="file-excel-2-fill" size={26} color="#16A34A" />
+          <View style={[styles.fileCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+            <View style={[styles.fileIconBox, { backgroundColor: tokens.successSoft, borderColor: tokens.success }]}>
+              <RemixIcon name="file-excel-2-fill" size={26} color={tokens.success} />
             </View>
             <View style={styles.fileInfo}>
-              <Text style={styles.fileName} numberOfLines={1}>
+              <Text style={[styles.fileName, { color: tokens.textPrimary }]} numberOfLines={1}>
                 {selectedFile.name}
               </Text>
-              <Text style={styles.fileSub}>
+              <Text style={[styles.fileSub, { color: tokens.textSecondary }]}>
                 {selectedFile.sizeFormatted} • ACLEDA Bank Statement • ~1,210 Rows
               </Text>
             </View>
 
             {/* Change File Button */}
             <TouchableOpacity
-              style={styles.changeFileBtn}
+              style={[styles.changeFileBtn, { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}
               onPress={handleTriggerFilePicker}
               activeOpacity={0.7}
             >
-              <RemixIcon name="folder-open-line" size={13} color="#2563EB" />
-              <Text style={styles.changeFileBtnText}>
+              <RemixIcon name="folder-open-line" size={13} color={tokens.accentColor} />
+              <Text style={[styles.changeFileBtnText, { color: tokens.accentColor }]}>
                 {isKh ? 'ប្តូរ File' : 'Change'}
               </Text>
             </TouchableOpacity>
@@ -171,40 +177,40 @@ export const ImportStatementModal: React.FC<ImportStatementModalProps> = ({
 
         {/* Statement Summary 2x2 Grid Tiles */}
         <View style={styles.specGrid}>
-          <View style={styles.specTile}>
-            <Text style={styles.specLabel}>{isKh ? 'ម្ចាស់គណនី' : 'Account Holder'}</Text>
-            <Text style={styles.specValue} numberOfLines={1}>
+          <View style={[styles.specTile, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+            <Text style={[styles.specLabel, { color: tokens.textSecondary }]}>{isKh ? 'ម្ចាស់គណនី' : 'Account Holder'}</Text>
+            <Text style={[styles.specValue, { color: tokens.textPrimary }]} numberOfLines={1}>
               ឆិល សុវណ្ណតារា (Cheol Sovandara)
             </Text>
           </View>
 
-          <View style={styles.specTile}>
-            <Text style={styles.specLabel}>{isKh ? 'លេខគណនី' : 'Account Number'}</Text>
-            <Text style={styles.specValueCode}>
-              0800-04200715-16 <Text style={{ color: '#059669', fontSize: 10 }}>[USD]</Text>
+          <View style={[styles.specTile, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+            <Text style={[styles.specLabel, { color: tokens.textSecondary }]}>{isKh ? 'លេខគណនី' : 'Account Number'}</Text>
+            <Text style={[styles.specValueCode, { color: tokens.textPrimary }]}>
+              0800-04200715-16 <Text style={{ color: tokens.success, fontSize: 10 }}>[USD]</Text>
             </Text>
           </View>
 
-          <View style={styles.specTile}>
-            <Text style={styles.specLabel}>{isKh ? 'កាលបរិច្ឆេទប្រតិបត្តិការ' : 'Statement Period'}</Text>
-            <Text style={[styles.specValue, { color: '#2563EB' }]} numberOfLines={1}>
+          <View style={[styles.specTile, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+            <Text style={[styles.specLabel, { color: tokens.textSecondary }]}>{isKh ? 'កាលបរិច្ឆេទប្រតិបត្តិការ' : 'Statement Period'}</Text>
+            <Text style={[styles.specValue, { color: tokens.accentColor }]} numberOfLines={1}>
               01 Aug 2025 - 31 Jul 2026 (1,210 txs)
             </Text>
           </View>
 
-          <View style={styles.specTile}>
-            <Text style={styles.specLabel}>{isKh ? 'ទីតាំងផ្ទុកទិន្នន័យ' : 'Database Storage'}</Text>
-            <Text style={[styles.specValue, { color: '#16A34A' }]} numberOfLines={1}>
+          <View style={[styles.specTile, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+            <Text style={[styles.specLabel, { color: tokens.textSecondary }]}>{isKh ? 'ទីតាំងផ្ទុកទិន្នន័យ' : 'Database Storage'}</Text>
+            <Text style={[styles.specValue, { color: tokens.success }]} numberOfLines={1}>
               SQLite Engine (quantum_personal.db)
             </Text>
           </View>
         </View>
 
         {/* Smart Append & Deduplicate Option Card */}
-        <View style={styles.switchCard}>
+        <View style={[styles.switchCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
           <View style={styles.switchTextWrap}>
             <View style={styles.switchLabelRow}>
-              <Text style={styles.switchLabel}>
+              <Text style={[styles.switchLabel, { color: tokens.textPrimary }]}>
                 {isKh
                   ? clearExisting
                     ? 'សម្អាតទិន្នន័យចាស់ទាំងអស់'
@@ -214,12 +220,12 @@ export const ImportStatementModal: React.FC<ImportStatementModalProps> = ({
                   : 'Smart Append & Deduplicate'}
               </Text>
               {!clearExisting && (
-                <View style={styles.recommendedBadge}>
-                  <Text style={styles.recommendedText}>Recommended</Text>
+                <View style={[styles.recommendedBadge, { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}>
+                  <Text style={[styles.recommendedText, { color: tokens.accentColor }]}>Recommended</Text>
                 </View>
               )}
             </View>
-            <Text style={styles.switchSub}>
+            <Text style={[styles.switchSub, { color: tokens.textSecondary }]}>
               {isKh
                 ? clearExisting
                   ? 'លុបទិន្នន័យចាស់ចោលទាំងអស់ ហើយដាក់ទិន្នន័យពី Excel ថ្មីទាំងស្រុង'
@@ -232,26 +238,26 @@ export const ImportStatementModal: React.FC<ImportStatementModalProps> = ({
           <Switch
             value={!clearExisting}
             onValueChange={(val) => setClearExisting(!val)}
-            trackColor={{ false: '#E2E8F0', true: '#16A34A' }}
+            trackColor={{ false: tokens.surfaceMuted, true: tokens.accentColor }}
             thumbColor="#FFFFFF"
           />
         </View>
 
         {/* Modal Actions */}
-        <View style={styles.footer}>
+        <View style={[styles.footer, { borderTopColor: tokens.borderSubtle }]}>
           <TouchableOpacity
-            style={styles.cancelBtn}
+            style={[styles.cancelBtn, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}
             onPress={onClose}
             disabled={isImporting}
             activeOpacity={0.7}
           >
-            <Text style={styles.cancelBtnText}>
+            <Text style={[styles.cancelBtnText, { color: tokens.textSecondary }]}>
               {isKh ? 'បោះបង់' : 'Cancel'}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.importBtn, (!selectedFile || isImporting) && styles.importBtnDisabled]}
+            style={[styles.importBtn, { backgroundColor: tokens.accentColor }, (!selectedFile || isImporting) && styles.importBtnDisabled]}
             onPress={handleImport}
             disabled={!selectedFile || isImporting}
             activeOpacity={0.8}
@@ -260,8 +266,8 @@ export const ImportStatementModal: React.FC<ImportStatementModalProps> = ({
               <ActivityIndicator size="small" color="#FFFFFF" />
             ) : (
               <>
-                <RemixIcon name="file-excel-2-line" size={13} color="#FFFFFF" />
-                <Text style={styles.importBtnText}>
+                <RemixIcon name="file-excel-2-line" size={13} color={tokens.accentFg} />
+                <Text style={[styles.importBtnText, { color: tokens.accentFg }]}>
                   {isKh
                     ? 'រក្សាទុកក្នុង Database (1,210 ប្រតិបត្តិការ)'
                     : 'Save to Database (1,210 Records)'}
