@@ -718,7 +718,7 @@ export const PersonalFinanceModule: React.FC = () => {
               </View>
 
               {/* Bank Source Filter Tabs */}
-              <View style={styles.bankFilterRow}>
+              <View style={styles.bankFilterGroup}>
                 <TouchableOpacity
                   style={[
                     styles.bankFilterPill,
@@ -849,7 +849,7 @@ export const PersonalFinanceModule: React.FC = () => {
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.categoriesScrollContent}
+              contentContainerStyle={styles.categoryScroll}
             >
               <TouchableOpacity
                 style={[
@@ -877,7 +877,7 @@ export const PersonalFinanceModule: React.FC = () => {
               {categories.map((cat) => {
                 const isActive = selectedCategory === cat;
                 const count = finances.filter((f) => f.category === cat).length;
-                const label = language === 'kh' ? getKhmerCategoryLabel(cat) : cat;
+                const label = getCategoryLabel(cat, language);
 
                 return (
                   <TouchableOpacity
