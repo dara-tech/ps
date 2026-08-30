@@ -1029,7 +1029,7 @@ export const PersonalFinanceModule: React.FC = () => {
             <View style={[styles.cfChartCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
               <View style={styles.cfCardHeader}>
                 <View style={styles.cfCardHeaderLeft}>
-                  <RemixIcon name="bar-chart-2-line" size={15} color={tokens.accentColor} />
+                  <RemixIcon name="bar-chart-box-line" size={15} color={tokens.accentColor} />
                   <Text style={[styles.cfCardTitle, { color: tokens.textPrimary }]}>
                     {language === 'kh' ? 'ចរន្តសាច់ប្រាក់តាមខែ (Inflow vs Outflow Timeline)' : 'Monthly Cashflow Velocity'}
                   </Text>
@@ -1091,7 +1091,7 @@ export const PersonalFinanceModule: React.FC = () => {
             <View style={[styles.cfBudgetCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
               <View style={styles.cfCardHeader}>
                 <View style={styles.cfCardHeaderLeft}>
-                  <RemixIcon name="pie-chart-2-line" size={15} color={tokens.accentColor} />
+                  <RemixIcon name="pie-chart-box-line" size={15} color={tokens.accentColor} />
                   <Text style={[styles.cfCardTitle, { color: tokens.textPrimary }]}>
                     {language === 'kh' ? 'ការបែងចែកថវិកា 50/30/20 Rule' : '50/30/20 Budget Rule'}
                   </Text>
@@ -1162,7 +1162,7 @@ export const PersonalFinanceModule: React.FC = () => {
             <View style={[styles.cfMerchantsCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
               <View style={styles.cfCardHeader}>
                 <View style={styles.cfCardHeaderLeft}>
-                  <RemixIcon name="store-2-line" size={15} color={tokens.accentColor} />
+                  <RemixIcon name="building-line" size={15} color={tokens.accentColor} />
                   <Text style={[styles.cfCardTitle, { color: tokens.textPrimary }]}>
                     {language === 'kh' ? 'ដៃគូ & ហាងដែលបានទូទាត់ច្រើនបំផុត (Top Counterparties)' : 'Top Spending Merchants & Counterparties'}
                   </Text>
@@ -1212,7 +1212,7 @@ export const PersonalFinanceModule: React.FC = () => {
               <View style={styles.cfAdvisorBody}>
                 <View style={[styles.cfInsightBlock, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
                   <View style={styles.cfInsightIcon}>
-                    <RemixIcon name="shield-check-fill" size={15} color="#16A34A" />
+                    <RemixIcon name="shield-check-line" size={15} color="#16A34A" />
                   </View>
                   <View style={styles.cfInsightContent}>
                     <Text style={[styles.cfInsightTitle, { color: tokens.textPrimary }]}>
@@ -1228,7 +1228,7 @@ export const PersonalFinanceModule: React.FC = () => {
 
                 <View style={[styles.cfInsightBlock, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
                   <View style={styles.cfInsightIcon}>
-                    <RemixIcon name="lightbulb-fill" size={15} color="#F59E0B" />
+                    <RemixIcon name="lightbulb-line" size={15} color="#F59E0B" />
                   </View>
                   <View style={styles.cfInsightContent}>
                     <Text style={[styles.cfInsightTitle, { color: tokens.textPrimary }]}>
