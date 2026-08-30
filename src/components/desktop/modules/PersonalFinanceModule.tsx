@@ -578,356 +578,346 @@ export const PersonalFinanceModule: React.FC = () => {
         </View>
       </View>
 
-      {/* Fixed Top Controls & Bank KPI Section (Never Scrolls) */}
-      <View style={[styles.fixedTopSection, { backgroundColor: tokens.windowBg }]}>
-        {/* Top Deck: 3 Clean FinTech Stat Cards */}
-        <View style={styles.statsGrid}>
-          {/* 1. HERO NET BALANCE CARD */}
-          <View style={[styles.statCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
-            <View style={styles.statTop}>
-              <View style={styles.statTitleGroup}>
-                <Text style={[styles.statLabel, { color: tokens.textSecondary }]}>{language === 'kh' ? 'សមតុល្យសរុប' : 'NET BALANCE'}</Text>
-                <View style={[styles.currencyBadge, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
-                  <Text style={[styles.currencyBadgeText, { color: tokens.textSecondary }]}>USD</Text>
+      {/* Fixed Top Controls & Bank KPI Section (Only for Transaction Ledger Views) */}
+      {filterType !== 'cashflow' && (
+        <View style={[styles.fixedTopSection, { backgroundColor: tokens.windowBg }]}>
+          {/* Top Deck: 3 Clean FinTech Stat Cards */}
+          <View style={styles.statsGrid}>
+            {/* 1. HERO NET BALANCE CARD */}
+            <View style={[styles.statCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+              <View style={styles.statTop}>
+                <View style={styles.statTitleGroup}>
+                  <Text style={[styles.statLabel, { color: tokens.textSecondary }]}>{language === 'kh' ? 'សមតុល្យសរុប' : 'NET BALANCE'}</Text>
+                  <View style={[styles.currencyBadge, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                    <Text style={[styles.currencyBadgeText, { color: tokens.textSecondary }]}>USD</Text>
+                  </View>
+                </View>
+                <View style={[styles.statIconBox, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                  <RemixIcon name="bank-card-line" size={12} color={tokens.textPrimary} />
                 </View>
               </View>
-              <View style={[styles.statIconBox, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
-                <RemixIcon name="bank-card-line" size={12} color={tokens.textPrimary} />
-              </View>
-            </View>
-            <Text
-              style={[
-                styles.statValue,
-                { color: netSavings >= 0 ? '#16A34A' : '#DC2626' },
-              ]}
-            >
-              {netSavings >= 0 ? '+' : '-'}${Math.abs(netSavings).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-            </Text>
-            <Text style={[styles.statSub, { color: tokens.textSecondary }]}>
-              {selectedPeriod === 'all'
-                ? language === 'kh'
-                  ? 'សមតុល្យសរុបគ្រប់ពេលវេលា'
-                  : 'Total live account balance'
-                : language === 'kh'
-                ? `សមតុល្យសម្រាប់ ${selectedPeriod}`
-                : `Net balance for ${selectedPeriod}`}
-            </Text>
-          </View>
-
-          {/* 2. INFLOW CARD (GREEN) */}
-          <View style={[styles.statCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
-            <View style={styles.statTop}>
-              <Text style={[styles.statLabel, { color: tokens.textSecondary }]}>{language === 'kh' ? 'ចំណូលសរុប (INFLOW)' : 'TOTAL INFLOW'}</Text>
-              <View style={[styles.statIconBox, { backgroundColor: '#DCFCE7', borderColor: '#BBF7D0' }]}>
-                <RemixIcon name="arrow-down-line" size={12} color="#16A34A" />
-              </View>
-            </View>
-            <Text style={[styles.statValue, { color: '#16A34A' }]}>
-              +${totalIncome.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-            </Text>
-            <Text style={[styles.statSub, { color: tokens.textSecondary }]}>
-              {language === 'kh' ? 'ចំណូលសរុបចូលគណនី' : 'Total money received'}
-            </Text>
-          </View>
-
-          {/* 3. OUTFLOW CARD (RED) */}
-          <View style={[styles.statCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
-            <View style={styles.statTop}>
-              <Text style={[styles.statLabel, { color: tokens.textSecondary }]}>{language === 'kh' ? 'ចំណាយសរុប (OUTFLOW)' : 'TOTAL OUTFLOW'}</Text>
-              <View style={[styles.statIconBox, { backgroundColor: '#FEE2E2', borderColor: '#FECACA' }]}>
-                <RemixIcon name="arrow-up-line" size={12} color="#DC2626" />
-              </View>
-            </View>
-            <Text style={[styles.statValue, { color: '#DC2626' }]}>
-              -${totalExpense.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-            </Text>
-            <Text style={[styles.statSub, { color: tokens.textSecondary }]}>
-              {language === 'kh' ? 'ចំណាយសរុបបានទូទាត់' : 'Total expenses paid'}
-            </Text>
-          </View>
-        </View>
-
-        {/* AI Smart Expense Capture Bar */}
-        <View style={styles.aiCaptureBar}>
-          <CustomTextInput
-            containerStyle={[styles.aiInputContainer, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}
-            value={aiInput}
-            onChangeText={setAiInput}
-            placeholder={t.finQuickLogPlaceholder}
-            onSubmitEditing={handleAiLog}
-            icon="sparkles-fill"
-            size="md"
-            rightElement={
-              <TouchableOpacity
+              <Text
                 style={[
-                  styles.aiButton,
-                  { backgroundColor: tokens.accentColor },
-                  (!aiInput.trim() || isProcessing) && { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+                  styles.statValue,
+                  { color: netSavings >= 0 ? '#16A34A' : '#DC2626' },
                 ]}
-                onPress={handleAiLog}
-                disabled={!aiInput.trim() || isProcessing}
-                activeOpacity={0.8}
               >
-                {isProcessing ? (
-                  <ActivityIndicator size="small" color={tokens.accentFg} />
-                ) : (
-                  <>
-                    <RemixIcon
-                      name="send-plane-fill"
-                      size={11}
-                      color={aiInput.trim() ? tokens.accentFg : tokens.textMuted}
-                    />
+                {netSavings >= 0 ? '+' : '-'}${Math.abs(netSavings).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              </Text>
+              <Text style={[styles.statSub, { color: tokens.textSecondary }]}>
+                {selectedPeriod === 'all'
+                  ? language === 'kh'
+                    ? 'សមតុល្យសរុបគ្រប់ពេលវេលា'
+                    : 'Total live account balance'
+                  : language === 'kh'
+                  ? `សមតុល្យសម្រាប់ ${selectedPeriod}`
+                  : `Net balance for ${selectedPeriod}`}
+              </Text>
+            </View>
+
+            {/* 2. INFLOW CARD (GREEN) */}
+            <View style={[styles.statCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+              <View style={styles.statTop}>
+                <Text style={[styles.statLabel, { color: tokens.textSecondary }]}>{language === 'kh' ? 'ចំណូលសរុប' : 'TOTAL INFLOW'}</Text>
+                <View style={[styles.statIconBox, { backgroundColor: '#DCFCE7', borderColor: '#BBF7D0' }]}>
+                  <RemixIcon name="arrow-down-line" size={12} color="#16A34A" />
+                </View>
+              </View>
+              <Text style={[styles.statValue, { color: '#16A34A' }]}>
+                +${totalIncome.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              </Text>
+              <Text style={[styles.statSub, { color: tokens.textSecondary }]}>
+                {language === 'kh' ? 'ចំណូលសរុបចូលគណនី' : 'Total money received'}
+              </Text>
+            </View>
+
+            {/* 3. OUTFLOW CARD (RED) */}
+            <View style={[styles.statCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+              <View style={styles.statTop}>
+                <Text style={[styles.statLabel, { color: tokens.textSecondary }]}>{language === 'kh' ? 'ចំណាយសរុប' : 'TOTAL OUTFLOW'}</Text>
+                <View style={[styles.statIconBox, { backgroundColor: '#FEE2E2', borderColor: '#FECACA' }]}>
+                  <RemixIcon name="arrow-up-line" size={12} color="#DC2626" />
+                </View>
+              </View>
+              <Text style={[styles.statValue, { color: '#DC2626' }]}>
+                -${totalExpense.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              </Text>
+              <Text style={[styles.statSub, { color: tokens.textSecondary }]}>
+                {language === 'kh' ? 'ចំណាយសរុបបានទូទាត់' : 'Total expenses paid'}
+              </Text>
+            </View>
+          </View>
+
+          {/* AI Smart Expense Capture Bar */}
+          <View style={styles.aiCaptureBar}>
+            <CustomTextInput
+              containerStyle={[styles.aiInputContainer, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}
+              value={aiInput}
+              onChangeText={setAiInput}
+              placeholder={t.finQuickLogPlaceholder}
+              onSubmitEditing={handleAiLog}
+              icon="sparkles-fill"
+              size="md"
+              rightElement={
+                <TouchableOpacity
+                  style={[
+                    styles.aiButton,
+                    { backgroundColor: tokens.accentColor },
+                    (!aiInput.trim() || isProcessing) && { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle },
+                  ]}
+                  onPress={handleAiLog}
+                  disabled={!aiInput.trim() || isProcessing}
+                  activeOpacity={0.8}
+                >
+                  {isProcessing ? (
+                    <ActivityIndicator size="small" color={tokens.accentFg} />
+                  ) : (
+                    <>
+                      <RemixIcon
+                        name="send-plane-fill"
+                        size={11}
+                        color={aiInput.trim() ? tokens.accentFg : tokens.textMuted}
+                      />
+                      <Text
+                        style={[
+                          styles.aiButtonText,
+                          { color: tokens.accentFg },
+                          !aiInput.trim() && { color: tokens.textMuted },
+                        ]}
+                      >
+                        {t.finLogEntry}
+                      </Text>
+                    </>
+                  )}
+                </TouchableOpacity>
+              }
+            />
+          </View>
+
+          {/* Controls Row 1: Search Box + Bank Source Selector + Page Size */}
+          <View style={styles.controlsRowTop}>
+            <View style={styles.controlsRowTopLeft}>
+              {/* Search Box */}
+              <View style={[styles.searchBox, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+                <RemixIcon name="search-line" size={13} color={tokens.textMuted} />
+                <TextInput
+                  style={[styles.searchInput, { color: tokens.textPrimary }]}
+                  placeholder={language === 'kh' ? 'ស្វែងរកប្រតិបត្តិការ, ហាង, Ref Code...' : 'Search note, merchant, ref...'}
+                  placeholderTextColor={tokens.textMuted}
+                  value={searchQuery}
+                  onChangeText={(text) => {
+                    setSearchQuery(text);
+                    setPage(1);
+                  }}
+                />
+                {searchQuery.length > 0 && (
+                  <TouchableOpacity onPress={() => setSearchQuery('')}>
+                    <RemixIcon name="close-line" size={13} color={tokens.textMuted} />
+                  </TouchableOpacity>
+                )}
+              </View>
+
+              {/* Bank Source Filter Tabs */}
+              <View style={styles.bankFilterRow}>
+                <TouchableOpacity
+                  style={[
+                    styles.bankFilterPill,
+                    { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
+                    selectedBank === 'all' && { backgroundColor: tokens.accentColor, borderColor: tokens.accentColor },
+                  ]}
+                  onPress={() => { setSelectedBank('all'); setPage(1); }}
+                  activeOpacity={0.75}
+                >
+                  <Text
+                    style={[
+                      styles.bankFilterPillText,
+                      { color: tokens.textSecondary },
+                      selectedBank === 'all' && { color: tokens.accentFg, fontWeight: '700' },
+                    ]}
+                  >
+                    {language === 'kh' ? `ធនាគារទាំងអស់ (${bankCounts.all})` : `All (${bankCounts.all})`}
+                  </Text>
+                </TouchableOpacity>
+
+                {bankCounts.acleda > 0 && (
+                  <TouchableOpacity
+                    style={[
+                      styles.bankFilterPill,
+                      { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
+                      selectedBank === 'acleda' && { backgroundColor: tokens.accentColor, borderColor: tokens.accentColor },
+                    ]}
+                    onPress={() => { setSelectedBank('acleda'); setPage(1); }}
+                    activeOpacity={0.75}
+                  >
+                    <View style={[styles.miniBankDot, { backgroundColor: '#FBBF24' }]} />
                     <Text
                       style={[
-                        styles.aiButtonText,
-                        { color: tokens.accentFg },
-                        !aiInput.trim() && { color: tokens.textMuted },
+                        styles.bankFilterPillText,
+                        { color: tokens.textSecondary },
+                        selectedBank === 'acleda' && { color: tokens.accentFg, fontWeight: '700' },
                       ]}
                     >
-                      {t.finLogEntry}
+                      ACLEDA ({bankCounts.acleda})
                     </Text>
-                  </>
+                  </TouchableOpacity>
                 )}
-              </TouchableOpacity>
-            }
-          />
-        </View>
 
-        {/* Controls Row 1: Search Box + Bank Source Selector + Page Size */}
-        <View style={styles.controlsRowTop}>
-          <View style={styles.controlsRowTopLeft}>
-            {/* Search Box */}
-            <View style={[styles.searchBox, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
-              <RemixIcon name="search-line" size={13} color={tokens.textMuted} />
-              <TextInput
-                style={[styles.searchInput, { color: tokens.textPrimary }]}
-                placeholder={
-                  language === 'kh'
-                    ? 'ស្វែងរកប្រតិបត្តិការ, ហាង, Ref Code...'
-                    : 'Search transactions, merchant, ref code...'
-                }
-                placeholderTextColor={tokens.textMuted}
-                value={searchQuery}
-                onChangeText={(txt) => {
-                  setSearchQuery(txt);
-                  setPage(1);
-                }}
-              />
-              {searchQuery ? (
-                <TouchableOpacity onPress={() => { setSearchQuery(''); setPage(1); }}>
-                  <RemixIcon name="close-line" size={13} color={tokens.textMuted} />
-                </TouchableOpacity>
-              ) : null}
+                {bankCounts.aba > 0 && (
+                  <TouchableOpacity
+                    style={[
+                      styles.bankFilterPill,
+                      { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
+                      selectedBank === 'aba' && { backgroundColor: tokens.accentColor, borderColor: tokens.accentColor },
+                    ]}
+                    onPress={() => { setSelectedBank('aba'); setPage(1); }}
+                    activeOpacity={0.75}
+                  >
+                    <View style={[styles.miniBankDot, { backgroundColor: '#38BDF8' }]} />
+                    <Text
+                      style={[
+                        styles.bankFilterPillText,
+                        { color: tokens.textSecondary },
+                        selectedBank === 'aba' && { color: tokens.accentFg, fontWeight: '700' },
+                      ]}
+                    >
+                      ABA Bank ({bankCounts.aba})
+                    </Text>
+                  </TouchableOpacity>
+                )}
+
+                {bankCounts.khqr > 0 && (
+                  <TouchableOpacity
+                    style={[
+                      styles.bankFilterPill,
+                      { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
+                      selectedBank === 'khqr' && { backgroundColor: tokens.accentColor, borderColor: tokens.accentColor },
+                    ]}
+                    onPress={() => { setSelectedBank('khqr'); setPage(1); }}
+                    activeOpacity={0.75}
+                  >
+                    <View style={[styles.miniBankDot, { backgroundColor: '#E11D48' }]} />
+                    <Text
+                      style={[
+                        styles.bankFilterPillText,
+                        { color: tokens.textSecondary },
+                        selectedBank === 'khqr' && { color: tokens.accentFg, fontWeight: '700' },
+                      ]}
+                    >
+                      KHQR ({bankCounts.khqr})
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
             </View>
 
-            {/* Bank Source Filter Tabs (All, ACLEDA, ABA Bank, KHQR) */}
-            <View style={styles.bankFilterGroup}>
+            {/* Page Size Toggle */}
+            <View style={styles.pageSizeSelector}>
+              <Text style={[styles.pageSizeLabel, { color: tokens.textSecondary }]}>
+                {language === 'kh' ? 'បង្ហាញ:' : 'Rows:'}
+              </Text>
+              <View style={[styles.pageSizeGroup, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                {[15, 25, 50].map((sz) => (
+                  <TouchableOpacity
+                    key={sz}
+                    style={[
+                      styles.pageSizeBtn,
+                      pageSize === sz && { backgroundColor: tokens.surfaceBg },
+                    ]}
+                    onPress={() => {
+                      setPageSize(sz);
+                      setPage(1);
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <Text
+                      style={[
+                        styles.pageSizeText,
+                        { color: tokens.textSecondary },
+                        pageSize === sz && { color: tokens.textPrimary, fontWeight: '700' },
+                      ]}
+                    >
+                      {sz}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          </View>
+
+          {/* Controls Row 2: Category Chips Scroll */}
+          <View style={styles.controlsRowBottom}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.categoriesScrollContent}
+            >
               <TouchableOpacity
                 style={[
-                  styles.bankFilterPill,
+                  styles.categoryFilterChip,
                   { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
-                  selectedBank === 'all' && { backgroundColor: tokens.accentColor, borderColor: tokens.accentColor },
+                  selectedCategory === 'all' && { backgroundColor: tokens.accentColor, borderColor: tokens.accentColor },
                 ]}
-                onPress={() => { setSelectedBank('all'); setPage(1); }}
+                onPress={() => {
+                  setSelectedCategory('all');
+                  setPage(1);
+                }}
                 activeOpacity={0.75}
               >
                 <Text
                   style={[
-                    styles.bankFilterPillText,
+                    styles.categoryFilterText,
                     { color: tokens.textSecondary },
-                    selectedBank === 'all' && { color: tokens.accentFg, fontWeight: '700' },
+                    selectedCategory === 'all' && { color: tokens.accentFg, fontWeight: '700' },
                   ]}
                 >
-                  {language === 'kh' ? 'ធនាគារទាំងអស់' : 'All Banks'} ({bankCounts.all})
+                  {language === 'kh' ? 'គ្រប់ប្រភេទ' : 'All Categories'}
                 </Text>
               </TouchableOpacity>
 
-              {bankCounts.acleda > 0 && (
-                <TouchableOpacity
-                  style={[
-                    styles.bankFilterPill,
-                    { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
-                    selectedBank === 'acleda' && { backgroundColor: tokens.accentColor, borderColor: tokens.accentColor },
-                  ]}
-                  onPress={() => { setSelectedBank('acleda'); setPage(1); }}
-                  activeOpacity={0.75}
-                >
-                  <View style={[styles.miniBankDot, { backgroundColor: '#FBBF24' }]} />
-                  <Text
-                    style={[
-                      styles.bankFilterPillText,
-                      { color: tokens.textSecondary },
-                      selectedBank === 'acleda' && { color: tokens.accentFg, fontWeight: '700' },
-                    ]}
-                  >
-                    ACLEDA ({bankCounts.acleda})
-                  </Text>
-                </TouchableOpacity>
-              )}
+              {categories.map((cat) => {
+                const isActive = selectedCategory === cat;
+                const count = finances.filter((f) => f.category === cat).length;
+                const label = language === 'kh' ? getKhmerCategoryLabel(cat) : cat;
 
-              {bankCounts.aba > 0 && (
-                <TouchableOpacity
-                  style={[
-                    styles.bankFilterPill,
-                    { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
-                    selectedBank === 'aba' && { backgroundColor: tokens.accentColor, borderColor: tokens.accentColor },
-                  ]}
-                  onPress={() => { setSelectedBank('aba'); setPage(1); }}
-                  activeOpacity={0.75}
-                >
-                  <View style={[styles.miniBankDot, { backgroundColor: '#38BDF8' }]} />
-                  <Text
+                return (
+                  <TouchableOpacity
+                    key={cat}
                     style={[
-                      styles.bankFilterPillText,
-                      { color: tokens.textSecondary },
-                      selectedBank === 'aba' && { color: tokens.accentFg, fontWeight: '700' },
+                      styles.categoryFilterChip,
+                      { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
+                      isActive && { backgroundColor: tokens.accentColor, borderColor: tokens.accentColor },
                     ]}
+                    onPress={() => {
+                      setSelectedCategory(cat);
+                      setPage(1);
+                    }}
+                    activeOpacity={0.75}
                   >
-                    ABA Bank ({bankCounts.aba})
-                  </Text>
-                </TouchableOpacity>
-              )}
-
-              {bankCounts.khqr > 0 && (
-                <TouchableOpacity
-                  style={[
-                    styles.bankFilterPill,
-                    { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
-                    selectedBank === 'khqr' && { backgroundColor: tokens.accentColor, borderColor: tokens.accentColor },
-                  ]}
-                  onPress={() => { setSelectedBank('khqr'); setPage(1); }}
-                  activeOpacity={0.75}
-                >
-                  <View style={[styles.miniBankDot, { backgroundColor: '#E11D48' }]} />
-                  <Text
-                    style={[
-                      styles.bankFilterPillText,
-                      { color: tokens.textSecondary },
-                      selectedBank === 'khqr' && { color: tokens.accentFg, fontWeight: '700' },
-                    ]}
-                  >
-                    KHQR ({bankCounts.khqr})
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          </View>
-
-          {/* Page Size Toggle */}
-          <View style={styles.pageSizeSelector}>
-            <Text style={[styles.pageSizeLabel, { color: tokens.textSecondary }]}>
-              {language === 'kh' ? 'បង្ហាញ:' : 'Rows:'}
-            </Text>
-            <View style={[styles.pageSizeGroup, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
-              {[15, 25, 50].map((sz) => (
-                <TouchableOpacity
-                  key={sz}
-                  style={[
-                    styles.pageSizeBtn,
-                    pageSize === sz && { backgroundColor: tokens.surfaceBg },
-                  ]}
-                  onPress={() => {
-                    setPageSize(sz);
-                    setPage(1);
-                  }}
-                  activeOpacity={0.7}
-                >
-                  <Text
-                    style={[
-                      styles.pageSizeText,
-                      { color: tokens.textSecondary },
-                      pageSize === sz && { color: tokens.textPrimary, fontWeight: '700' },
-                    ]}
-                  >
-                    {sz}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-        </View>
-
-        {/* Controls Row 2: Category Chips Scroll */}
-        <View style={styles.controlsRowBottom}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.categoryScroll}
-          >
-            <TouchableOpacity
-              style={[
-                styles.categoryFilterChip,
-                { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
-                selectedCategory === 'all' && { backgroundColor: tokens.accentColor, borderColor: tokens.accentColor },
-              ]}
-              onPress={() => {
-                setSelectedCategory('all');
-                setPage(1);
-              }}
-              activeOpacity={0.75}
-            >
-              <Text
-                style={[
-                  styles.categoryFilterText,
-                  { color: tokens.textSecondary },
-                  selectedCategory === 'all' && { color: tokens.accentFg, fontWeight: '700' },
-                ]}
-              >
-                {language === 'kh' ? 'ទាំងអស់' : 'All Categories'}
-                <Text
-                  style={[
-                    styles.categoryCountText,
-                    { color: tokens.textMuted },
-                    selectedCategory === 'all' && { color: tokens.accentFg, opacity: 0.8 },
-                  ]}
-                >
-                  {' '}({finances.length})
-                </Text>
-              </Text>
-            </TouchableOpacity>
-
-            {categories.map((cat) => {
-              const count = finances.filter((f) => f.category === cat).length;
-              const isActive = selectedCategory === cat;
-              const label = getCategoryLabel(cat, language);
-              return (
-                <TouchableOpacity
-                  key={cat}
-                  style={[
-                    styles.categoryFilterChip,
-                    { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle },
-                    isActive && { backgroundColor: tokens.accentColor, borderColor: tokens.accentColor },
-                  ]}
-                  onPress={() => {
-                    setSelectedCategory(cat);
-                    setPage(1);
-                  }}
-                  activeOpacity={0.75}
-                >
-                  <Text
-                    style={[
-                      styles.categoryFilterText,
-                      { color: tokens.textSecondary },
-                      isActive && { color: tokens.accentFg, fontWeight: '700' },
-                    ]}
-                  >
-                    {label}
                     <Text
                       style={[
-                        styles.categoryCountText,
-                        { color: tokens.textMuted },
-                        isActive && { color: tokens.accentFg, opacity: 0.8 },
+                        styles.categoryFilterText,
+                        { color: tokens.textSecondary },
+                        isActive && { color: tokens.accentFg, fontWeight: '700' },
                       ]}
                     >
-                      {' '}({count})
+                      {label}
+                      <Text
+                        style={[
+                          styles.categoryCountText,
+                          { color: tokens.textMuted },
+                          isActive && { color: tokens.accentFg, opacity: 0.8 },
+                        ]}
+                      >
+                        {' '}({count})
+                      </Text>
                     </Text>
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+          </View>
         </View>
-      </View>
+      )}
 
       {/* Conditional: Cashflow Intelligence View vs Main Bank Ledger Table */}
       {filterType === 'cashflow' ? (
@@ -936,90 +926,74 @@ export const PersonalFinanceModule: React.FC = () => {
           contentContainerStyle={styles.cashflowScrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* 1. Cashflow Intelligence Hero Banner */}
-          <View style={[styles.cfHeroCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
-            <View style={styles.cfHeroTop}>
-              <View style={styles.cfHeroHeaderLeft}>
-                <View style={[styles.cfIconCircle, { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}>
-                  <RemixIcon name="funds-line" size={18} color={tokens.accentColor} />
-                </View>
-                <View>
-                  <Text style={[styles.cfHeroTitle, { color: tokens.textPrimary }]}>
-                    {language === 'kh' ? 'ផ្ទាំងវិភាគចរន្តសាច់ប្រាក់ឆ្លាតវៃ (Cashflow Intelligence)' : 'Cashflow Intelligence & Runway Radar'}
-                  </Text>
-                  <Text style={[styles.cfHeroSub, { color: tokens.textSecondary }]}>
-                    {language === 'kh'
-                      ? `វិភាគលើប្រតិបត្តិការជាក់ស្តែង ${finances.length.toLocaleString()} ប្រតិបត្តិការ ពី ACLEDA & ABA Bank`
-                      : `Deep financial diagnosis across ${finances.length.toLocaleString()} real bank transactions`}
-                  </Text>
-                </View>
-              </View>
-
-              <View style={[styles.cfHealthPill, { backgroundColor: cashflowAnalytics.netVelocity >= 0 ? '#DCFCE7' : '#FEE2E2', borderColor: cashflowAnalytics.netVelocity >= 0 ? '#BBF7D0' : '#FECACA' }]}>
-                <View style={[styles.cfHealthDot, { backgroundColor: cashflowAnalytics.netVelocity >= 0 ? '#16A34A' : '#DC2626' }]} />
-                <Text style={[styles.cfHealthText, { color: cashflowAnalytics.netVelocity >= 0 ? '#15803D' : '#B91C1C' }]}>
-                  {cashflowAnalytics.netVelocity >= 0
-                    ? (language === 'kh' ? 'ចរន្តសាច់ប្រាក់រឹងមាំ (Healthy Surplus)' : 'Healthy Cashflow Surplus')
-                    : (language === 'kh' ? 'មានសម្ពាធចំណាយ (Deficit Burn)' : 'Deficit Burn Alert')}
+          {/* 1. Clean Top 4 KPI Metrics Deck */}
+          <View style={styles.cfMetricsGrid}>
+            <View style={[styles.statCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+              <View style={styles.statTop}>
+                <Text style={[styles.statLabel, { color: tokens.textSecondary }]}>
+                  {language === 'kh' ? 'សមតុល្យសុទ្ធ' : 'NET VELOCITY'}
                 </Text>
+                <View style={[styles.statIconBox, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
+                  <RemixIcon name="funds-line" size={12} color={tokens.textPrimary} />
+                </View>
               </View>
+              <Text style={[styles.statValue, { color: cashflowAnalytics.netVelocity >= 0 ? '#16A34A' : '#DC2626' }]}>
+                {cashflowAnalytics.netVelocity >= 0 ? '+' : '-'}${Math.abs(cashflowAnalytics.netVelocity).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              </Text>
+              <Text style={[styles.statSub, { color: tokens.textSecondary }]}>
+                {cashflowAnalytics.savingsRate}% {language === 'kh' ? 'អត្រាសន្សំសុទ្ធ' : 'net retained savings'}
+              </Text>
             </View>
 
-            {/* 4 Health KPI Tiles */}
-            <View style={styles.cfMetricsGrid}>
-              {/* Metric 1: Net Velocity */}
-              <View style={[styles.cfMetricTile, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
-                <Text style={[styles.cfMetricLabel, { color: tokens.textSecondary }]}>
-                  {language === 'kh' ? 'ល្បឿនសាច់ប្រាក់សុទ្ធ (Net Velocity)' : 'Net Cashflow Velocity'}
+            <View style={[styles.statCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+              <View style={styles.statTop}>
+                <Text style={[styles.statLabel, { color: tokens.textSecondary }]}>
+                  {language === 'kh' ? 'ចំណូលសរុប' : 'TOTAL INFLOW'}
                 </Text>
-                <Text style={[styles.cfMetricValue, { color: cashflowAnalytics.netVelocity >= 0 ? '#16A34A' : '#DC2626' }]}>
-                  {cashflowAnalytics.netVelocity >= 0 ? '+' : '-'}${Math.abs(cashflowAnalytics.netVelocity).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </Text>
-                <Text style={[styles.cfMetricSub, { color: tokens.textSecondary }]}>
-                  {cashflowAnalytics.savingsRate}% {language === 'kh' ? 'នៃចំណូលត្រូវបានរក្សាទុក' : 'net retained savings'}
-                </Text>
+                <View style={[styles.statIconBox, { backgroundColor: '#DCFCE7', borderColor: '#BBF7D0' }]}>
+                  <RemixIcon name="arrow-down-line" size={12} color="#16A34A" />
+                </View>
               </View>
+              <Text style={[styles.statValue, { color: '#16A34A' }]}>
+                +${cashflowAnalytics.totalInflow.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              </Text>
+              <Text style={[styles.statSub, { color: tokens.textSecondary }]}>
+                {language === 'kh' ? 'ចំណូលសរុបគ្រប់ធនាគារ' : 'Total money received'}
+              </Text>
+            </View>
 
-              {/* Metric 2: Estimated Runway */}
-              <View style={[styles.cfMetricTile, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
-                <Text style={[styles.cfMetricLabel, { color: tokens.textSecondary }]}>
-                  {language === 'kh' ? 'រយៈពេលទ្រទ្រង់ (Cash Runway)' : 'Cash Runway & Buffer'}
+            <View style={[styles.statCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+              <View style={styles.statTop}>
+                <Text style={[styles.statLabel, { color: tokens.textSecondary }]}>
+                  {language === 'kh' ? 'ចំណាយសរុប' : 'TOTAL OUTFLOW'}
                 </Text>
-                <Text style={[styles.cfMetricValue, { color: tokens.textPrimary }]}>
-                  {cashflowAnalytics.runwayMonths} {language === 'kh' ? 'ខែ' : 'Months'}
-                </Text>
-                <Text style={[styles.cfMetricSub, { color: tokens.textSecondary }]}>
-                  {language === 'kh' ? 'ការប៉ាន់ស្មានតាមកម្រិតចំណាយ' : 'Estimated buffer at current burn'}
-                </Text>
+                <View style={[styles.statIconBox, { backgroundColor: '#FEE2E2', borderColor: '#FECACA' }]}>
+                  <RemixIcon name="arrow-up-line" size={12} color="#DC2626" />
+                </View>
               </View>
+              <Text style={[styles.statValue, { color: '#DC2626' }]}>
+                -${cashflowAnalytics.totalOutflow.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              </Text>
+              <Text style={[styles.statSub, { color: tokens.textSecondary }]}>
+                {language === 'kh' ? 'ចំណាយសរុបបានទូទាត់' : 'Total expenses paid'}
+              </Text>
+            </View>
 
-              {/* Metric 3: Safe-to-Spend Daily Limit */}
-              <View style={[styles.cfMetricTile, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
-                <Text style={[styles.cfMetricLabel, { color: tokens.textSecondary }]}>
-                  {language === 'kh' ? 'កម្រិតចាយសុវត្ថិភាព (Daily Limit)' : 'Daily Safe-to-Spend'}
+            <View style={[styles.statCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
+              <View style={styles.statTop}>
+                <Text style={[styles.statLabel, { color: tokens.textSecondary }]}>
+                  {language === 'kh' ? 'កម្រិតចាយប្រចាំថ្ងៃ' : 'DAILY SAFE SPEND'}
                 </Text>
-                <Text style={[styles.cfMetricValue, { color: tokens.accentColor }]}>
-                  ${cashflowAnalytics.safeDailySpend.toFixed(2)}
-                </Text>
-                <Text style={[styles.cfMetricSub, { color: tokens.textSecondary }]}>
-                  {language === 'kh' ? 'ពិដានចំណាយក្នុង ១ ថ្ងៃ' : 'Recommended daily ceiling'}
-                </Text>
+                <View style={[styles.statIconBox, { backgroundColor: tokens.accentSoft, borderColor: tokens.accentBorder }]}>
+                  <RemixIcon name="shield-check-line" size={12} color={tokens.accentColor} />
+                </View>
               </View>
-
-              {/* Metric 4: Savings Ratio */}
-              <View style={[styles.cfMetricTile, { backgroundColor: tokens.surfaceMuted, borderColor: tokens.borderSubtle }]}>
-                <Text style={[styles.cfMetricLabel, { color: tokens.textSecondary }]}>
-                  {language === 'kh' ? 'អត្រាសន្សំ & ចំណេញ (Savings Rate)' : 'Net Savings Ratio'}
-                </Text>
-                <Text style={[styles.cfMetricValue, { color: cashflowAnalytics.savingsRate >= 20 ? '#16A34A' : '#EAB308' }]}>
-                  {cashflowAnalytics.savingsRate}%
-                </Text>
-                <Text style={[styles.cfMetricSub, { color: tokens.textSecondary }]}>
-                  {cashflowAnalytics.savingsRate >= 20
-                    ? (language === 'kh' ? 'សម្រេចបានគោលដៅ 20%+' : 'Above 20% benchmark')
-                    : (language === 'kh' ? 'គោលដៅស្តង់ដារ 20%+' : 'Target: 20%+ benchmark')}
-                </Text>
-              </View>
+              <Text style={[styles.statValue, { color: tokens.accentColor }]}>
+                ${cashflowAnalytics.safeDailySpend.toFixed(2)}
+              </Text>
+              <Text style={[styles.statSub, { color: tokens.textSecondary }]}>
+                {cashflowAnalytics.runwayMonths} {language === 'kh' ? 'ខែ រយៈពេលទ្រទ្រង់' : 'months runway'}
+              </Text>
             </View>
           </View>
 
@@ -1031,7 +1005,7 @@ export const PersonalFinanceModule: React.FC = () => {
                 <View style={styles.cfCardHeaderLeft}>
                   <RemixIcon name="bar-chart-box-line" size={15} color={tokens.accentColor} />
                   <Text style={[styles.cfCardTitle, { color: tokens.textPrimary }]}>
-                    {language === 'kh' ? 'ចរន្តសាច់ប្រាក់តាមខែ (Inflow vs Outflow Timeline)' : 'Monthly Cashflow Velocity'}
+                    {language === 'kh' ? 'ចរន្តសាច់ប្រាក់តាមខែ' : 'Monthly Cashflow Velocity'}
                   </Text>
                 </View>
                 <View style={styles.cfLegendRow}>
@@ -1093,7 +1067,7 @@ export const PersonalFinanceModule: React.FC = () => {
                 <View style={styles.cfCardHeaderLeft}>
                   <RemixIcon name="bar-chart-box-line" size={15} color={tokens.accentColor} />
                   <Text style={[styles.cfCardTitle, { color: tokens.textPrimary }]}>
-                    {language === 'kh' ? 'ការបែងចែកថវិកា 50/30/20 Rule' : '50/30/20 Budget Rule'}
+                    {language === 'kh' ? 'ការបែងចែកថវិកា 50/30/20' : '50/30/20 Budget Rule'}
                   </Text>
                 </View>
               </View>
@@ -1103,7 +1077,7 @@ export const PersonalFinanceModule: React.FC = () => {
                 <View style={styles.cfBudgetItem}>
                   <View style={styles.cfBudgetMetaRow}>
                     <Text style={[styles.cfBudgetName, { color: tokens.textPrimary }]}>
-                      {language === 'kh' ? 'ចំណាយចាំបាច់ (Needs - 50% Target)' : 'Essential Needs (50% Target)'}
+                      {language === 'kh' ? 'ចំណាយចាំបាច់ (Needs 50%)' : 'Essential Needs (50% Target)'}
                     </Text>
                     <Text style={[styles.cfBudgetVal, { color: tokens.textPrimary }]}>
                       ${cashflowAnalytics.needsTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })} ({cashflowAnalytics.needsPct}%)
@@ -1121,7 +1095,7 @@ export const PersonalFinanceModule: React.FC = () => {
                 <View style={styles.cfBudgetItem}>
                   <View style={styles.cfBudgetMetaRow}>
                     <Text style={[styles.cfBudgetName, { color: tokens.textPrimary }]}>
-                      {language === 'kh' ? 'ចំណាយកម្សាន្ត (Wants - 30% Target)' : 'Discretionary Wants (30% Target)'}
+                      {language === 'kh' ? 'ចំណាយកម្សាន្ត (Wants 30%)' : 'Discretionary Wants (30% Target)'}
                     </Text>
                     <Text style={[styles.cfBudgetVal, { color: tokens.textPrimary }]}>
                       ${cashflowAnalytics.wantsTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })} ({cashflowAnalytics.wantsPct}%)
@@ -1131,7 +1105,7 @@ export const PersonalFinanceModule: React.FC = () => {
                     <View style={[styles.cfProgressBarFill, { width: `${Math.min(100, cashflowAnalytics.wantsPct)}%`, backgroundColor: '#F59E0B' }]} />
                   </View>
                   <Text style={[styles.cfBudgetSub, { color: tokens.textSecondary }]}>
-                    {language === 'kh' ? 'Shopping, ញ៉ាំខាងក្រៅ, កាហ្វេ, កម្សាន្ត' : 'Shopping, dining out, lifestyle'}
+                    {language === 'kh' ? 'Shopping, ញ៉ាំខាងក្រៅ, កាហ្វេ, Lifestyle' : 'Shopping, dining out, lifestyle'}
                   </Text>
                 </View>
 
@@ -1139,7 +1113,7 @@ export const PersonalFinanceModule: React.FC = () => {
                 <View style={styles.cfBudgetItem}>
                   <View style={styles.cfBudgetMetaRow}>
                     <Text style={[styles.cfBudgetName, { color: tokens.textPrimary }]}>
-                      {language === 'kh' ? 'ប្រាក់សន្សំសុទ្ធ (Savings - 20% Target)' : 'Retained Savings (20% Target)'}
+                      {language === 'kh' ? 'ប្រាក់សន្សំសុទ្ធ (Savings 20%)' : 'Retained Savings (20% Target)'}
                     </Text>
                     <Text style={[styles.cfBudgetVal, { color: '#16A34A' }]}>
                       ${Math.max(0, cashflowAnalytics.netVelocity).toLocaleString('en-US', { minimumFractionDigits: 2 })} ({cashflowAnalytics.savingsRate}%)
@@ -1164,7 +1138,7 @@ export const PersonalFinanceModule: React.FC = () => {
                 <View style={styles.cfCardHeaderLeft}>
                   <RemixIcon name="building-line" size={15} color={tokens.accentColor} />
                   <Text style={[styles.cfCardTitle, { color: tokens.textPrimary }]}>
-                    {language === 'kh' ? 'ដៃគូ & ហាងដែលបានទូទាត់ច្រើនបំផុត (Top Counterparties)' : 'Top Spending Merchants & Counterparties'}
+                    {language === 'kh' ? 'ដៃគូ & ហាងចំណាយច្រើនបំផុត' : 'Top Spending Merchants'}
                   </Text>
                 </View>
               </View>
@@ -1204,7 +1178,7 @@ export const PersonalFinanceModule: React.FC = () => {
                 <View style={styles.cfCardHeaderLeft}>
                   <RemixIcon name="sparkles-fill" size={15} color={tokens.accentColor} />
                   <Text style={[styles.cfCardTitle, { color: tokens.textPrimary }]}>
-                    {language === 'kh' ? 'អនុសាសន៍ឆ្លាតវៃពី AI Advisor' : 'AI Financial Advisor Diagnosis'}
+                    {language === 'kh' ? 'ការវិភាគពី AI Financial Advisor' : 'AI Financial Advisor Diagnosis'}
                   </Text>
                 </View>
               </View>
