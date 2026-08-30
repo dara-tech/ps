@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, systemPreferences } = require('electron');
+const { app, BrowserWindow, ipcMain, systemPreferences, shell } = require('electron');
 const path = require('path');
 
 // IPC Handlers for Native macOS Touch ID
@@ -38,6 +38,14 @@ function createWindow() {
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js'),
     },
+  });
+
+  // Prevent blank pop-up windows: external links open in system default browser
+  win.webContents.setWindowOpenHandler(({ url }) => {
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('mailto:')) {
+      shell.openExternal(url);
+    }
+    return { action: 'deny' };
   });
 
   // Load the React Native / Expo Desktop Application

@@ -27,21 +27,11 @@ export class Khmer24Client {
 
     this.isLaunching = true;
     try {
-      console.log('[Khmer24 Live Client] Launching warm persistent Chrome instance (stealth background)...');
+      console.log('[Khmer24 Live Client] Launching warm persistent Chrome instance...');
       this.browser = await puppeteer.launch({
         executablePath: Khmer24Client.CHROME_PATH,
         headless: true,
         args: [
-          '--headless=new',
-          '--no-startup-window',
-          '--no-first-run',
-          '--no-default-browser-check',
-          '--disable-extensions',
-          '--disable-background-networking',
-          '--disable-default-apps',
-          '--disable-sync',
-          '--disable-translate',
-          '--mute-audio',
           '--no-sandbox',
           '--disable-setuid-sandbox',
           '--disable-blink-features=AutomationControlled',

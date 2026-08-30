@@ -5,6 +5,7 @@ import { ModernAvatar } from '../../ui/ModernAvatar';
 import { toast } from '../../../store/useToastStore';
 import { useLanguageStore } from '../../../store/useLanguageStore';
 import { telegramApi } from '../../../services/telegramApi';
+import { downloadTelegramFile } from './chat/chatHelpers';
 
 interface ContactInfoSidebarProps {
   conversation: any;
@@ -487,7 +488,7 @@ export const ContactInfoSidebar: React.FC<ContactInfoSidebarProps> = ({
                   <TouchableOpacity
                     key={file.id}
                     style={styles.fileRow}
-                    onPress={() => file.url && window.open(file.url, '_blank')}
+                    onPress={() => file.url && downloadTelegramFile(file.url, file.name)}
                     activeOpacity={0.7}
                   >
                     <View style={styles.fileIconBox}>
@@ -592,7 +593,7 @@ export const ContactInfoSidebar: React.FC<ContactInfoSidebarProps> = ({
             <View style={styles.lightboxHeader}>
               <TouchableOpacity
                 style={styles.lightboxActionBtn}
-                onPress={() => window.open(selectedPhoto, '_blank')}
+                onPress={() => selectedPhoto && downloadTelegramFile(selectedPhoto, 'telegram_photo.jpg')}
                 activeOpacity={0.7}
               >
                 <RemixIcon name="arrow-down-line" size={15} color="#FFFFFF" />

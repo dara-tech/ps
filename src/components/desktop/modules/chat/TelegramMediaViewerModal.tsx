@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { RemixIcon } from '../../../ui/RemixIcon';
 import { ModernAvatar } from '../../../ui/ModernAvatar';
 import { useDesktopStore } from '../../../../store/useDesktopStore';
+import { downloadTelegramFile } from './chatHelpers';
 
 export interface TelegramMediaItem {
   url: string;
@@ -75,13 +76,8 @@ export const TelegramMediaViewerModal: React.FC<TelegramMediaViewerModalProps> =
   const handleDownload = () => {
     const activeItem = items[currentIndex];
     if (!activeItem) return;
-    const a = document.createElement('a');
-    a.href = activeItem.url;
-    a.download = activeItem.isVideo ? 'telegram_video.mp4' : 'telegram_photo.jpg';
-    a.target = '_blank';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    const fileName = activeItem.isVideo ? 'telegram_video.mp4' : 'telegram_photo.jpg';
+    downloadTelegramFile(activeItem.url, fileName);
   };
 
   // Keyboard navigation

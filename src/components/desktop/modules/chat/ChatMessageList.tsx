@@ -5,7 +5,7 @@ import { ModernAvatar } from '../../../ui/ModernAvatar';
 import { CustomModal } from '../../../ui/CustomModal';
 import { telegramApi } from '../../../../services/telegramApi';
 import { chatStyles as styles } from './chatStyles';
-import { formatMessageDate, renderFormattedMarkdown } from './chatHelpers';
+import { formatMessageDate, renderFormattedMarkdown, downloadTelegramFile } from './chatHelpers';
 import { QUICK_REACTION_EMOJIS, EMOJI_CATEGORIES } from './chatTypes';
 import { toast } from '../../../../store/useToastStore';
 import { useThemeStore } from '../../../../store/useThemeStore';
@@ -453,12 +453,16 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                         <View style={styles.tgFileMainRow}>
                           <TouchableOpacity
                             style={[styles.tgDownloadCircleBtn, { backgroundColor: isMe ? 'rgba(255, 255, 255, 0.2)' : tokens.accentColor }]}
-                            onPress={() => msg.mediaUrl && window.open(msg.mediaUrl, '_blank')}
+                            onPress={() => msg.mediaUrl && downloadTelegramFile(msg.mediaUrl, msg.fileName)}
                             activeOpacity={0.8}
                           >
                             <RemixIcon name="arrow-down-line" size={18} color="#FFFFFF" />
                           </TouchableOpacity>
-                          <View style={styles.tgFileInfoBox}>
+                          <TouchableOpacity
+                            style={styles.tgFileInfoBox}
+                            onPress={() => msg.mediaUrl && downloadTelegramFile(msg.mediaUrl, msg.fileName)}
+                            activeOpacity={0.7}
+                          >
                             <Text style={[styles.tgFileName, { color: bubbleText }]} numberOfLines={1}>
                               {msg.fileName || 'Document.pdf'}
                             </Text>
@@ -467,7 +471,7 @@ export const ChatMessageList: React.FC<ChatMessageListProps> = ({
                               <Text style={[styles.tgFileDot, { color: isMe ? 'rgba(255, 255, 255, 0.6)' : tokens.textMuted }]}>•</Text>
                               <Text style={[styles.tgFileDownloadLink, { color: isMe ? '#FFFFFF' : tokens.accentColor }]}>Download</Text>
                             </View>
-                          </View>
+                          </TouchableOpacity>
                         </View>
                         <View style={styles.tgMsgMetaRow}>
                           {msg.isPinned && <RemixIcon name="pushpin-fill" size={10} color={isMe ? 'rgba(255, 255, 255, 0.85)' : tokens.accentColor} />}

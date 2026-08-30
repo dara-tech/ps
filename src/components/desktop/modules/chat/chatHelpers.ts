@@ -253,3 +253,23 @@ export function renderFormattedMarkdown(text: string, baseStyle?: any, keyPrefix
     );
   });
 }
+
+export function downloadTelegramFile(url: string, fileName?: string): void {
+  if (!url) return;
+  try {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName || 'download';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      if (document.body.contains(a)) {
+        document.body.removeChild(a);
+      }
+    }, 200);
+    toast.success('Downloading', fileName ? `Downloading ${fileName}...` : 'Downloading file...');
+  } catch (err) {
+    console.error('Download failed:', err);
+  }
+}
