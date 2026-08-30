@@ -1045,9 +1045,9 @@ export const PersonalFinanceModule: React.FC = () => {
           maxWidth={460}
         >
           <View style={styles.detailContainer}>
-            <View style={styles.detailAmountCard}>
+            <View style={[styles.detailAmountCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
               <BankLogo brand={detectBankBrand(selectedTx.note, selectedTx.category, selectedTx.type).brand} size={44} height={44} />
-              <Text style={styles.detailAmountLabel}>
+              <Text style={[styles.detailAmountLabel, { color: tokens.textSecondary }]}>
                 {selectedTx.type === 'income' ? 'Total Received' : 'Total Settled'}
               </Text>
               <Text
@@ -1061,8 +1061,8 @@ export const PersonalFinanceModule: React.FC = () => {
             </View>
 
             <View style={styles.detailGrid}>
-              <View style={styles.detailRow}>
-                <Text style={styles.detailKey}>Category</Text>
+              <View style={[styles.detailRow, { borderBottomColor: tokens.borderSubtle }]}>
+                <Text style={[styles.detailKey, { color: tokens.textSecondary }]}>Category</Text>
                 <View
                   style={[
                     styles.categoryPill,
@@ -1086,29 +1086,29 @@ export const PersonalFinanceModule: React.FC = () => {
                 </View>
               </View>
 
-              <View style={styles.detailRow}>
-                <Text style={styles.detailKey}>Date</Text>
-                <Text style={styles.detailVal}>{selectedTx.date}</Text>
+              <View style={[styles.detailRow, { borderBottomColor: tokens.borderSubtle }]}>
+                <Text style={[styles.detailKey, { color: tokens.textSecondary }]}>Date</Text>
+                <Text style={[styles.detailVal, { color: tokens.textPrimary }]}>{selectedTx.date}</Text>
               </View>
 
-              <View style={styles.detailRowCol}>
-                <Text style={styles.detailKey}>Full Memo / Ref</Text>
-                <Text style={styles.detailNoteText}>{selectedTx.note}</Text>
+              <View style={[styles.detailRowCol, { borderBottomColor: tokens.borderSubtle }]}>
+                <Text style={[styles.detailKey, { color: tokens.textSecondary }]}>Full Memo / Ref</Text>
+                <Text style={[styles.detailNoteText, { color: tokens.textPrimary }]}>{selectedTx.note}</Text>
               </View>
 
-              <View style={styles.detailRow}>
-                <Text style={styles.detailKey}>Transaction ID</Text>
-                <Text style={styles.detailValCode}>{selectedTx.id}</Text>
+              <View style={[styles.detailRow, { borderBottomColor: tokens.borderSubtle }]}>
+                <Text style={[styles.detailKey, { color: tokens.textSecondary }]}>Transaction ID</Text>
+                <Text style={[styles.detailValCode, { color: tokens.textPrimary, backgroundColor: tokens.surfaceMuted }]}>{selectedTx.id}</Text>
               </View>
             </View>
 
             <View style={styles.detailFooter}>
               <TouchableOpacity
-                style={styles.closeDetailBtn}
+                style={[styles.closeDetailBtn, { backgroundColor: tokens.accentColor }]}
                 onPress={() => setSelectedTx(null)}
                 activeOpacity={0.8}
               >
-                <Text style={styles.closeDetailBtnText}>
+                <Text style={[styles.closeDetailBtnText, { color: tokens.accentFg }]}>
                   {language === 'kh' ? 'បិទ' : 'Close'}
                 </Text>
               </TouchableOpacity>
