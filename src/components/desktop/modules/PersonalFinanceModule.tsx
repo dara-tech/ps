@@ -1091,7 +1091,7 @@ export const PersonalFinanceModule: React.FC = () => {
             <View style={[styles.cfBudgetCard, { backgroundColor: tokens.surfaceBg, borderColor: tokens.borderSubtle }]}>
               <View style={styles.cfCardHeader}>
                 <View style={styles.cfCardHeaderLeft}>
-                  <RemixIcon name="pie-chart-box-line" size={15} color={tokens.accentColor} />
+                  <RemixIcon name="bar-chart-box-line" size={15} color={tokens.accentColor} />
                   <Text style={[styles.cfCardTitle, { color: tokens.textPrimary }]}>
                     {language === 'kh' ? 'ការបែងចែកថវិកា 50/30/20 Rule' : '50/30/20 Budget Rule'}
                   </Text>
